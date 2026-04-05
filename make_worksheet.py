@@ -449,5 +449,6 @@ def build_pdf(output_path, selected_topics=None, include_answers=False):
     print(f"PDF saved: {output_path}")
 
 
-build_pdf("/home/claude/sgmaths_p4_worksheet.pdf",         include_answers=False)
-build_pdf("/home/claude/sgmaths_p4_worksheet_answers.pdf", include_answers=True)
+if __name__ == "__main__":
+    build_pdf("sgmaths_p4_worksheet.pdf",         include_answers=False)
+    build_pdf("sgmaths_p4_worksheet_answers.pdf", include_answers=True)
