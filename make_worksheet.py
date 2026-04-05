@@ -8,7 +8,6 @@ from reportlab.lib.colors import HexColor
 from reportlab.pdfbase.pdfmetrics import stringWidth
 import os, re
 
-# ── Colours ───────────────────────────────────────────────────────────────────
 NAVY   = HexColor("#1e3a5f")
 TEAL   = HexColor("#0e7490")
 LGRAY  = HexColor("#f3f4f6")
@@ -20,147 +19,108 @@ RED    = HexColor("#991b1b")
 GBG    = HexColor("#dcfce7")
 ABG    = HexColor("#fef9c3")
 RBG    = HexColor("#fee2e2")
-
 BODY_FONT = "Helvetica"
 BOLD_FONT = "Helvetica-Bold"
 
-# ── Mixed text+fraction line renderer ────────────────────────────────────────
-# Segment types: ('text', str) | ('frac', num_str, den_str, whole_str_or_None)
+# ── Inline stacked fraction ───────────────────────────────────────────────────
+class InlineFrac(Flowable):
+    def __init__(self, num, den, whole=None, fsize=10, color=colors.black):
+        super().__init__()
+        self.num = str(num); self.den = str(den)
+        self.whole = str(whole) if whole else None
+        self.fsize = fsize; self.nsize = fsize * 0.72; self.color = color
+        self._calc()
+    def _calc(self):
+        sw = lambda s, sz: stringWidth(s, BODY_FONT, sz)
+        self.num_w  = sw(self.num, self.nsize); self.den_w = sw(self.den, self.nsize)
+        self.frac_w = max(self.num_w, self.den_w) + 5
+        self.whole_w = sw(self.whole + " ", self.fsize) if self.whole else 0
+        self.width  = self.whole_w + self.frac_w + 3
+        self.nh = self.nsize * 1.15; self.gap = 1.8
+        self.height = self.nh * 2 + self.gap * 2 + 2
+    def wrap(self, aw, ah): return self.width, self.height
+    def draw(self):
+        c = self.canv; c.saveState()
+        c.setFillColor(self.color); c.setStrokeColor(self.color)
+        x = 0; bar_y = self.nh + self.gap
+        if self.whole:
+            c.setFont(BODY_FONT, self.fsize)
+            c.drawString(x, bar_y - self.fsize * 0.28, self.whole); x = self.whole_w
+        c.setLineWidth(0.7); c.line(x, bar_y, x + self.frac_w, bar_y)
+        c.setFont(BODY_FONT, self.nsize)
+        c.drawString(x + (self.frac_w - self.num_w) / 2, bar_y + self.gap + 0.5, self.num)
+        c.drawString(x + (self.frac_w - self.den_w) / 2, bar_y - self.nh - 0.5, self.den)
+        c.restoreState()
+
 FRAC_RE = re.compile(r'(\b\d+\s+)?(\d+)\s*/\s*(\d+)')
 
 def _parse_segs(line):
-    """Return list of ('text'|'frac', ...) segments for one line."""
     segs, last = [], 0
     for m in FRAC_RE.finditer(line):
         pre = line[last:m.start()]
-        if pre:
-            segs.append(('text', pre))
+        if pre: segs.append(('text', pre))
         whole = m.group(1).strip() if m.group(1) else None
         segs.append(('frac', m.group(2), m.group(3), whole))
         last = m.end()
     tail = line[last:]
-    if tail:
-        segs.append(('text', tail))
+    if tail: segs.append(('text', tail))
     return segs or [('text', ' ')]
 
-
 class MixedLine(Flowable):
-    """
-    Renders one line of text that may contain stacked fractions.
-    Everything is drawn on a single canvas pass sharing one baseline —
-    no table padding, no alignment drift.
-    """
     def __init__(self, segs, fsize=10, bold_prefix=None, color=colors.black, leading=16):
         super().__init__()
-        self.segs        = segs
-        self.fsize       = fsize
-        self.nsize       = fsize * 0.72          # fraction num/den size
-        self.color       = color
-        self.leading     = leading
-        self.bold_prefix = bold_prefix           # e.g. "Q1." drawn bold before segs
+        self.segs = segs; self.fsize = fsize; self.nsize = fsize * 0.72
+        self.color = color; self.leading = leading; self.bold_prefix = bold_prefix
         self._calc()
-
-    # ── sizing ────────────────────────────────────────────────────────────────
     def _frac_metrics(self, num, den, whole):
-        sw  = lambda s, sz: stringWidth(s, BODY_FONT, sz)
-        nw  = sw(num, self.nsize)
-        dw  = sw(den, self.nsize)
-        fw  = max(nw, dw) + 4
-        ww  = sw(whole + "\u2009", self.fsize) if whole else 0  # thin space after whole
-        nh  = self.nsize * 1.1
-        gap = 1.6
-        # fraction total height above baseline = nh + gap + bar (bar at nh+gap from bottom of frac)
-        # we position bar at TEXT_BASELINE + fsize*0.25  (midline of body text)
-        return dict(nw=nw, dw=dw, fw=fw, ww=ww, nh=nh, gap=gap,
-                    total_w=ww + fw + 2)
-
-    def _calc(self):
         sw = lambda s, sz: stringWidth(s, BODY_FONT, sz)
+        nw = sw(num, self.nsize); dw = sw(den, self.nsize); fw = max(nw, dw) + 4
+        ww = sw(whole + "\u2009", self.fsize) if whole else 0
+        nh = self.nsize * 1.1; gap = 1.6
+        return dict(nw=nw, dw=dw, fw=fw, ww=ww, nh=nh, gap=gap, total_w=ww + fw + 2)
+    def _calc(self):
         bw = stringWidth(self.bold_prefix, BOLD_FONT, self.fsize) + 4 if self.bold_prefix else 0
-        total_w = bw
-        has_frac = False
+        total_w = bw; has_frac = False
         for seg in self.segs:
-            if seg[0] == 'text':
-                total_w += sw(seg[1], self.fsize)
+            if seg[0] == 'text': total_w += stringWidth(seg[1], BODY_FONT, self.fsize)
             else:
                 _, num, den, whole = seg
-                m = self._frac_metrics(num, den, whole)
-                total_w += m['total_w']
-                has_frac = True
-        self._has_frac = has_frac
-        self._bw       = bw
-        self._total_w  = total_w
-        # height: enough for fraction (num above bar + den below bar) or plain leading
-        nh  = self.nsize * 1.1
-        gap = 1.6
-        frac_h = nh + gap + 0.7 + nh + gap   # above + below bar
+                total_w += self._frac_metrics(num, den, whole)['total_w']; has_frac = True
+        self._has_frac = has_frac; self._bw = bw; self._total_w = total_w
+        nh = self.nsize * 1.1; gap = 1.6
+        frac_h = nh + gap + 0.7 + nh + gap
         self.height = max(self.leading, frac_h + 2) if has_frac else self.leading
-
-    def wrap(self, aw, ah):
-        self._aw = aw
-        return aw, self.height
-
-    # ── drawing ───────────────────────────────────────────────────────────────
+    def wrap(self, aw, ah): self._aw = aw; return aw, self.height
     def draw(self):
-        c   = self.canv
-        c.saveState()
-        c.setFillColor(self.color)
-        c.setStrokeColor(self.color)
-
-        # baseline: sit text on lower quarter of cell height
-        baseline = self.height * 0.22
-
-        x = 0
+        c = self.canv; c.saveState()
+        c.setFillColor(self.color); c.setStrokeColor(self.color)
+        baseline = self.height * 0.22; x = 0
         if self.bold_prefix:
             c.setFont(BOLD_FONT, self.fsize)
-            c.drawString(x, baseline, self.bold_prefix + " ")
-            x += self._bw
-
-        sw = lambda s, sz: stringWidth(s, BODY_FONT, sz)
-
+            c.drawString(x, baseline, self.bold_prefix + " "); x += self._bw
         for seg in self.segs:
             if seg[0] == 'text':
                 c.setFont(BODY_FONT, self.fsize)
                 c.drawString(x, baseline, seg[1])
-                x += sw(seg[1], self.fsize)
+                x += stringWidth(seg[1], BODY_FONT, self.fsize)
             else:
                 _, num, den, whole = seg
-                m  = self._frac_metrics(num, den, whole)
-                nh  = m['nh']
-                gap = m['gap']
-                fw  = m['fw']
-                nw  = m['nw']
-                dw  = m['dw']
-                # whole number aligns baseline
+                m = self._frac_metrics(num, den, whole)
+                nh = m['nh']; gap = m['gap']; fw = m['fw']; nw = m['nw']; dw = m['dw']
                 if whole:
-                    c.setFont(BODY_FONT, self.fsize)
-                    c.drawString(x, baseline, whole)
-                    x += m['ww']
-                # bar sits at text midline (cap-height midpoint ≈ baseline + fsize*0.3)
+                    c.setFont(BODY_FONT, self.fsize); c.drawString(x, baseline, whole); x += m['ww']
                 bar_y = baseline + self.fsize * 0.30
-                c.setLineWidth(0.65)
-                c.line(x, bar_y, x + fw, bar_y)
-                # numerator above bar
+                c.setLineWidth(0.65); c.line(x, bar_y, x + fw, bar_y)
                 c.setFont(BODY_FONT, self.nsize)
                 c.drawString(x + (fw - nw) / 2, bar_y + gap, num)
-                # denominator below bar
                 c.drawString(x + (fw - dw) / 2, bar_y - nh - 0.5, den)
                 x += fw + 2
-
         c.restoreState()
 
-
 def make_inline(text, style, fsize=10, total_width=13.3*cm, bold_prefix=None):
-    """
-    Convert a (possibly multi-line) string with n/d fractions into
-    a list of MixedLine flowables — one per text line.
-    Falls back to plain Paragraph for lines with no fractions.
-    """
-    result  = []
-    leading = getattr(style, 'leading', fsize * 1.4)
+    result = []; leading = getattr(style, 'leading', fsize * 1.4)
     for line in text.split('\n'):
-        segs     = _parse_segs(line)
-        has_frac = any(s[0] == 'frac' for s in segs)
+        segs = _parse_segs(line); has_frac = any(s[0] == 'frac' for s in segs)
         if not has_frac and not bold_prefix:
             result.append(Paragraph(line or ' ', style))
         else:
@@ -169,80 +129,176 @@ def make_inline(text, style, fsize=10, total_width=13.3*cm, bold_prefix=None):
                                     leading=leading))
     return result
 
+# ── Question banks ────────────────────────────────────────────────────────────
+P3_QUESTIONS = [
+    # Multiplication & Division
+    dict(id=1,  topic="Multiplication & Division", difficulty="Easy",   school="Nan Hua",    marks=1,
+         text="6 fours is the same as ___.",
+         type="mcq", opts=["A.  6 + 6 + 6 + 6", "B.  6 x 6 x 6 x 6", "C.  4 x 4 x 4 x 4 x 4 x 4", "D.  4 + 4 + 4 + 4 + 4 + 4"], answer="D.  4 + 4 + 4 + 4 + 4 + 4"),
+    dict(id=2,  topic="Multiplication & Division", difficulty="Easy",   school="Nan Hua",    marks=1,
+         text="5 x 7 is 14 more than ___.",
+         type="mcq", opts=["A.  2 x 7", "B.  3 x 7", "C.  4 x 7", "D.  7 x 7"], answer="B.  3 x 7"),
+    dict(id=3,  topic="Multiplication & Division", difficulty="Easy",   school="Nan Hua",    marks=1,
+         text="Bala bought a roll of string that is 420 cm long. He cut the string equally into 7 cm long pieces. How many pieces of 7 cm string did he get?",
+         type="mcq", opts=["A.  6", "B.  8", "C.  60", "D.  80"], answer="C.  60"),
+    dict(id=4,  topic="Multiplication & Division", difficulty="Easy",   school="Nan Hua",    marks=1,
+         text="Liming has 65 curry puffs. He packs 9 curry puffs in each container. How many containers does he need to pack all the curry puffs?",
+         type="mcq", opts=["A.  5", "B.  6", "C.  7", "D.  8"], answer="D.  8"),
+    dict(id=5,  topic="Multiplication & Division", difficulty="Medium",  school="Nan Hua",    marks=2,
+         text="Find the quotient and remainder when 803 is divided by 5.",
+         type="short", answer="Quotient: 160, Remainder: 3"),
+    dict(id=6,  topic="Multiplication & Division", difficulty="Medium",  school="Nan Hua",    marks=2,
+         text="Six children visited the chocolate factory. Mr Wonka gave eight chocolate candies to each child and kept four for himself. How many chocolate candies did he have at first?",
+         type="short", answer="52"),
+    dict(id=7,  topic="Multiplication & Division", difficulty="Hard",   school="Henry Park", marks=2,
+         text="Mr Bala prepared some gift bags. He packed 4 pens and 7 stickers in each gift bag. There was a total of 144 pens in the gift bags.\n(a) How many gift bags did he prepare?\n(b) How many stickers were there altogether?",
+         type="short", answer="(a) 36 bags  (b) 252 stickers"),
+    dict(id=8,  topic="Multiplication & Division", difficulty="Hard",   school="Nan Hua",    marks=3,
+         text="Charlie and Augustus made 90 paper planes. Augustus made 5 times as many paper planes as Charlie. How many more paper planes did Augustus make than Charlie?",
+         type="short", answer="60"),
+    # Fractions
+    dict(id=9,  topic="Fractions", difficulty="Easy",   school="Henry Park", marks=1,
+         text="5/9 = ?/72. What is the missing numerator?",
+         type="mcq", opts=["A.  10", "B.  18", "C.  40", "D.  68"], answer="C.  40"),
+    dict(id=10, topic="Fractions", difficulty="Medium",  school="Maha Bodhi", marks=2,
+         text="Write 14/42 in its simplest form.",
+         type="short", answer="1/3"),
+    dict(id=11, topic="Fractions", difficulty="Medium",  school="Maha Bodhi", marks=2,
+         text="Arrange these fractions from greatest to smallest: 1/2, 3/8, 7/9.",
+         type="mcq", opts=["A.  3/8, 1/2, 7/9", "B.  1/2, 3/8, 7/9", "C.  7/9, 1/2, 3/8", "D.  7/9, 3/8, 1/2"], answer="C.  7/9, 1/2, 3/8"),
+    dict(id=12, topic="Fractions", difficulty="Medium",  school="Henry Park", marks=1,
+         text="Arrange the fractions in order, beginning with the smallest: 7/12, 3/7, 1/2.",
+         type="short", answer="7/12, 3/7, 1/2"),
+    dict(id=13, topic="Fractions", difficulty="Medium",  school="Maha Bodhi", marks=2,
+         text="Amber ate 1/8 of a pizza and Danny ate 1/4 of the same pizza. What fraction of the pizza was left?",
+         type="short", answer="5/8"),
+    dict(id=14, topic="Fractions", difficulty="Medium",  school="Maha Bodhi", marks=2,
+         text="What is the missing fraction in the box?\n___ + 1/10 = 2/5",
+         type="short", answer="3/10"),
+    dict(id=15, topic="Fractions", difficulty="Hard",   school="Henry Park", marks=2,
+         text="Siti spent 1/5 of her money on a cake and some of her money on a cookie.\nAfter buying both items, she had 3/10 of her money left.\nWhat fraction of her money did she spend on the cookie? Express your answer in simplest form.",
+         type="short", answer="1/2"),
+    # Angles & Lines
+    dict(id=16, topic="Angles & Lines", difficulty="Easy",   school="Maha Bodhi", marks=2,
+         text="How many acute angles are there inside a pentagon-like figure with 2 acute angles at the bottom?",
+         type="mcq", opts=["A.  6", "B.  2", "C.  3", "D.  4"], answer="B.  2"),
+    dict(id=17, topic="Angles & Lines", difficulty="Medium",  school="Henry Park", marks=1,
+         text="In the figure shown, how many of the marked angles are obtuse angles?",
+         type="short", answer="4"),
+    dict(id=18, topic="Angles & Lines", difficulty="Medium",  school="Maha Bodhi", marks=2,
+         text="A line PQ is drawn in the square grid. Draw a line parallel to PQ passing through point R.\nHow many right angles does the shape in Q7 have?",
+         type="short", answer="2"),
+    dict(id=19, topic="Angles & Lines", difficulty="Medium",  school="Henry Park", marks=1,
+         text="Which of the following figures have more than 2 right angles?",
+         type="mcq", opts=["A.  (d) only", "B.  (a) and (d) only", "C.  (d) and (e) only", "D.  (a), (b) and (c) only"], answer="B.  (a) and (d) only"),
+    dict(id=20, topic="Angles & Lines", difficulty="Medium",  school="Henry Park", marks=1,
+         text="Identify the pair of parallel lines in a figure with lines AB, BC, AF, ED and DC on a grid.",
+         type="mcq", opts=["A.  AB // DC", "B.  AF // BC", "C.  AF // ED", "D.  BC // ED"], answer="C.  AF // ED"),
+    # Data & Graphs
+    dict(id=21, topic="Data & Graphs", difficulty="Medium",  school="Nan Hua",    marks=2,
+         text="A bar graph shows the number of times P1 pupils went to the library. The number who went 4 times = 40, 5 times = 30.\nHow many P1 pupils went to the library more than 3 times?",
+         type="mcq", opts=["A.  65", "B.  145", "C.  180", "D.  245"], answer="A.  65"),
+    dict(id=22, topic="Data & Graphs", difficulty="Medium",  school="Nan Hua",    marks=2,
+         text="A bar graph shows hair dryers sold over 5 days (Brand A and Brand B).\nBrand A totals: Mon=12, Tue=8, Wed=7, Thur=15, Fri=11\nBrand B totals: Mon=6, Tue=8, Wed=4, Thur=2, Fri=6\n(a) Which day had the most hair dryers sold?\n(b) How many more Brand A dryers were sold than Brand B overall?",
+         type="short", answer="(a) Thursday  (b) 13"),
+    dict(id=23, topic="Data & Graphs", difficulty="Medium",  school="Henry Park", marks=2,
+         text="A bar graph shows fruits sold by Grocer Pan: Apple=40, Peach=15, Durian=35, Orange=50.\n(a) How many apples and durians did Grocer Pan sell in total?\n(b) Grocer Pan sold twice as many watermelons as peaches. How many watermelons were sold?",
+         type="short", answer="(a) 75  (b) 30"),
+    dict(id=24, topic="Data & Graphs", difficulty="Medium",  school="Maha Bodhi", marks=2,
+         text="A bar graph shows paper clips in four boxes: Box A=12, Box B=44, Box C=32, Box D=20.\nHow many paper clips must be taken from Box B and placed in Box D so that the two boxes have the same number?",
+         type="short", answer="12"),
+    # Word Problems
+    dict(id=25, topic="Word Problems", difficulty="Medium",  school="Nan Hua",    marks=3,
+         text="580 people visited the cinema on a weekend. There were 168 fewer people who visited on Sunday than on Saturday. How many people visited the cinema on Sunday?",
+         type="short", answer="206"),
+    dict(id=26, topic="Word Problems", difficulty="Hard",   school="Maha Bodhi", marks=3,
+         text="Mr Lim packed some muffins and fruit tarts into boxes.\nHe packed 3 muffins and 6 fruit tarts into each box.\nThere was a total of 174 fruit tarts in all the boxes.\nHow many muffins did Mr Lim pack altogether?",
+         type="short", answer="87"),
+    dict(id=27, topic="Word Problems", difficulty="Hard",   school="Maha Bodhi", marks=3,
+         text="Marvin had 278 more cards than Sally at first.\nAfter Sally gave 87 cards to Marvin, Marvin had 3 times as many cards as Sally.\nHow many cards did Sally have in the end?",
+         type="short", answer="226"),
+    dict(id=28, topic="Word Problems", difficulty="Hard",   school="Henry Park",  marks=3,
+         text="A school had some flags for National Day. The school gave out 378 flags to students. After that, the school bought another 1386 flags. In the end, there were 2953 flags altogether. How many flags did the school have at first?",
+         type="short", answer="1945"),
+    dict(id=29, topic="Word Problems", difficulty="Hard",   school="Henry Park",  marks=2,
+         text="Leo bought a toy car that cost $13.85. He paid an additional $1.50 for a box.\n(a) How much did he spend in all?\n(b) He paid with two $10 notes. How much change did he receive?",
+         type="short", answer="(a) $15.35  (b) $4.65"),
+]
 
-# ── Question bank ─────────────────────────────────────────────────────────────
-QUESTIONS = [
-    dict(id=1,  topic="Fractions",          difficulty="Easy",   school="St Hilda's",     marks=1,
+P4_QUESTIONS = [
+    dict(id=1,  topic="Fractions",         difficulty="Easy",   school="St Hilda's",     marks=1,
          text="Express 26/7 as a mixed number.",
          type="mcq", opts=["A.  2 6/7", "B.  3 5/7", "C.  5 3/7", "D.  7 3/5"], answer="B.  3 5/7"),
-    dict(id=2,  topic="Fractions",          difficulty="Easy",   school="St Hilda's",     marks=1,
+    dict(id=2,  topic="Fractions",         difficulty="Easy",   school="St Hilda's",     marks=1,
          text="What is 2/9 of 18?",
          type="mcq", opts=["A.  1", "B.  81", "C.  162", "D.  4"], answer="D.  4"),
-    dict(id=3,  topic="Fractions",          difficulty="Medium", school="St Hilda's",     marks=2,
+    dict(id=3,  topic="Fractions",         difficulty="Medium", school="St Hilda's",     marks=2,
          text="Find the difference between 3/5 and 2/3.",
          type="mcq", opts=["A.  1/15", "B.  1/2", "C.  5/8", "D.  19/15"], answer="A.  1/15"),
-    dict(id=4,  topic="Fractions",          difficulty="Medium", school="Red Swastika",   marks=2,
+    dict(id=4,  topic="Fractions",         difficulty="Medium", school="Red Swastika",   marks=2,
          text="Write 15/7 as a mixed number.",
          type="short", answer="2 1/7"),
-    dict(id=5,  topic="Fractions",          difficulty="Medium", school="Red Swastika",   marks=2,
+    dict(id=5,  topic="Fractions",         difficulty="Medium", school="Red Swastika",   marks=2,
          text="Express 0.75 as a fraction in its simplest form.",
          type="short", answer="3/4"),
-    dict(id=6,  topic="Fractions",          difficulty="Medium", school="Rosyth",         marks=2,
+    dict(id=6,  topic="Fractions",         difficulty="Medium", school="Rosyth",         marks=2,
          text="Find the value of 11/12 - 2/3 in its simplest form.",
          type="short", answer="1/4"),
-    dict(id=7,  topic="Fractions",          difficulty="Hard",   school="Paya Lebar MGS", marks=2,
+    dict(id=7,  topic="Fractions",         difficulty="Hard",   school="Paya Lebar MGS", marks=2,
          text="Which of the following is NOT an equivalent fraction of 1/4?",
          type="mcq", opts=["A.  2/8", "B.  3/12", "C.  4/12", "D.  5/20"], answer="C.  4/12"),
-    dict(id=8,  topic="Fractions",          difficulty="Hard",   school="St Hilda's",     marks=3,
+    dict(id=8,  topic="Fractions",         difficulty="Hard",   school="St Hilda's",     marks=3,
          text="A tank is 3/8 filled with water. 120 litres more are needed to fill it completely.\nWhat is the capacity of the tank?",
          type="short", answer="192 litres"),
-    dict(id=9,  topic="Fractions",          difficulty="Hard",   school="St Hilda's",     marks=3,
+    dict(id=9,  topic="Fractions",         difficulty="Hard",   school="St Hilda's",     marks=3,
          text="5/6 of the people at a carnival were children and the rest were adults.\nThere were 240 more children than adults.\nHow many people were there altogether?",
          type="short", answer="360"),
-    dict(id=10, topic="Angles & Geometry",  difficulty="Medium", school="Red Swastika",   marks=2,
-         text="In square ABCD, two lines from corner D make angles of 24 degrees and 35 degrees\nwith side DC. Find angle y (the angle between the two lines).",
+    dict(id=10, topic="Angles & Geometry", difficulty="Medium", school="Red Swastika",   marks=2,
+         text="In square ABCD, two lines from corner D make angles of 24 degrees and 35 degrees with side DC. Find angle y (the angle between the two lines).",
          type="short", answer="31 degrees"),
-    dict(id=11, topic="Angles & Geometry",  difficulty="Medium", school="St Hilda's",     marks=2,
+    dict(id=11, topic="Angles & Geometry", difficulty="Medium", school="St Hilda's",     marks=2,
          text="Angle EFG = 134 degrees. Draw the angle with the given line EF. Mark and label the angle.",
          type="draw", answer="Obtuse angle, 134 degrees"),
-    dict(id=12, topic="Angles & Geometry",  difficulty="Medium", school="Rosyth",         marks=2,
+    dict(id=12, topic="Angles & Geometry", difficulty="Medium", school="Rosyth",         marks=2,
          text="Ahmad walked directly from point A to point D in a straight line on a grid.\nD is one square up and one square to the left of A.\nIn which direction did Ahmad walk?",
          type="short", answer="North-West"),
-    dict(id=13, topic="Whole Numbers",      difficulty="Easy",   school="Rosyth",         marks=1,
+    dict(id=13, topic="Whole Numbers",     difficulty="Easy",   school="Rosyth",         marks=1,
          text="Round 25 571 to the nearest hundred.",
          type="short", answer="25 600"),
-    dict(id=14, topic="Whole Numbers",      difficulty="Medium", school="Rosyth",         marks=2,
+    dict(id=14, topic="Whole Numbers",     difficulty="Medium", school="Rosyth",         marks=2,
          text="A number is 15 000 when rounded to the nearest thousand.\nWhat is the greatest possible value of the number?",
          type="short", answer="15 499"),
-    dict(id=15, topic="Whole Numbers",      difficulty="Medium", school="Rosyth",         marks=2,
+    dict(id=15, topic="Whole Numbers",     difficulty="Medium", school="Rosyth",         marks=2,
          text="Find the quotient and remainder when 4505 is divided by 6.",
          type="short", answer="Quotient: 750, Remainder: 5"),
-    dict(id=16, topic="Whole Numbers",      difficulty="Medium", school="Paya Lebar MGS", marks=2,
+    dict(id=16, topic="Whole Numbers",     difficulty="Medium", school="Paya Lebar MGS", marks=2,
          text="Using ALL the digits 5, 2, 7, 0, 4 — form the largest possible 5-digit number.",
          type="short", answer="75 420"),
-    dict(id=17, topic="Decimals",           difficulty="Medium", school="Red Swastika",   marks=2,
+    dict(id=17, topic="Decimals",          difficulty="Medium", school="Red Swastika",   marks=2,
          text="A number has 2 decimal places. It is 34.7 when rounded to 1 decimal place.\nWhat is the smallest possible value of the number?",
          type="mcq", opts=["A.  34.60", "B.  34.65", "C.  34.70", "D.  34.74"], answer="B.  34.65"),
-    dict(id=18, topic="Decimals",           difficulty="Medium", school="Paya Lebar MGS", marks=2,
+    dict(id=18, topic="Decimals",          difficulty="Medium", school="Paya Lebar MGS", marks=2,
          text="What is the value of 4 divided by 7? Give your answer correct to 1 decimal place.",
          type="short", answer="0.6"),
-    dict(id=19, topic="Data & Tables",      difficulty="Medium", school="St Hilda's",     marks=2,
+    dict(id=19, topic="Data & Tables",     difficulty="Medium", school="St Hilda's",     marks=2,
          text="A table shows P4 students across 3 classes.\n4A: total 38, wear spectacles 15\n4B: total 41, do not wear spectacles 19\n4C: total 40, wear spectacles 27\n\nHow many students in 4B wear spectacles?",
          type="short", answer="22"),
-    dict(id=20, topic="Data & Tables",      difficulty="Medium", school="Paya Lebar MGS", marks=2,
-         text="The table shows times P4 students jog per week:\n1 time = 61 students, 2 times = 50, 3 times = 42, 4 times = 75, 5 times = 80.\n\nHow many students jogged more than 2 times in a week?",
+    dict(id=20, topic="Data & Tables",     difficulty="Medium", school="Paya Lebar MGS", marks=2,
+         text="The table shows times P4 students jog per week:\n1 time=61, 2 times=50, 3 times=42, 4 times=75, 5 times=80.\n\nHow many students jogged more than 2 times in a week?",
          type="short", answer="197"),
-    dict(id=21, topic="Word Problems",      difficulty="Hard",   school="Rosyth",         marks=4,
+    dict(id=21, topic="Word Problems",     difficulty="Hard",   school="Rosyth",         marks=4,
          text="Janice had twice as many stamps as Kenneth at first.\nAfter Kenneth gave away 24 stamps, Janice had 5 times as many stamps as Kenneth.\nHow many stamps did Kenneth have at first?",
          type="short", answer="40"),
-    dict(id=22, topic="Word Problems",      difficulty="Hard",   school="Rosyth",         marks=4,
+    dict(id=22, topic="Word Problems",     difficulty="Hard",   school="Rosyth",         marks=4,
          text="Giresh had $108 more than Beng Huat.\nAfter both of them spent an equal amount of money to buy some stationery,\nthe amount of money Giresh had left was 3 times as much as Beng Huat.\nGiven that Giresh had $198 at first, how much did each of them spend?",
          type="short", answer="$36"),
 ]
 
-DIFF_COLORS = {"Easy": (GBG, GREEN), "Medium": (ABG, AMBER), "Hard": (RBG, RED)}
+QUESTIONS = {"P3": P3_QUESTIONS, "P4": P4_QUESTIONS}
 
-# ── Styles ─────────────────────────────────────────────────────────────────────
+LEVEL_LABELS = {"P3": "Primary 3", "P4": "Primary 4"}
+DIFF_COLORS  = {"Easy": (GBG, GREEN), "Medium": (ABG, AMBER), "Hard": (RBG, RED)}
+
 def make_styles():
     return {
         "section":   ParagraphStyle("section",   fontName=BOLD_FONT, fontSize=11,
@@ -263,24 +319,21 @@ def make_styles():
                                     textColor=colors.black),
     }
 
+def build_pdf(output_path, level="P4", selected_topics=None, include_answers=False):
+    S   = make_styles()
+    doc = SimpleDocTemplate(output_path, pagesize=A4,
+                            leftMargin=2*cm, rightMargin=2*cm,
+                            topMargin=2*cm, bottomMargin=2*cm)
 
-# ── Build PDF ──────────────────────────────────────────────────────────────────
-def build_pdf(output_path, selected_topics=None, include_answers=False):
-    S = make_styles()
-    doc = SimpleDocTemplate(
-        output_path, pagesize=A4,
-        leftMargin=2*cm, rightMargin=2*cm,
-        topMargin=2*cm, bottomMargin=2*cm
-    )
-
-    qs = [q for q in QUESTIONS if selected_topics is None or q["topic"] in selected_topics]
+    qs = QUESTIONS.get(level, P4_QUESTIONS)
+    if selected_topics:
+        qs = [q for q in qs if q["topic"] in selected_topics]
     total_marks = sum(q["marks"] for q in qs)
     story = []
 
-    # ── Logo ───────────────────────────────────────────────────────────────────
+    # Logo
     LOGO_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), "sgmaths_logo.png")
-    logo_img = Image(LOGO_PATH, width=8*cm, height=2.2*cm, kind="proportional")
-    story.append(logo_img)
+    story.append(Image(LOGO_PATH, width=8*cm, height=2.2*cm, kind="proportional"))
     story.append(Spacer(1, 0.4*cm))
     story.append(HRFlowable(width="100%", thickness=1.5, color=NAVY))
     story.append(Spacer(1, 0.35*cm))
@@ -293,8 +346,8 @@ def build_pdf(output_path, selected_topics=None, include_answers=False):
     ]]
     name_tbl = Table(name_data, colWidths=[8.5*cm, 4*cm, 5*cm])
     name_tbl.setStyle(TableStyle([
-        ("VALIGN",       (0,0), (-1,-1), "MIDDLE"),
-        ("LEFTPADDING",  (0,0), (-1,-1), 0),
+        ("VALIGN", (0,0), (-1,-1), "MIDDLE"),
+        ("LEFTPADDING", (0,0), (-1,-1), 0),
         ("RIGHTPADDING", (0,0), (-1,-1), 4),
     ]))
     story.append(name_tbl)
@@ -302,17 +355,14 @@ def build_pdf(output_path, selected_topics=None, include_answers=False):
     story.append(HRFlowable(width="100%", thickness=0.5, color=BORDER))
     story.append(Spacer(1, 0.2*cm))
 
-    # ── Questions by topic ─────────────────────────────────────────────────────
     current_topic = None
     q_counter = 0
-    PAGE_W = 16.5*cm   # usable width inside margins
+    PAGE_W = 16.5*cm
 
     def make_ans_box():
-        """Right-aligned answer rectangle."""
         ans_row = Table(
             [[Paragraph("Answer:", S["ans_label"]), Paragraph("", S["ans_label"])]],
-            colWidths=[2*cm, 4.5*cm]
-        )
+            colWidths=[2*cm, 4.5*cm])
         ans_row.setStyle(TableStyle([
             ("VALIGN",        (0,0), (-1,-1), "MIDDLE"),
             ("LEFTPADDING",   (0,0), (-1,-1), 0),
@@ -321,8 +371,7 @@ def build_pdf(output_path, selected_topics=None, include_answers=False):
             ("TOPPADDING",    (1,0), (1,0),   15),
             ("BOTTOMPADDING", (1,0), (1,0),   15),
         ]))
-        outer = Table([[Paragraph("", S["ans_label"]), ans_row]],
-                      colWidths=[10*cm, 6.5*cm])
+        outer = Table([[Paragraph("", S["ans_label"]), ans_row]], colWidths=[10*cm, 6.5*cm])
         outer.setStyle(TableStyle([
             ("LEFTPADDING",  (0,0), (-1,-1), 0),
             ("RIGHTPADDING", (0,0), (-1,-1), 0),
@@ -340,7 +389,6 @@ def build_pdf(output_path, selected_topics=None, include_answers=False):
         q_counter += 1
         diff_bg, diff_fg = DIFF_COLORS[q["difficulty"]]
 
-        # ── Badge (right-side pill) ────────────────────────────────────────────
         badge = Paragraph(
             f"{q['difficulty']}  |  {q['marks']} mark{'s' if q['marks']>1 else ''}",
             ParagraphStyle("b", fontName=BODY_FONT, fontSize=8,
@@ -353,19 +401,11 @@ def build_pdf(output_path, selected_topics=None, include_answers=False):
             ("BOTTOMPADDING", (0,0), (-1,-1), 3),
         ]))
 
-        # ── Question text: Q-number bold-prefix, then inline fractions ─────────
-        # All lines of the question rendered as MixedLine on single canvas pass
-        TEXT_W = PAGE_W - 3.5*cm   # leave room for badge on first line
+        TEXT_W = PAGE_W - 3.5*cm
         all_lines = q["text"].split("\n")
-
-        first_segs = _parse_segs(all_lines[0])
-        first_line = MixedLine(first_segs, fsize=10,
-                               bold_prefix=f"Q{q_counter}.",
-                               leading=18)
-
-        # First line + badge in a table (badge floats right, no padding interference)
-        header_tbl = Table([[first_line, badge_tbl]],
-                           colWidths=[TEXT_W + 0.3*cm, 3.2*cm])
+        first_line = MixedLine(_parse_segs(all_lines[0]), fsize=10,
+                               bold_prefix=f"Q{q_counter}.", leading=18)
+        header_tbl = Table([[first_line, badge_tbl]], colWidths=[TEXT_W + 0.3*cm, 3.2*cm])
         header_tbl.setStyle(TableStyle([
             ("VALIGN",        (0,0), (-1,-1), "TOP"),
             ("LEFTPADDING",   (0,0), (-1,-1), 0),
@@ -375,22 +415,18 @@ def build_pdf(output_path, selected_topics=None, include_answers=False):
         ]))
 
         q_block = [header_tbl]
-
-        # Remaining lines of question text
         for extra in all_lines[1:]:
             if extra.strip():
                 q_block.append(MixedLine(_parse_segs(extra), fsize=10, leading=16))
             else:
                 q_block.append(Spacer(1, 0.2*cm))
 
-        # ── MCQ options ────────────────────────────────────────────────────────
         if q["type"] == "mcq":
             q_block.append(Spacer(1, 0.1*cm))
             for opt in q["opts"]:
                 q_block.append(MixedLine(_parse_segs(opt), fsize=10, leading=16))
             q_block.append(Spacer(1, 0.15*cm))
             q_block.append(make_ans_box())
-
         elif q["type"] == "draw":
             q_block.append(Spacer(1, 0.2*cm))
             draw_tbl = Table([[Paragraph("Drawing space:", S["ans_label"])]], colWidths=[PAGE_W])
@@ -402,15 +438,13 @@ def build_pdf(output_path, selected_topics=None, include_answers=False):
                 ("LEFTPADDING",   (0,0), (-1,-1), 8),
             ]))
             q_block.append(draw_tbl)
-
         else:
             q_block.append(Spacer(1, 0.15*cm))
             work_tbl = Table(
                 [[Paragraph("Working:", S["ans_label"])],
                  [Paragraph("", S["ans_label"])],
                  [Paragraph("", S["ans_label"])]],
-                colWidths=[PAGE_W]
-            )
+                colWidths=[PAGE_W])
             work_tbl.setStyle(TableStyle([
                 ("BOX",           (0,0), (-1,-1), 0.5, BORDER),
                 ("BACKGROUND",    (0,0), (-1,-1), LGRAY),
@@ -422,11 +456,9 @@ def build_pdf(output_path, selected_topics=None, include_answers=False):
             q_block.append(Spacer(1, 0.1*cm))
             q_block.append(make_ans_box())
 
-        # ── Answer key ─────────────────────────────────────────────────────────
         if include_answers:
-            ak_segs  = _parse_segs(str(q["answer"]))
-            ak_line  = MixedLine(ak_segs, fsize=10, bold_prefix="Answer:", leading=18,
-                                 color=GREEN)
+            ak_line  = MixedLine(_parse_segs(str(q["answer"])), fsize=10,
+                                 bold_prefix="Answer:", leading=18, color=GREEN)
             ak_outer = Table([[ak_line]], colWidths=[PAGE_W])
             ak_outer.setStyle(TableStyle([
                 ("BACKGROUND",    (0,0), (-1,-1), GBG),
@@ -440,15 +472,14 @@ def build_pdf(output_path, selected_topics=None, include_answers=False):
         story.append(KeepTogether(q_block))
         story.append(Spacer(1, 0.4*cm))
 
-    # ── Footer ──────────────────────────────────────────────────────────────────
     story.append(HRFlowable(width="100%", thickness=0.5, color=BORDER))
     story.append(Spacer(1, 0.2*cm))
-    story.append(Paragraph("sgmaths.sg  |  P4 Mathematics  |  End of Paper", S["footer"]))
-
+    story.append(Paragraph(f"sgmaths.sg  |  {LEVEL_LABELS.get(level, level)} Mathematics  |  End of Paper", S["footer"]))
     doc.build(story)
     print(f"PDF saved: {output_path}")
 
-
 if __name__ == "__main__":
-    build_pdf("sgmaths_p4_worksheet.pdf",         include_answers=False)
-    build_pdf("sgmaths_p4_worksheet_answers.pdf", include_answers=True)
+    build_pdf("sgmaths_p3_worksheet.pdf",         level="P3", include_answers=False)
+    build_pdf("sgmaths_p3_worksheet_answers.pdf", level="P3", include_answers=True)
+    build_pdf("sgmaths_p4_worksheet.pdf",         level="P4", include_answers=False)
+    build_pdf("sgmaths_p4_worksheet_answers.pdf", level="P4", include_answers=True)
