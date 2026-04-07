@@ -1,4 +1,5 @@
 from reportlab.lib.pagesizes import A4
+from reportlab.lib.utils import ImageReader
 from reportlab.lib.units import cm
 from reportlab.lib.styles import ParagraphStyle
 from reportlab.lib.enums import TA_LEFT, TA_CENTER, TA_RIGHT
@@ -145,6 +146,10 @@ P3_QUESTIONS = [
          text="Liming has 65 curry puffs. He packs 9 curry puffs in each container. How many containers does he need to pack all the curry puffs?",
          type="mcq", opts=["A.  5", "B.  6", "C.  7", "D.  8"], answer="D.  8"),
     dict(id=5,  topic="Multiplication & Division", difficulty="Medium",  school="Nan Hua",    marks=2,
+         text="Look at the number pattern. What is the missing number?",
+         image="img_p3_q5_pattern.png",
+         type="mcq", opts=["A.  12", "B.  15", "C.  22", "D.  24"], answer="D.  24"),
+    dict(id=55, topic="Multiplication & Division", difficulty="Medium",  school="Nan Hua",    marks=2,
          text="Find the quotient and remainder when 803 is divided by 5.",
          type="short", answer="Quotient: 160, Remainder: 3"),
     dict(id=6,  topic="Multiplication & Division", difficulty="Medium",  school="Nan Hua",    marks=2,
@@ -170,7 +175,7 @@ P3_QUESTIONS = [
          text="Arrange the fractions in order, beginning with the smallest: 7/12, 3/7, 1/2.",
          type="short", answer="7/12, 3/7, 1/2"),
     dict(id=13, topic="Fractions", difficulty="Medium",  school="Maha Bodhi", marks=2,
-         text="Amber ate 1/8 of a pizza and Danny ate 1/4 of the same pizza. What fraction of the pizza was left?",
+         text="Amber ate 1/8 of a pizza and Danny ate 1/4 of the same pizza.\nWhat fraction of the pizza was left?",
          type="short", answer="5/8"),
     dict(id=14, topic="Fractions", difficulty="Medium",  school="Maha Bodhi", marks=2,
          text="What is the missing fraction in the box?\n___ + 1/10 = 2/5",
@@ -196,10 +201,12 @@ P3_QUESTIONS = [
          type="mcq", opts=["A.  AB // DC", "B.  AF // BC", "C.  AF // ED", "D.  BC // ED"], answer="C.  AF // ED"),
     # Data & Graphs
     dict(id=21, topic="Data & Graphs", difficulty="Medium",  school="Nan Hua",    marks=2,
-         text="A bar graph shows the number of times P1 pupils went to the library. The number who went 4 times = 40, 5 times = 30.\nHow many P1 pupils went to the library more than 3 times?",
+         text="The graph shows the number of times P1 pupils went to the library during the June holidays. Study the graph carefully and answer the question below.\nHow many P1 pupils went to the library more than 3 times?",
+         image="q6_graph.png",
          type="mcq", opts=["A.  65", "B.  145", "C.  180", "D.  245"], answer="A.  65"),
     dict(id=22, topic="Data & Graphs", difficulty="Medium",  school="Nan Hua",    marks=2,
-         text="A bar graph shows hair dryers sold over 5 days (Brand A and Brand B).\nBrand A totals: Mon=12, Tue=8, Wed=7, Thur=15, Fri=11\nBrand B totals: Mon=6, Tue=8, Wed=4, Thur=2, Fri=6\n(a) Which day had the most hair dryers sold?\n(b) How many more Brand A dryers were sold than Brand B overall?",
+         text="The graph shows the number of hair dryers sold at Sunshine Shop in 5 days.\nStudy the graph carefully and answer the questions (a) and (b).\n(a) Which day had the most number of hair dryers sold?\n(b) How many more Brand A hair dryers were sold compared to Brand B?",
+         image="img_p3_q9_graph.png",
          type="short", answer="(a) Thursday  (b) 13"),
     dict(id=23, topic="Data & Graphs", difficulty="Medium",  school="Henry Park", marks=2,
          text="A bar graph shows fruits sold by Grocer Pan: Apple=40, Peach=15, Durian=35, Orange=50.\n(a) How many apples and durians did Grocer Pan sell in total?\n(b) Grocer Pan sold twice as many watermelons as peaches. How many watermelons were sold?",
@@ -294,9 +301,111 @@ P4_QUESTIONS = [
          type="short", answer="$36"),
 ]
 
-QUESTIONS = {"P3": P3_QUESTIONS, "P4": P4_QUESTIONS}
+P5_QUESTIONS = [
+    # ── Triangles & Area ────────────────────────────────────────────────────────
+    dict(id=1, topic="Triangles & Area", difficulty="Easy", school="Raffles Girls'", marks=1,
+         text="VWX is a triangle. If the base is VX, the height is ___.",
+         image="img_p5_q1a_triangle.png",
+         type="short", answer="YW"),
+    dict(id=2, topic="Triangles & Area", difficulty="Easy", school="Raffles Girls'", marks=1,
+         text="DCB is a straight line.\nD is 3 cm to the left of C, and C is 9 cm to the left of B.\nA is 5 cm above D, and AC = 6 cm.\nFind the area of triangle ABC.",
+         image="img_p5_q1b_triangle.png",
+         type="short", answer="22.5 cm²"),
+    dict(id=3, topic="Triangles & Area", difficulty="Medium", school="Raffles Girls'", marks=2,
+         text="ABCD is a square of side 18 m. E is the midpoint of AB and F is the midpoint of DC.\nFind the total area of the shaded triangles formed by the diagonals of each half.",
+         image="img_p5_q8_square.png",
+         type="short", answer="162 m²"),
+    dict(id=4, topic="Triangles & Area", difficulty="Hard", school="Raffles Girls'", marks=4,
+         text="The figure is made up of a rectangle ABFG and a square CDEF.\nAB = 11 cm, AG = 12 cm + 16 cm = 28 cm (height of rectangle), CDEF has side 16 cm.\nAH = HG and GF = FE.\nFind the area of the shaded part.",
+         image="img_p5_q9_rect.png",
+         type="short", answer="252 cm²"),
+    dict(id=5, topic="Triangles & Area", difficulty="Medium", school="Ai Tong", marks=2,
+         text="Find the area of the shaded triangle with base 25 m and perpendicular height 16 m.\n(Note: The 15 m and 4 m are other sides, not the height.)",
+         image="img_p5_q3_triangle.png",
+         type="short", answer="200 m²"),
+    dict(id=6, topic="Triangles & Area", difficulty="Hard", school="Ai Tong", marks=4,
+         text="Rectangle ACEH is made up of two identical rectangles BCDK and KDEF and two identical squares ABKJ and JKFH.\nAC = 21 cm and DE = 6 cm.\n(a) Find the area of triangle GKD.\n(b) Find the total area of the shaded parts.",
+         image="img_p5_q10_rect.png",
+         type="short", answer="(a) 45 cm²  (b) 162 cm²"),
+    # ── Volume ──────────────────────────────────────────────────────────────────
+    dict(id=7, topic="Volume", difficulty="Easy", school="Raffles Girls'", marks=1,
+         text="Find the volume of a cube with side 7 cm.",
+         image="img_p5_q2a_cube.png",
+         type="short", answer="343 cm³"),
+    dict(id=8, topic="Volume", difficulty="Easy", school="Raffles Girls'", marks=1,
+         text="The figure shows some cubes in a glass tank.\nThe tank is 5 cubes long, 3 cubes wide and 3 cubes tall. 25 cubes are already placed.\nHow many more cubes are needed to fill the tank completely?",
+         image="img_p5_q2b_tank.png",
+         type="short", answer="20"),
+    dict(id=9, topic="Volume", difficulty="Medium", school="Raffles Girls'", marks=2,
+         text="The figure shows a solid made up of 1-cm cubes.\nHow many more cubes must be added to make a solid of 30 cm³?",
+         image="img_p5_q6_solid.png",
+         type="short", answer="18"),
+    dict(id=10, topic="Volume", difficulty="Hard", school="Raffles Girls'", marks=5,
+         text="The figure shows a rectangular tank P and an empty cubical tank Q.\nTank P measures 30 cm × 24 cm × 18 cm. Tank Q has side 18 cm.\nTank P was 1/5 filled with water. Johan then poured another 1.3 l into tank P.\n(a) What was the total volume of water in tank P?\n(b) Johan poured all the water from tank P into tank Q.\nHow much more water was needed to fill tank Q? Leave your answer in litres.",
+         image="img_p5_q10_tanks.png",
+         type="short", answer="(a) 3.892 l  (b) 1.94 l"),
+    dict(id=11, topic="Volume", difficulty="Easy", school="Ai Tong", marks=2,
+         text="The cuboid has a height of 8 cm and a square base of side 3 cm. Find its volume.",
+         type="short", answer="72 cm³"),
+    dict(id=12, topic="Volume", difficulty="Hard", school="Ai Tong", marks=3,
+         text="At a party, a rectangular container (45 cm × 38 cm × 40 cm) was 5/8 filled with fruit punch.\nEach guest was served a 550 ml cup of fruit punch.\nWhat was the greatest possible number of cups served?",
+         image="img_p5_q7_container.png",
+         type="short", answer="77 cups"),
+    # ── Decimals & Measurement ─────────────────────────────────────────────────
+    dict(id=13, topic="Decimals & Measurement", difficulty="Easy", school="Raffles Girls'", marks=1,
+         text="Write down a decimal between 6.2 and 6.3.",
+         type="short", answer="Any decimal such as 6.21, 6.25, etc."),
+    dict(id=14, topic="Decimals & Measurement", difficulty="Easy", school="Raffles Girls'", marks=1,
+         text="Arrange these decimals from the smallest to the largest:\n1.09,  1.609,  1.069",
+         type="short", answer="1.069,  1.09,  1.609"),
+    dict(id=15, topic="Decimals & Measurement", difficulty="Easy", school="Raffles Girls'", marks=1,
+         text="Convert the following:\n(a) 21.5 m = ___ cm\n(b) 3 kg 80 g = ___ kg",
+         type="short", answer="(a) 2150 cm  (b) 3.08 kg"),
+    dict(id=16, topic="Decimals & Measurement", difficulty="Medium", school="Raffles Girls'", marks=2,
+         text="Mr Bala bought 4.5 kg of meat. He packed them into smaller bags of 0.15 kg each.\nHow many bags of meat did he pack?",
+         type="short", answer="30"),
+    dict(id=17, topic="Decimals & Measurement", difficulty="Easy", school="Ai Tong", marks=2,
+         text="(a) Express 6095 cm³ in l and ml.\n(b) Express 8 kg 20 g in kg.",
+         type="short", answer="(a) 6 l 95 ml  (b) 8.02 kg"),
+    dict(id=18, topic="Decimals & Measurement", difficulty="Easy", school="Ai Tong", marks=2,
+         text="A wire is 2.5 m long. Some of it is used to form an equilateral triangle with each side 75 cm.\nWhat is the length of wire that is left unused?",
+         image="img_p5_q4_triangle.png",
+         type="short", answer="25 cm"),
+    # ── 3D Solids & Views ───────────────────────────────────────────────────────
+    dict(id=19, topic="3D Solids & Views", difficulty="Medium", school="Raffles Girls'", marks=2,
+         text="Nisha built a solid using 10 unit cubes.\n(a) Draw the top view of the solid on the given square grid.\n(b) Nisha has 4 more unit cubes. What is the greatest number of unit cubes she can add without changing the top view and front view?",
+         image="img_p5_q7_solid_grid.png",
+         type="short", answer="(a) See diagram  (b) 2"),
+    dict(id=20, topic="3D Solids & Views", difficulty="Medium", school="Ai Tong", marks=2,
+         text="7 unit cubes were stacked and glued together to form a solid.\nDraw the side view and the top view of the solid on the grid provided.",
+         image="img_p5_q5_cubes_grid.png",
+         type="draw", answer="Side view: 3 rows (3-wide, 2-wide, 1-wide). Top view: 3×1 + 1 extra = L-shape"),
+    # ── Fractions (Word Problems) ───────────────────────────────────────────────
+    dict(id=21, topic="Fractions", difficulty="Hard", school="Ai Tong", marks=3,
+         text="In a competition, 3/5 of the participants were men.\n1/3 of the remaining participants were women and the rest were children.\nThere were 225 more men than children.\nHow many participants were there in the competition?",
+         type="short", answer="675"),
+    dict(id=22, topic="Fractions", difficulty="Hard", school="Ai Tong", marks=3,
+         text="Amanda went shopping with some money.\nShe spent 1/3 of her money on a table, 1/4 of it on a sofa and $54 on a lamp.\nThen she had 1/6 of her money left.\nHow much did she spend on the table?",
+         type="short", answer="$72"),
+    # ── Word Problems ───────────────────────────────────────────────────────────
+    dict(id=23, topic="Word Problems", difficulty="Medium", school="Raffles Girls'", marks=2,
+         text="At a bookshop, pencils are sold in boxes of 12 for $9.60 and erasers in boxes of 7 for $3.50.\n(a) Mrs Lee needs 42 pencils and 20 erasers. What is the least amount she needs to spend?\n(b) Mr Ali bought 8 more pencils than erasers. The total number was fewer than 70. How much did he spend altogether?",
+         image="img_p5_q11_pencils.png",
+         type="short", answer="(a) $48.90  (b) $42.80"),
+    dict(id=24, topic="Word Problems", difficulty="Medium", school="Ai Tong", marks=3,
+         text="The cost of 2 pens and 4 files is $23.90. The cost of a file is $1.40 more than the cost of a pen.\nFind the cost of a pen.",
+         type="short", answer="$3.05"),
+    dict(id=25, topic="Word Problems", difficulty="Hard", school="Ai Tong", marks=5,
+         text="A total of 60 light bulbs are set up at equal distance around a rectangular garden ABCD.\nA light bulb is placed at each corner. The distance between every two bulbs is 30 cm.\n17 light bulbs are set up along side DC.\n(a) Find the length of DC.\n(b) How many light bulbs are placed along BC?",
+         type="short", answer="(a) 480 cm  (b) 15 light bulbs"),
+    dict(id=26, topic="Word Problems", difficulty="Hard", school="Ai Tong", marks=4,
+         text="Daryl and Ben had an equal amount of money at first.\nEach day, Daryl spent $5.50 and Ben spent $3.20.\nAfter some days, Daryl had $95.20 left and Ben had $132 left.\nHow much money did each of them have at first?",
+         type="short", answer="$183.20"),
+]
 
-LEVEL_LABELS = {"P3": "Primary 3", "P4": "Primary 4"}
+QUESTIONS = {"P3": P3_QUESTIONS, "P4": P4_QUESTIONS, "P5": P5_QUESTIONS}
+
+LEVEL_LABELS = {"P3": "Primary 3", "P4": "Primary 4", "P5": "Primary 5"}
 DIFF_COLORS  = {"Easy": (GBG, GREEN), "Medium": (ABG, AMBER), "Hard": (RBG, RED)}
 
 def make_styles():
@@ -320,7 +429,37 @@ def make_styles():
     }
 
 def build_pdf(output_path, level="P4", selected_topics=None, include_answers=False):
+    import re as _re
     S   = make_styles()
+
+    LOGO_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), "sgmaths_logo.png")
+    PAGE_W_PT, PAGE_H_PT = A4
+
+    footer_text = f"sgmaths.sg  |  {LEVEL_LABELS.get(level, level)} Mathematics  |  End of Paper"
+
+    def draw_page(canvas, doc):
+        import math
+        canvas.saveState()
+        # Watermark
+        img = ImageReader(LOGO_PATH)
+        iw, ih = img.getSize()
+        wm_w = 16 * cm
+        wm_h = wm_w * ih / iw
+        angle = math.degrees(math.atan2(PAGE_H_PT, PAGE_W_PT))
+        canvas.translate(PAGE_W_PT / 2, PAGE_H_PT / 2)
+        canvas.rotate(angle)
+        canvas.setFillAlpha(0.07)
+        canvas.drawImage(img, -wm_w / 2, -wm_h / 2,
+                         width=wm_w, height=wm_h, mask="auto")
+        canvas.restoreState()
+        # Footer on last page only
+        if canvas.getPageNumber() == doc._pageCount:
+            canvas.saveState()
+            canvas.setFont("Helvetica", 8)
+            canvas.setFillColor(HexColor("#6b7280"))
+            canvas.drawCentredString(PAGE_W_PT / 2, 1.2*cm, footer_text)
+            canvas.restoreState()
+
     doc = SimpleDocTemplate(output_path, pagesize=A4,
                             leftMargin=2*cm, rightMargin=2*cm,
                             topMargin=2*cm, bottomMargin=2*cm)
@@ -328,107 +467,164 @@ def build_pdf(output_path, level="P4", selected_topics=None, include_answers=Fal
     qs = QUESTIONS.get(level, P4_QUESTIONS)
     if selected_topics:
         qs = [q for q in qs if q["topic"] in selected_topics]
-    total_marks = sum(q["marks"] for q in qs)
     story = []
 
-    # Logo
-    LOGO_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), "sgmaths_logo.png")
-    story.append(Image(LOGO_PATH, width=8*cm, height=2.2*cm, kind="proportional"))
-    story.append(Spacer(1, 0.4*cm))
-    story.append(HRFlowable(width="100%", thickness=1.5, color=NAVY))
-    story.append(Spacer(1, 0.35*cm))
+    # ── Page header ────────────────────────────────────────────────────────────
+    PAGE_W  = 17.0*cm
+    BADGE_W = 3.0*cm
+    LINE_H  = 22   # uniform line height for all text (plain and fraction)
 
-    # Name / Class / Date
+    # Name / Date row
     name_data = [[
         Paragraph("Name: ________________________________", S["fl"]),
         Paragraph("Class: __________", S["fl"]),
         Paragraph("Date: ______________", S["fl"]),
     ]]
-    name_tbl = Table(name_data, colWidths=[8.5*cm, 4*cm, 5*cm])
+    name_tbl = Table(name_data, colWidths=[8.5*cm, 4.5*cm, 4.0*cm])
     name_tbl.setStyle(TableStyle([
-        ("VALIGN", (0,0), (-1,-1), "MIDDLE"),
-        ("LEFTPADDING", (0,0), (-1,-1), 0),
-        ("RIGHTPADDING", (0,0), (-1,-1), 4),
+        ("VALIGN",        (0,0), (-1,-1), "MIDDLE"),
+        ("LEFTPADDING",   (0,0), (-1,-1), 0),
+        ("RIGHTPADDING",  (0,0), (-1,-1), 0),
     ]))
     story.append(name_tbl)
     story.append(Spacer(1, 0.3*cm))
-    story.append(HRFlowable(width="100%", thickness=0.5, color=BORDER))
-    story.append(Spacer(1, 0.2*cm))
+    story.append(HRFlowable(width="100%", thickness=1.5, color=NAVY))
+    story.append(Spacer(1, 0.3*cm))
 
-    current_topic = None
-    q_counter = 0
-    PAGE_W = 16.5*cm
+    # ── Helpers ────────────────────────────────────────────────────────────────
+    PART_RE = _re.compile(r'^\(([a-z])\)\s*')
 
-    def make_ans_box():
-        ans_row = Table(
-            [[Paragraph("Answer:", S["ans_label"]), Paragraph("", S["ans_label"])]],
-            colWidths=[2*cm, 4.5*cm])
-        ans_row.setStyle(TableStyle([
+    def smart_line(text, bold_prefix=None, fsize=10):
+        segs = _parse_segs(text)
+        has_frac = any(s[0] == "frac" for s in segs)
+        if has_frac:
+            return MixedLine(segs, fsize=fsize, bold_prefix=bold_prefix, leading=LINE_H)
+        prefix_html = f"<b>{bold_prefix}</b> " if bold_prefix else ""
+        style = ParagraphStyle("ql", fontName=BODY_FONT, fontSize=fsize,
+                               leading=LINE_H, textColor=colors.black)
+        return Paragraph(prefix_html + text, style)
+
+    def make_work_box(marks, is_word_problem=False):
+        """Working space box — larger for word problems."""
+        if is_word_problem:
+            if marks <= 3:
+                h = 7.0*cm
+            else:
+                h = 10.0*cm
+        else:
+            if marks <= 2:
+                h = 2.5*cm
+            elif marks <= 4:
+                h = 4.5*cm
+            else:
+                h = 6.5*cm
+        tbl = Table([[Paragraph("Working:", S["ans_label"])]], colWidths=[PAGE_W],
+                    rowHeights=[h])
+        tbl.setStyle(TableStyle([
+            ("BOX",           (0,0), (-1,-1), 0.5, BORDER),
+            ("BACKGROUND",    (0,0), (-1,-1), LGRAY),
+            ("TOPPADDING",    (0,0), (-1,-1), 4),
+            ("BOTTOMPADDING", (0,0), (-1,-1), 4),
+            ("LEFTPADDING",   (0,0), (-1,-1), 8),
+            ("VALIGN",        (0,0), (-1,-1), "TOP"),
+        ]))
+        return tbl
+
+    def make_ans_boxes(parts):
+        """
+        parts: list of part labels e.g. ['a','b'] or [] for single answer.
+        Each part gets its own row: label right-aligned next to a box.
+        Single answer → one row with "Ans:" label.
+        """
+        BOX_W   = 5.0*cm
+        LABEL_W = 1.8*cm
+        SPACE_W = PAGE_W - LABEL_W - BOX_W   # left spacer
+
+        if not parts:
+            parts = [""]
+
+        rows   = []
+        styles = [
             ("VALIGN",        (0,0), (-1,-1), "MIDDLE"),
             ("LEFTPADDING",   (0,0), (-1,-1), 0),
             ("RIGHTPADDING",  (0,0), (-1,-1), 0),
-            ("BOX",           (1,0), (1,0),   1, NAVY),
-            ("TOPPADDING",    (1,0), (1,0),   15),
-            ("BOTTOMPADDING", (1,0), (1,0),   15),
-        ]))
-        outer = Table([[Paragraph("", S["ans_label"]), ans_row]], colWidths=[10*cm, 6.5*cm])
-        outer.setStyle(TableStyle([
-            ("LEFTPADDING",  (0,0), (-1,-1), 0),
-            ("RIGHTPADDING", (0,0), (-1,-1), 0),
-            ("VALIGN",       (0,0), (-1,-1), "MIDDLE"),
-        ]))
-        return outer
+            ("TOPPADDING",    (0,0), (-1,-1), 10),
+            ("BOTTOMPADDING", (0,0), (-1,-1), 10),
+        ]
+        for i, p in enumerate(parts):
+            label_txt = f"({p})" if p else "Ans:"
+            rows.append([
+                Paragraph("", S["ans_label"]),
+                Paragraph(label_txt, S["ans_label"]),
+                Paragraph("", S["ans_label"]),
+            ])
+            # box is column 2
+            styles.append(("BOX", (2, i), (2, i), 1, NAVY))
 
+        tbl = Table(rows, colWidths=[SPACE_W, LABEL_W, BOX_W])
+        tbl.setStyle(TableStyle(styles))
+        return tbl
+
+    # ── Questions ──────────────────────────────────────────────────────────────
+    q_counter = 0
     for q in qs:
-        if q["topic"] != current_topic:
-            current_topic = q["topic"]
-            story.append(Paragraph(current_topic.upper(), S["section"]))
-            story.append(HRFlowable(width="100%", thickness=0.5, color=TEAL))
-            story.append(Spacer(1, 0.2*cm))
-
         q_counter += 1
         diff_bg, diff_fg = DIFF_COLORS[q["difficulty"]]
+        is_word = (q["topic"] == "Word Problems")
 
+        # Detect parts (a), (b), (c) in question text
+        parts = _re.findall(r'\(([a-z])\)', q["text"])
+        parts = list(dict.fromkeys(parts))   # deduplicate, preserve order
+
+        # Badge
         badge = Paragraph(
             f"{q['difficulty']}  |  {q['marks']} mark{'s' if q['marks']>1 else ''}",
             ParagraphStyle("b", fontName=BODY_FONT, fontSize=8,
                            textColor=diff_fg, alignment=TA_CENTER))
-        badge_tbl = Table([[badge]], colWidths=[3.2*cm])
+        badge_tbl = Table([[badge]], colWidths=[BADGE_W])
         badge_tbl.setStyle(TableStyle([
             ("BACKGROUND",    (0,0), (-1,-1), diff_bg),
             ("ROUNDEDCORNERS",[4]),
             ("TOPPADDING",    (0,0), (-1,-1), 3),
             ("BOTTOMPADDING", (0,0), (-1,-1), 3),
         ]))
-
-        TEXT_W = PAGE_W - 3.5*cm
-        all_lines = q["text"].split("\n")
-        first_line = MixedLine(_parse_segs(all_lines[0]), fsize=10,
-                               bold_prefix=f"Q{q_counter}.", leading=18)
-        header_tbl = Table([[first_line, badge_tbl]], colWidths=[TEXT_W + 0.3*cm, 3.2*cm])
-        header_tbl.setStyle(TableStyle([
-            ("VALIGN",        (0,0), (-1,-1), "TOP"),
-            ("LEFTPADDING",   (0,0), (-1,-1), 0),
-            ("RIGHTPADDING",  (0,0), (-1,-1), 0),
-            ("TOPPADDING",    (0,0), (-1,-1), 0),
-            ("BOTTOMPADDING", (0,0), (-1,-1), 0),
+        badge_row = Table([[Paragraph("", S["ans_label"]), badge_tbl]],
+                          colWidths=[PAGE_W - BADGE_W, BADGE_W])
+        badge_row.setStyle(TableStyle([
+            ("LEFTPADDING",  (0,0), (-1,-1), 0),
+            ("RIGHTPADDING", (0,0), (-1,-1), 0),
+            ("TOPPADDING",   (0,0), (-1,-1), 4),
+            ("BOTTOMPADDING",(0,0), (-1,-1), 2),
         ]))
 
-        q_block = [header_tbl]
+        # Question text lines
+        all_lines = q["text"].split("\n")
+        first_cell = smart_line(all_lines[0], bold_prefix=f"Q{q_counter}.", fsize=10)
+        q_block = [first_cell]
         for extra in all_lines[1:]:
             if extra.strip():
-                q_block.append(MixedLine(_parse_segs(extra), fsize=10, leading=16))
+                q_block.append(smart_line(extra, fsize=10))
             else:
-                q_block.append(Spacer(1, 0.2*cm))
+                q_block.append(Spacer(1, 0.15*cm))
 
+        # Embed image if question has one (e.g. bar graphs, diagrams)
+        if q.get("image"):
+            img_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), q["image"])
+            q_block.append(Spacer(1, 0.2*cm))
+            q_block.append(Image(img_path, width=PAGE_W, height=5.5*cm, kind="proportional"))
+            q_block.append(Spacer(1, 0.2*cm))
+
+        # Answer / working area
         if q["type"] == "mcq":
             q_block.append(Spacer(1, 0.1*cm))
             for opt in q["opts"]:
-                q_block.append(MixedLine(_parse_segs(opt), fsize=10, leading=16))
-            q_block.append(Spacer(1, 0.15*cm))
-            q_block.append(make_ans_box())
+                q_block.append(smart_line(opt, fsize=10))
+            q_block.append(Spacer(1, 0.1*cm))
+            q_block.append(badge_row)
+            q_block.append(make_ans_boxes([]))
         elif q["type"] == "draw":
-            q_block.append(Spacer(1, 0.2*cm))
+            q_block.append(Spacer(1, 0.1*cm))
+            q_block.append(badge_row)
             draw_tbl = Table([[Paragraph("Drawing space:", S["ans_label"])]], colWidths=[PAGE_W])
             draw_tbl.setStyle(TableStyle([
                 ("BOX",           (0,0), (-1,-1), 0.5, BORDER),
@@ -439,26 +635,15 @@ def build_pdf(output_path, level="P4", selected_topics=None, include_answers=Fal
             ]))
             q_block.append(draw_tbl)
         else:
-            q_block.append(Spacer(1, 0.15*cm))
-            work_tbl = Table(
-                [[Paragraph("Working:", S["ans_label"])],
-                 [Paragraph("", S["ans_label"])],
-                 [Paragraph("", S["ans_label"])]],
-                colWidths=[PAGE_W])
-            work_tbl.setStyle(TableStyle([
-                ("BOX",           (0,0), (-1,-1), 0.5, BORDER),
-                ("BACKGROUND",    (0,0), (-1,-1), LGRAY),
-                ("TOPPADDING",    (0,0), (-1,-1), 3),
-                ("BOTTOMPADDING", (0,0), (-1,-1), 22),
-                ("LEFTPADDING",   (0,0), (-1,-1), 8),
-            ]))
-            q_block.append(work_tbl)
             q_block.append(Spacer(1, 0.1*cm))
-            q_block.append(make_ans_box())
+            q_block.append(badge_row)
+            q_block.append(make_work_box(q["marks"], is_word_problem=is_word))
+            q_block.append(Spacer(1, 0.1*cm))
+            q_block.append(make_ans_boxes(parts))
 
         if include_answers:
             ak_line  = MixedLine(_parse_segs(str(q["answer"])), fsize=10,
-                                 bold_prefix="Answer:", leading=18, color=GREEN)
+                                 bold_prefix="Answer:", leading=LINE_H, color=GREEN)
             ak_outer = Table([[ak_line]], colWidths=[PAGE_W])
             ak_outer.setStyle(TableStyle([
                 ("BACKGROUND",    (0,0), (-1,-1), GBG),
@@ -470,12 +655,29 @@ def build_pdf(output_path, level="P4", selected_topics=None, include_answers=Fal
             q_block.append(ak_outer)
 
         story.append(KeepTogether(q_block))
-        story.append(Spacer(1, 0.4*cm))
 
-    story.append(HRFlowable(width="100%", thickness=0.5, color=BORDER))
-    story.append(Spacer(1, 0.2*cm))
-    story.append(Paragraph(f"sgmaths.sg  |  {LEVEL_LABELS.get(level, level)} Mathematics  |  End of Paper", S["footer"]))
-    doc.build(story)
+        # Word problems: 2 per page → hard page break after every 2nd one
+        if is_word:
+            if q_counter % 2 == 0:
+                from reportlab.platypus import PageBreak
+                story.append(PageBreak())
+            else:
+                story.append(Spacer(1, 0.5*cm))
+        else:
+            story.append(Spacer(1, 0.5*cm))
+
+    # Two-pass: dry-run on a copy to get total page count, then real build
+    import io, copy
+    _buf = io.BytesIO()
+    _doc2 = SimpleDocTemplate(_buf, pagesize=A4,
+                               leftMargin=2*cm, rightMargin=2*cm,
+                               topMargin=2*cm, bottomMargin=2*cm)
+    _page_count = [0]
+    def _count_page(canvas, doc): _page_count[0] = canvas.getPageNumber()
+    _doc2.build(copy.deepcopy(story), onFirstPage=_count_page, onLaterPages=_count_page)
+    doc._pageCount = _page_count[0]
+
+    doc.build(story, onFirstPage=draw_page, onLaterPages=draw_page)
     print(f"PDF saved: {output_path}")
 
 if __name__ == "__main__":
@@ -483,3 +685,5 @@ if __name__ == "__main__":
     build_pdf("sgmaths_p3_worksheet_answers.pdf", level="P3", include_answers=True)
     build_pdf("sgmaths_p4_worksheet.pdf",         level="P4", include_answers=False)
     build_pdf("sgmaths_p4_worksheet_answers.pdf", level="P4", include_answers=True)
+    build_pdf("sgmaths_p5_worksheet.pdf",         level="P5", include_answers=False)
+    build_pdf("sgmaths_p5_worksheet_answers.pdf", level="P5", include_answers=True)
