@@ -15,6 +15,15 @@ LEVELS = {
         "topics": ["Fractions", "Angles & Geometry", "Whole Numbers",
                    "Decimals", "Data & Tables", "Word Problems"],
     },
+    "P5": {
+        "topics": ["Triangles & Area", "Volume", "Decimals & Measurement",
+                   "3D Solids & Views", "Fractions", "Word Problems"],
+    },
+    "P6": {
+        "topics": ["Whole Numbers & Decimals", "Fractions, Ratio & Percentage",
+                   "Geometry & Angles", "Area & Perimeter",
+                   "Data & Algebra", "Word Problems"],
+    },
 }
 
 @app.route("/")
