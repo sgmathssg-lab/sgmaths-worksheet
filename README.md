@@ -1,98 +1,126 @@
-# SGMaths Worksheet Generator — Deployment Guide
+# SGMaths Worksheet Generator
 
-## What's in this folder
-
-| File | What it does |
-|---|---|
-| `app.py` | The web server — receives requests, generates PDF, sends it back |
-| `make_worksheet.py` | The PDF generator (the script we built) |
-| `sgmaths_logo.png` | Your logo |
-| `requirements.txt` | List of Python packages needed |
-| `Procfile` | Tells Render how to start the server |
-| `wordpress-embed.html` | Paste this into your WordPress page |
+Auto-generates printable PDF maths worksheets for Singapore Primary students (P3–P5). Built for [sgmaths.sg](https://sgmaths.sg).
 
 ---
 
-## Step 1 — Create a GitHub account
+## Project Structure
 
-1. Go to **github.com**
-2. Click **Sign up**
-3. Enter your email, create a password, choose a username
-4. Verify your email
-
----
-
-## Step 2 — Create a new GitHub repository
-
-1. Once logged in, click the **+** button (top right) → **New repository**
-2. Name it: `sgmaths-worksheet`
-3. Set it to **Public**
-4. Click **Create repository**
+```
+sgmaths-worksheet-generator/
+├── app.py                  # Flask API server
+├── make_worksheet.py       # PDF generation engine (ReportLab)
+├── wordpress-embed.html    # Drop-in widget for WordPress
+├── requirements.txt
+├── Procfile                # For Render / Heroku deployment
+└── .gitignore
+```
 
 ---
 
-## Step 3 — Upload your files to GitHub
+## How It Works
 
-1. On your new repository page, click **uploading an existing file**
-2. Drag and drop ALL files from this folder:
-   - `app.py`
-   - `make_worksheet.py`
-   - `sgmaths_logo.png`
-   - `requirements.txt`
-   - `Procfile`
-3. Scroll down, click **Commit changes**
+1. **`make_worksheet.py`** — Contains the full question bank (P3–P5) and the `build_pdf()` function that renders a styled, branded PDF using ReportLab.
+2. **`app.py`** — A Flask server exposing a single `/generate` POST endpoint. Accepts `level`, `topics`, and `include_answers` in JSON; returns a PDF file download.
+3. **`wordpress-embed.html`** — A self-contained HTML/CSS/JS widget. Paste it into a WordPress **Custom HTML** block. Lets visitors pick a level, select topics, and download a worksheet directly from the browser.
 
 ---
 
-## Step 4 — Create a Render account
+## API
 
-1. Go to **render.com**
-2. Click **Get Started** → sign up with GitHub (use the same account)
-3. Authorise Render to access your GitHub
+### `POST /generate`
 
----
+**Request body (JSON):**
+```json
+{
+  "level": "P4",
+  "topics": ["Fractions", "Decimals"],
+  "include_answers": false
+}
+```
 
-## Step 5 — Deploy on Render
+**Response:** PDF file download.
 
-1. In Render dashboard, click **New** → **Web Service**
-2. Select your `sgmaths-worksheet` repository
-3. Fill in these settings:
-   - **Name**: sgmaths-worksheet
-   - **Runtime**: Python 3
-   - **Build Command**: `pip install -r requirements.txt`
-   - **Start Command**: `gunicorn app:app`
-   - **Plan**: Free
-4. Click **Create Web Service**
-5. Wait ~3 minutes for it to build and deploy
-6. Copy your URL — it looks like: `https://sgmaths-worksheet.onrender.com`
+**Supported levels:** `P3`, `P4`, `P5`
 
----
-
-## Step 6 — Connect to your WordPress site
-
-1. Open `wordpress-embed.html` in a text editor (Notepad is fine)
-2. Find this line near the bottom:
-   ```
-   var SGM_SERVER = "https://YOUR_RENDER_URL.onrender.com";
-   ```
-3. Replace `YOUR_RENDER_URL` with your actual Render URL from Step 5
-4. Copy the entire contents of the file
-5. In WordPress: edit any page → click **+** → search **Custom HTML** → paste
+| Level | Available Topics |
+|-------|-----------------|
+| P3 | Multiplication & Division, Fractions, Angles & Lines, Data & Graphs, Word Problems |
+| P4 | Fractions, Angles & Geometry, Whole Numbers, Decimals, Data & Tables, Word Problems |
+| P5 | Fractions, Ratio, Percentage, Area & Perimeter, Volume, Word Problems |
 
 ---
 
-## Done! ✅
+## Local Development
 
-Your worksheet generator is now live on sgmaths.sg.
-Visitors can pick topics, click Download, and get a PDF instantly.
+```bash
+# 1. Clone the repo
+git clone https://github.com/your-username/sgmaths-worksheet-generator.git
+cd sgmaths-worksheet-generator
+
+# 2. Create a virtual environment
+python -m venv venv
+source venv/bin/activate      # Windows: venv\Scripts\activate
+
+# 3. Install dependencies
+pip install -r requirements.txt
+
+# 4. Run the server
+python app.py
+# → Listening on http://localhost:5000
+
+# 5. Generate PDFs directly (no server needed)
+python make_worksheet.py
+```
 
 ---
 
-## Notes
+## Deploying to Render (free tier)
 
-- The free Render plan "spins down" after 15 minutes of inactivity.
-  The first request after that takes ~30 seconds to wake up.
-  This is fine for a worksheet generator — just show a loading message.
-  (The wordpress-embed.html already does this.)
+1. Push this repo to GitHub.
+2. Go to [render.com](https://render.com) → **New Web Service** → connect your repo.
+3. Set:
+   - **Build Command:** `pip install -r requirements.txt`
+   - **Start Command:** `gunicorn app:app`
+4. Deploy. Your service URL will be something like `https://sgmaths-worksheet.onrender.com`.
+5. Update the `SGM_SERVER` variable in `wordpress-embed.html` to match.
 
-- If you want it always-on, upgrade to Render's $7/month plan.
+---
+
+## WordPress Integration
+
+1. In your WordPress editor, add a **Custom HTML** block.
+2. Paste the entire contents of `wordpress-embed.html`.
+3. Publish. The widget appears inline on the page — no plugin required.
+
+---
+
+## Customising Questions
+
+All questions live in `make_worksheet.py` in the `P3_QUESTIONS`, `P4_QUESTIONS`, and `P5_QUESTIONS` lists. Each question is a dict:
+
+```python
+dict(
+    id=1,
+    topic="Fractions",
+    difficulty="Easy",       # "Easy" | "Medium" | "Hard"
+    school="Nan Hua",
+    marks=2,
+    text="Write 3/4 as a decimal.",
+    type="short",            # "short" | "mcq" | "draw"
+    answer="0.75"
+)
+```
+
+For MCQ questions, also include:
+```python
+opts=["A. 0.25", "B. 0.5", "C. 0.75", "D. 1.0"]
+```
+
+Fractions in question text are written as `3/4` or `1 3/4` — they are automatically rendered as stacked fractions in the PDF.
+
+---
+
+## License
+
+MIT — free to use, adapt, and share.

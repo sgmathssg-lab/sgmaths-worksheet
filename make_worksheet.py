@@ -146,10 +146,6 @@ P3_QUESTIONS = [
          text="Liming has 65 curry puffs. He packs 9 curry puffs in each container. How many containers does he need to pack all the curry puffs?",
          type="mcq", opts=["A.  5", "B.  6", "C.  7", "D.  8"], answer="D.  8"),
     dict(id=5,  topic="Multiplication & Division", difficulty="Medium",  school="Nan Hua",    marks=2,
-         text="Look at the number pattern. What is the missing number?",
-         image="img_p3_q5_pattern.png",
-         type="mcq", opts=["A.  12", "B.  15", "C.  22", "D.  24"], answer="D.  24"),
-    dict(id=55, topic="Multiplication & Division", difficulty="Medium",  school="Nan Hua",    marks=2,
          text="Find the quotient and remainder when 803 is divided by 5.",
          type="short", answer="Quotient: 160, Remainder: 3"),
     dict(id=6,  topic="Multiplication & Division", difficulty="Medium",  school="Nan Hua",    marks=2,
@@ -201,12 +197,10 @@ P3_QUESTIONS = [
          type="mcq", opts=["A.  AB // DC", "B.  AF // BC", "C.  AF // ED", "D.  BC // ED"], answer="C.  AF // ED"),
     # Data & Graphs
     dict(id=21, topic="Data & Graphs", difficulty="Medium",  school="Nan Hua",    marks=2,
-         text="The graph shows the number of times P1 pupils went to the library during the June holidays. Study the graph carefully and answer the question below.\nHow many P1 pupils went to the library more than 3 times?",
-         image="q6_graph.png",
+         text="A bar graph shows the number of times P1 pupils went to the library. The number who went 4 times = 40, 5 times = 30.\nHow many P1 pupils went to the library more than 3 times?",
          type="mcq", opts=["A.  65", "B.  145", "C.  180", "D.  245"], answer="A.  65"),
     dict(id=22, topic="Data & Graphs", difficulty="Medium",  school="Nan Hua",    marks=2,
-         text="The graph shows the number of hair dryers sold at Sunshine Shop in 5 days.\nStudy the graph carefully and answer the questions (a) and (b).\n(a) Which day had the most number of hair dryers sold?\n(b) How many more Brand A hair dryers were sold compared to Brand B?",
-         image="img_p3_q9_graph.png",
+         text="A bar graph shows hair dryers sold over 5 days (Brand A and Brand B).\nBrand A totals: Mon=12, Tue=8, Wed=7, Thur=15, Fri=11\nBrand B totals: Mon=6, Tue=8, Wed=4, Thur=2, Fri=6\n(a) Which day had the most hair dryers sold?\n(b) How many more Brand A dryers were sold than Brand B overall?",
          type="short", answer="(a) Thursday  (b) 13"),
     dict(id=23, topic="Data & Graphs", difficulty="Medium",  school="Henry Park", marks=2,
          text="A bar graph shows fruits sold by Grocer Pan: Apple=40, Peach=15, Durian=35, Orange=50.\n(a) How many apples and durians did Grocer Pan sell in total?\n(b) Grocer Pan sold twice as many watermelons as peaches. How many watermelons were sold?",
@@ -305,51 +299,40 @@ P5_QUESTIONS = [
     # ── Triangles & Area ────────────────────────────────────────────────────────
     dict(id=1, topic="Triangles & Area", difficulty="Easy", school="Raffles Girls'", marks=1,
          text="VWX is a triangle. If the base is VX, the height is ___.",
-         image="img_p5_q1a_triangle.png",
          type="short", answer="YW"),
     dict(id=2, topic="Triangles & Area", difficulty="Easy", school="Raffles Girls'", marks=1,
          text="DCB is a straight line.\nD is 3 cm to the left of C, and C is 9 cm to the left of B.\nA is 5 cm above D, and AC = 6 cm.\nFind the area of triangle ABC.",
-         image="img_p5_q1b_triangle.png",
          type="short", answer="22.5 cm²"),
     dict(id=3, topic="Triangles & Area", difficulty="Medium", school="Raffles Girls'", marks=2,
          text="ABCD is a square of side 18 m. E is the midpoint of AB and F is the midpoint of DC.\nFind the total area of the shaded triangles formed by the diagonals of each half.",
-         image="img_p5_q8_square.png",
          type="short", answer="162 m²"),
     dict(id=4, topic="Triangles & Area", difficulty="Hard", school="Raffles Girls'", marks=4,
          text="The figure is made up of a rectangle ABFG and a square CDEF.\nAB = 11 cm, AG = 12 cm + 16 cm = 28 cm (height of rectangle), CDEF has side 16 cm.\nAH = HG and GF = FE.\nFind the area of the shaded part.",
-         image="img_p5_q9_rect.png",
          type="short", answer="252 cm²"),
     dict(id=5, topic="Triangles & Area", difficulty="Medium", school="Ai Tong", marks=2,
          text="Find the area of the shaded triangle with base 25 m and perpendicular height 16 m.\n(Note: The 15 m and 4 m are other sides, not the height.)",
-         image="img_p5_q3_triangle.png",
          type="short", answer="200 m²"),
     dict(id=6, topic="Triangles & Area", difficulty="Hard", school="Ai Tong", marks=4,
          text="Rectangle ACEH is made up of two identical rectangles BCDK and KDEF and two identical squares ABKJ and JKFH.\nAC = 21 cm and DE = 6 cm.\n(a) Find the area of triangle GKD.\n(b) Find the total area of the shaded parts.",
-         image="img_p5_q10_rect.png",
          type="short", answer="(a) 45 cm²  (b) 162 cm²"),
     # ── Volume ──────────────────────────────────────────────────────────────────
     dict(id=7, topic="Volume", difficulty="Easy", school="Raffles Girls'", marks=1,
          text="Find the volume of a cube with side 7 cm.",
-         image="img_p5_q2a_cube.png",
          type="short", answer="343 cm³"),
     dict(id=8, topic="Volume", difficulty="Easy", school="Raffles Girls'", marks=1,
          text="The figure shows some cubes in a glass tank.\nThe tank is 5 cubes long, 3 cubes wide and 3 cubes tall. 25 cubes are already placed.\nHow many more cubes are needed to fill the tank completely?",
-         image="img_p5_q2b_tank.png",
          type="short", answer="20"),
     dict(id=9, topic="Volume", difficulty="Medium", school="Raffles Girls'", marks=2,
          text="The figure shows a solid made up of 1-cm cubes.\nHow many more cubes must be added to make a solid of 30 cm³?",
-         image="img_p5_q6_solid.png",
          type="short", answer="18"),
     dict(id=10, topic="Volume", difficulty="Hard", school="Raffles Girls'", marks=5,
          text="The figure shows a rectangular tank P and an empty cubical tank Q.\nTank P measures 30 cm × 24 cm × 18 cm. Tank Q has side 18 cm.\nTank P was 1/5 filled with water. Johan then poured another 1.3 l into tank P.\n(a) What was the total volume of water in tank P?\n(b) Johan poured all the water from tank P into tank Q.\nHow much more water was needed to fill tank Q? Leave your answer in litres.",
-         image="img_p5_q10_tanks.png",
          type="short", answer="(a) 3.892 l  (b) 1.94 l"),
     dict(id=11, topic="Volume", difficulty="Easy", school="Ai Tong", marks=2,
          text="The cuboid has a height of 8 cm and a square base of side 3 cm. Find its volume.",
          type="short", answer="72 cm³"),
     dict(id=12, topic="Volume", difficulty="Hard", school="Ai Tong", marks=3,
          text="At a party, a rectangular container (45 cm × 38 cm × 40 cm) was 5/8 filled with fruit punch.\nEach guest was served a 550 ml cup of fruit punch.\nWhat was the greatest possible number of cups served?",
-         image="img_p5_q7_container.png",
          type="short", answer="77 cups"),
     # ── Decimals & Measurement ─────────────────────────────────────────────────
     dict(id=13, topic="Decimals & Measurement", difficulty="Easy", school="Raffles Girls'", marks=1,
@@ -369,16 +352,13 @@ P5_QUESTIONS = [
          type="short", answer="(a) 6 l 95 ml  (b) 8.02 kg"),
     dict(id=18, topic="Decimals & Measurement", difficulty="Easy", school="Ai Tong", marks=2,
          text="A wire is 2.5 m long. Some of it is used to form an equilateral triangle with each side 75 cm.\nWhat is the length of wire that is left unused?",
-         image="img_p5_q4_triangle.png",
          type="short", answer="25 cm"),
     # ── 3D Solids & Views ───────────────────────────────────────────────────────
     dict(id=19, topic="3D Solids & Views", difficulty="Medium", school="Raffles Girls'", marks=2,
          text="Nisha built a solid using 10 unit cubes.\n(a) Draw the top view of the solid on the given square grid.\n(b) Nisha has 4 more unit cubes. What is the greatest number of unit cubes she can add without changing the top view and front view?",
-         image="img_p5_q7_solid_grid.png",
          type="short", answer="(a) See diagram  (b) 2"),
     dict(id=20, topic="3D Solids & Views", difficulty="Medium", school="Ai Tong", marks=2,
          text="7 unit cubes were stacked and glued together to form a solid.\nDraw the side view and the top view of the solid on the grid provided.",
-         image="img_p5_q5_cubes_grid.png",
          type="draw", answer="Side view: 3 rows (3-wide, 2-wide, 1-wide). Top view: 3×1 + 1 extra = L-shape"),
     # ── Fractions (Word Problems) ───────────────────────────────────────────────
     dict(id=21, topic="Fractions", difficulty="Hard", school="Ai Tong", marks=3,
@@ -390,7 +370,6 @@ P5_QUESTIONS = [
     # ── Word Problems ───────────────────────────────────────────────────────────
     dict(id=23, topic="Word Problems", difficulty="Medium", school="Raffles Girls'", marks=2,
          text="At a bookshop, pencils are sold in boxes of 12 for $9.60 and erasers in boxes of 7 for $3.50.\n(a) Mrs Lee needs 42 pencils and 20 erasers. What is the least amount she needs to spend?\n(b) Mr Ali bought 8 more pencils than erasers. The total number was fewer than 70. How much did he spend altogether?",
-         image="img_p5_q11_pencils.png",
          type="short", answer="(a) $48.90  (b) $42.80"),
     dict(id=24, topic="Word Problems", difficulty="Medium", school="Ai Tong", marks=3,
          text="The cost of 2 pens and 4 files is $23.90. The cost of a file is $1.40 more than the cost of a pen.\nFind the cost of a pen.",
@@ -435,30 +414,23 @@ def build_pdf(output_path, level="P4", selected_topics=None, include_answers=Fal
     LOGO_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), "sgmaths_logo.png")
     PAGE_W_PT, PAGE_H_PT = A4
 
-    footer_text = f"sgmaths.sg  |  {LEVEL_LABELS.get(level, level)} Mathematics  |  End of Paper"
-
-    def draw_page(canvas, doc):
+    def draw_watermark(canvas, doc):
         import math
         canvas.saveState()
-        # Watermark
         img = ImageReader(LOGO_PATH)
         iw, ih = img.getSize()
+        # Scale to 16 cm wide
         wm_w = 16 * cm
         wm_h = wm_w * ih / iw
+        # Diagonal angle from bottom-left to top-right of A4
         angle = math.degrees(math.atan2(PAGE_H_PT, PAGE_W_PT))
+        # Translate to page centre, rotate, draw centred on origin
         canvas.translate(PAGE_W_PT / 2, PAGE_H_PT / 2)
         canvas.rotate(angle)
         canvas.setFillAlpha(0.07)
         canvas.drawImage(img, -wm_w / 2, -wm_h / 2,
                          width=wm_w, height=wm_h, mask="auto")
         canvas.restoreState()
-        # Footer on last page only
-        if canvas.getPageNumber() == doc._pageCount:
-            canvas.saveState()
-            canvas.setFont("Helvetica", 8)
-            canvas.setFillColor(HexColor("#6b7280"))
-            canvas.drawCentredString(PAGE_W_PT / 2, 1.2*cm, footer_text)
-            canvas.restoreState()
 
     doc = SimpleDocTemplate(output_path, pagesize=A4,
                             leftMargin=2*cm, rightMargin=2*cm,
@@ -607,13 +579,6 @@ def build_pdf(output_path, level="P4", selected_topics=None, include_answers=Fal
             else:
                 q_block.append(Spacer(1, 0.15*cm))
 
-        # Embed image if question has one (e.g. bar graphs, diagrams)
-        if q.get("image"):
-            img_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), q["image"])
-            q_block.append(Spacer(1, 0.2*cm))
-            q_block.append(Image(img_path, width=PAGE_W, height=5.5*cm, kind="proportional"))
-            q_block.append(Spacer(1, 0.2*cm))
-
         # Answer / working area
         if q["type"] == "mcq":
             q_block.append(Spacer(1, 0.1*cm))
@@ -666,18 +631,12 @@ def build_pdf(output_path, level="P4", selected_topics=None, include_answers=Fal
         else:
             story.append(Spacer(1, 0.5*cm))
 
-    # Two-pass: dry-run on a copy to get total page count, then real build
-    import io, copy
-    _buf = io.BytesIO()
-    _doc2 = SimpleDocTemplate(_buf, pagesize=A4,
-                               leftMargin=2*cm, rightMargin=2*cm,
-                               topMargin=2*cm, bottomMargin=2*cm)
-    _page_count = [0]
-    def _count_page(canvas, doc): _page_count[0] = canvas.getPageNumber()
-    _doc2.build(copy.deepcopy(story), onFirstPage=_count_page, onLaterPages=_count_page)
-    doc._pageCount = _page_count[0]
-
-    doc.build(story, onFirstPage=draw_page, onLaterPages=draw_page)
+    story.append(HRFlowable(width="100%", thickness=0.5, color=BORDER))
+    story.append(Spacer(1, 0.2*cm))
+    story.append(Paragraph(
+        f"sgmaths.sg  |  {LEVEL_LABELS.get(level, level)} Mathematics  |  End of Paper",
+        S["footer"]))
+    doc.build(story, onFirstPage=draw_watermark, onLaterPages=draw_watermark)
     print(f"PDF saved: {output_path}")
 
 if __name__ == "__main__":
