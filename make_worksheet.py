@@ -8,6 +8,10 @@ from reportlab.lib import colors
 from reportlab.lib.colors import HexColor
 from reportlab.pdfbase.pdfmetrics import stringWidth
 import os, re
+try:
+    from diagrams import get_diagram
+except ImportError:
+    def get_diagram(level, qid): return None
 
 NAVY   = HexColor("#1e3a5f")
 TEAL   = HexColor("#0e7490")
@@ -701,6 +705,13 @@ def build_pdf(output_path, level="P4", selected_topics=None, include_answers=Fal
                 q_block.append(smart_line(extra, fsize=10))
             else:
                 q_block.append(Spacer(1, 0.15*cm))
+
+        # Diagram (if available for this question)
+        diag = get_diagram(level, q["id"])
+        if diag is not None:
+            q_block.append(Spacer(1, 0.15*cm))
+            q_block.append(diag)
+            q_block.append(Spacer(1, 0.1*cm))
 
         # Answer / working area
         if q["type"] == "mcq":
