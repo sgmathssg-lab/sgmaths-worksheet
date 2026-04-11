@@ -3,10 +3,8 @@
 #sgm-gen *{box-sizing:border-box}
 #sgm-gen{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;max-width:640px;margin:0 auto;padding:1.5rem 0}
 #sgm-gen h3{font-size:16px;font-weight:600;color:#1e3a5f;margin:0 0 1rem}
-.sgm-select-wrap{position:relative;margin-bottom:1.2rem}
-.sgm-select{width:100%;padding:10px 36px 10px 14px;border:1px solid #e5e7eb;border-radius:8px;font-size:14px;font-weight:500;color:#1e3a5f;background:#fff;appearance:none;-webkit-appearance:none;cursor:pointer;font-family:inherit;transition:border-color .15s}
-.sgm-select:hover,.sgm-select:focus{border-color:#1e3a5f;outline:none}
-.sgm-select-icon{position:absolute;right:12px;top:50%;transform:translateY(-50%);pointer-events:none;color:#6b7280}
+#sgm-level-select{width:100%;padding:10px 14px;border:1px solid #e5e7eb;border-radius:8px;font-size:14px;font-weight:500;color:#1e3a5f;background:#fff;cursor:pointer;font-family:inherit;margin-bottom:1.2rem}
+#sgm-level-select:focus{border-color:#1e3a5f;outline:none}
 .sgm-topics{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:1.2rem}
 .sgm-topic{display:flex;align-items:center;gap:8px;padding:10px 14px;border:1px solid #e5e7eb;border-radius:8px;cursor:pointer;font-size:14px;color:#111;background:#fff;transition:all .15s}
 .sgm-topic:hover{border-color:#6b7280;background:#f9fafb}
@@ -38,24 +36,19 @@
 <div id="sgm-gen">
   <h3>Generate Worksheet</h3>
 
-  <!-- Level dropdown -->
-  <div style="font-size:13px;color:#6b7280;margin-bottom:8px">Select level:</div>
-  <div class="sgm-select-wrap">
-    <select class="sgm-select" id="sgm-level-select" onchange="sgmSetLevel(this.value)">
-      <option value="P3">Primary 3</option>
-      <option value="P4">Primary 4</option>
-      <option value="P5">Primary 5</option>
-      <option value="P6">Primary 6</option>
-    </select>
-    <svg class="sgm-select-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
-  </div>
+  <div style="font-size:13px;color:#6b7280;margin-bottom:6px">Select level:</div>
+  <select id="sgm-level-select">
+    <option value="P3">Primary 3</option>
+    <option value="P4">Primary 4</option>
+    <option value="P5">Primary 5</option>
+    <option value="P6">Primary 6</option>
+  </select>
 
   <div class="sgm-divider" style="margin-top:0"></div>
 
-  <!-- Topics -->
   <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">
     <span style="font-size:13px;color:#6b7280">Select topics to include:</span>
-    <button class="sgm-selall" onclick="sgmSelectAll()">Select all</button>
+    <button class="sgm-selall" id="sgm-selall-btn">Select all</button>
   </div>
   <div class="sgm-topics" id="sgm-topics"></div>
 
@@ -70,85 +63,105 @@
   </div>
 
   <div class="sgm-btns">
-    <button class="sgm-btn sgm-btn-primary" onclick="sgmDownload()">⬇ Download Worksheet PDF</button>
-    <button class="sgm-btn sgm-btn-secondary" onclick="sgmDownload(true)">⬇ Download with Answers</button>
+    <button class="sgm-btn sgm-btn-primary" id="sgm-btn-ws">&#11015; Download Worksheet PDF</button>
+    <button class="sgm-btn sgm-btn-secondary" id="sgm-btn-ans">&#11015; Download with Answers</button>
   </div>
 
   <div class="sgm-status" id="sgm-status"></div>
 </div>
 
 <script>
-var SGM_SERVER = "https://sgmaths-worksheet.onrender.com";
+(function(){
+  var SGM_SERVER = "https://sgmaths-worksheet.onrender.com";
 
-var SGM_TOPICS = {
-  P3: ["Multiplication & Division","Fractions","Angles & Lines","Data & Graphs","Word Problems"],
-  P4: ["Fractions","Angles & Geometry","Whole Numbers","Decimals","Data & Tables","Word Problems"],
-  P5: ["Triangles & Area","Volume","Decimals & Measurement","3D Solids & Views","Fractions","Word Problems"],
-  P6: ["Whole Numbers & Decimals","Fractions, Ratio & Percentage","Geometry & Angles","Area & Perimeter","Data & Algebra","Word Problems"]
-};
+  var SGM_TOPICS = {
+    P3: ["Multiplication & Division","Fractions","Angles & Lines","Data & Graphs","Word Problems"],
+    P4: ["Fractions","Angles & Geometry","Whole Numbers","Decimals","Data & Tables","Word Problems"],
+    P5: ["Triangles & Area","Volume","Decimals & Measurement","3D Solids & Views","Fractions","Word Problems"],
+    P6: ["Whole Numbers & Decimals","Fractions, Ratio & Percentage","Geometry & Angles","Area & Perimeter","Data & Algebra","Word Problems"]
+  };
 
-var currentLevel = "P3";
+  function renderTopics(level){
+    var topics = SGM_TOPICS[level] || [];
+    var el = document.getElementById('sgm-topics');
+    el.innerHTML = '';
+    topics.forEach(function(t){
+      var lbl = document.createElement('label');
+      lbl.className = 'sgm-topic checked';
+      var cb = document.createElement('input');
+      cb.type = 'checkbox';
+      cb.value = t;
+      cb.checked = true;
+      cb.addEventListener('change', function(){
+        lbl.classList.toggle('checked', cb.checked);
+      });
+      lbl.appendChild(cb);
+      lbl.appendChild(document.createTextNode(' ' + t));
+      el.appendChild(lbl);
+    });
+  }
 
-function sgmSetLevel(level){
-  currentLevel = level;
-  sgmRenderTopics();
-}
+  function setStatus(msg, type){
+    var el = document.getElementById('sgm-status');
+    el.textContent = msg;
+    el.className = 'sgm-status show ' + type;
+  }
 
-function sgmRenderTopics(){
-  var topics = SGM_TOPICS[currentLevel];
-  var el = document.getElementById('sgm-topics');
-  el.innerHTML = topics.map(function(t){
-    return '<label class="sgm-topic checked"><input type="checkbox" value="'+t+'" checked onchange="sgmToggle(this)"> '+t+'</label>';
-  }).join('');
-}
+  function clearStatus(){
+    document.getElementById('sgm-status').className = 'sgm-status';
+  }
 
-function sgmToggle(cb){
-  cb.closest('.sgm-topic').classList.toggle('checked', cb.checked);
-}
+  function getButtons(){ return document.querySelectorAll('.sgm-btn'); }
 
-function sgmSelectAll(){
-  document.querySelectorAll('#sgm-topics input').forEach(function(cb){
-    cb.checked = true;
-    cb.closest('.sgm-topic').classList.add('checked');
-  });
-}
+  function download(withAnswers){
+    var level = document.getElementById('sgm-level-select').value;
+    var checked = document.querySelectorAll('#sgm-topics input:checked');
+    var topics = [];
+    checked.forEach(function(cb){ topics.push(cb.value); });
 
-function sgmStatus(msg, type){
-  var el = document.getElementById('sgm-status');
-  el.textContent = msg;
-  el.className = 'sgm-status show ' + type;
-}
+    if(topics.length === 0){ setStatus('Please select at least one topic.','error'); return; }
 
-async function sgmDownload(withAnswers){
-  var topics = Array.from(document.querySelectorAll('#sgm-topics input:checked'))
-                    .map(function(cb){ return cb.value; });
-  if(topics.length === 0){ sgmStatus('Please select at least one topic.','error'); return; }
+    var includeAnswers = withAnswers || document.getElementById('sgm-answers').checked;
+    getButtons().forEach(function(b){ b.disabled = true; });
+    setStatus('Generating your worksheet... this takes about 10 seconds.','loading');
 
-  var includeAnswers = withAnswers || document.getElementById('sgm-answers').checked;
-  document.querySelectorAll('.sgm-btn').forEach(function(b){ b.disabled = true; });
-  sgmStatus('Generating your worksheet... this takes about 10 seconds.','loading');
-
-  try {
-    var res = await fetch(SGM_SERVER + '/generate', {
+    fetch(SGM_SERVER + '/generate', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ level: currentLevel, topics: topics, include_answers: includeAnswers })
+      body: JSON.stringify({ level: level, topics: topics, include_answers: includeAnswers })
+    }).then(function(res){
+      if(!res.ok) throw new Error('Server error: ' + res.status);
+      return res.blob();
+    }).then(function(blob){
+      var url = URL.createObjectURL(blob);
+      var a = document.createElement('a');
+      a.href = url;
+      a.download = 'sgmaths_' + level + '_worksheet' + (includeAnswers ? '_answers' : '') + '.pdf';
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+      clearStatus();
+    }).catch(function(){
+      setStatus('Something went wrong. Please try again in a moment.','error');
+    }).finally(function(){
+      getButtons().forEach(function(b){ b.disabled = false; });
     });
-    if(!res.ok) throw new Error('Server error: ' + res.status);
-    var blob = await res.blob();
-    var url  = URL.createObjectURL(blob);
-    var a    = document.createElement('a');
-    a.href = url;
-    a.download = 'sgmaths_' + currentLevel + '_worksheet' + (includeAnswers ? '_answers' : '') + '.pdf';
-    document.body.appendChild(a); a.click(); document.body.removeChild(a);
-    URL.revokeObjectURL(url);
-    document.getElementById('sgm-status').className = 'sgm-status';
-  } catch(e) {
-    sgmStatus('Something went wrong. Please try again in a moment.','error');
-  } finally {
-    document.querySelectorAll('.sgm-btn').forEach(function(b){ b.disabled = false; });
   }
-}
 
-sgmRenderTopics();
+  // Init
+  document.getElementById('sgm-level-select').addEventListener('change', function(){
+    renderTopics(this.value);
+  });
+  document.getElementById('sgm-selall-btn').addEventListener('click', function(){
+    document.querySelectorAll('#sgm-topics input').forEach(function(cb){
+      cb.checked = true;
+      cb.closest('.sgm-topic').classList.add('checked');
+    });
+  });
+  document.getElementById('sgm-btn-ws').addEventListener('click', function(){ download(false); });
+  document.getElementById('sgm-btn-ans').addEventListener('click', function(){ download(true); });
+
+  renderTopics('P3');
+})();
 </script>
