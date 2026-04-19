@@ -8,10 +8,6 @@ from reportlab.lib import colors
 from reportlab.lib.colors import HexColor
 from reportlab.pdfbase.pdfmetrics import stringWidth
 import os, re
-try:
-    from diagrams import get_diagram
-except ImportError:
-    def get_diagram(level, qid): return None
 
 NAVY   = HexColor("#1e3a5f")
 TEAL   = HexColor("#0e7490")
@@ -135,6 +131,75 @@ def make_inline(text, style, fsize=10, total_width=13.3*cm, bold_prefix=None):
     return result
 
 # ── Question banks ────────────────────────────────────────────────────────────
+P2_QUESTIONS = [
+    # ── Numbers to 1000 ────────────────────────────────────────────────────────
+    dict(id=1,  topic="Numbers to 1000", difficulty="Easy", school="Rosyth", marks=1,
+         text="In 652, the digit ___ is in the ones place.",
+         type="mcq",
+         opts=["(1)  1", "(2)  2", "(3)  5", "(4)  6"],
+         answer="(2)  2"),
+    dict(id=2,  topic="Numbers to 1000", difficulty="Easy", school="Rosyth", marks=1,
+         text="What is the missing number in the pattern?\n145,  165,  ___,  205,  225",
+         type="mcq",
+         opts=["(1)  170", "(2)  175", "(3)  185", "(4)  200"],
+         answer="(3)  185"),
+    dict(id=7,  topic="Numbers to 1000", difficulty="Easy", school="Rosyth", marks=1,
+         text="Write seven hundred and thirteen in numerals.",
+         type="short", answer="713"),
+    dict(id=8,  topic="Numbers to 1000", difficulty="Easy", school="Rosyth", marks=1,
+         text="Add 10 tens to 880. The answer is ___.",
+         type="short", answer="980"),
+    dict(id=9,  topic="Numbers to 1000", difficulty="Easy", school="Rosyth", marks=1,
+         text="10 less than 596 is ___.",
+         type="short", answer="586"),
+    # ── Addition & Subtraction within 1000 ─────────────────────────────────────
+    dict(id=3,  topic="Addition & Subtraction", difficulty="Easy", school="Rosyth", marks=1,
+         text="32 + 544 = ___",
+         type="mcq",
+         opts=["(1)  512", "(2)  516", "(3)  576", "(4)  864"],
+         answer="(2)  576"),
+    dict(id=4,  topic="Addition & Subtraction", difficulty="Easy", school="Rosyth", marks=1,
+         text="267 − 132 = ___",
+         type="mcq",
+         opts=["(1)  135", "(2)  199", "(3)  335", "(4)  399"],
+         answer="(1)  135"),
+    dict(id=5,  topic="Addition & Subtraction", difficulty="Easy", school="Rosyth", marks=1,
+         text="Subtract 438 from 908. The answer is ___.",
+         type="mcq",
+         opts=["(1)  470", "(2)  500", "(3)  530", "(4)  538"],
+         answer="(1)  470"),
+    dict(id=6,  topic="Addition & Subtraction", difficulty="Easy", school="Rosyth", marks=1,
+         text="Find the sum of 365 and 329. The answer is ___.",
+         type="mcq",
+         opts=["(1)  36", "(2)  44", "(3)  684", "(4)  694"],
+         answer="(4)  694"),
+    dict(id=10, topic="Addition & Subtraction", difficulty="Easy", school="Rosyth", marks=1,
+         text="Find the difference between 502 and 348.",
+         type="short", answer="154"),
+    dict(id=11, topic="Addition & Subtraction", difficulty="Medium", school="Rosyth", marks=1,
+         text="Fill in the blanks.\n\n  Hundreds | Tens | Ones\n     2     |  6   | ___\n  +  6     | ___  |  2\n  ─────────────────────\n     9     |  1   |  1",
+         type="short", answer="Ones: 9,  Tens: 4"),
+    dict(id=12, topic="Addition & Subtraction", difficulty="Medium", school="Rosyth", marks=1,
+         text="Which two numbers below add up to 374?\n324,  334,  50,  60\n\n___ + ___ = 374",
+         type="short", answer="324 + 50 = 374"),
+    # ── Word Problems ───────────────────────────────────────────────────────────
+    dict(id=13, topic="Word Problems", difficulty="Easy", school="Rosyth", marks=1,
+         text="Uncle Samy delivered 127 pizzas in the afternoon.\nHe delivered 60 pizzas at night.\nHow many pizzas did Uncle Samy deliver altogether?",
+         type="short", answer="187 pizzas"),
+    dict(id=14, topic="Word Problems", difficulty="Easy", school="Rosyth", marks=1,
+         text="Mrs Koh baked 758 cookies for Christmas.\nShe gave 446 cookies to her friends.\nHow many cookies did she have left?",
+         type="short", answer="312 cookies"),
+    dict(id=15, topic="Word Problems", difficulty="Medium", school="Rosyth", marks=2,
+         text="There are 527 books on a shelf.\nThe librarian puts 283 more books on the shelf.\nHow many books are there altogether on the shelf?",
+         type="short", answer="810 books"),
+    dict(id=16, topic="Word Problems", difficulty="Medium", school="Rosyth", marks=2,
+         text="A shop sold 56 toy cars.\nThere were 651 toy cars left in the shop.\nHow many toy cars did the shop have at first?",
+         type="short", answer="707 toy cars"),
+    dict(id=17, topic="Word Problems", difficulty="Medium", school="Rosyth", marks=2,
+         text="Siti has 499 buttons.\nShe has 194 more buttons than Amy.\nHow many buttons does Amy have?",
+         type="short", answer="305 buttons"),
+]
+
 P3_QUESTIONS = [
     # Multiplication & Division
     dict(id=1,  topic="Multiplication & Division", difficulty="Easy",   school="Nan Hua",    marks=1,
@@ -150,6 +215,10 @@ P3_QUESTIONS = [
          text="Liming has 65 curry puffs. He packs 9 curry puffs in each container. How many containers does he need to pack all the curry puffs?",
          type="mcq", opts=["A.  5", "B.  6", "C.  7", "D.  8"], answer="D.  8"),
     dict(id=5,  topic="Multiplication & Division", difficulty="Medium",  school="Nan Hua",    marks=2,
+         text="Look at the number pattern. What is the missing number?",
+         image="img_p3_q5_pattern.png",
+         type="mcq", opts=["A.  12", "B.  15", "C.  22", "D.  24"], answer="D.  24"),
+    dict(id=55, topic="Multiplication & Division", difficulty="Medium",  school="Nan Hua",    marks=2,
          text="Find the quotient and remainder when 803 is divided by 5.",
          type="short", answer="Quotient: 160, Remainder: 3"),
     dict(id=6,  topic="Multiplication & Division", difficulty="Medium",  school="Nan Hua",    marks=2,
@@ -201,10 +270,12 @@ P3_QUESTIONS = [
          type="mcq", opts=["A.  AB // DC", "B.  AF // BC", "C.  AF // ED", "D.  BC // ED"], answer="C.  AF // ED"),
     # Data & Graphs
     dict(id=21, topic="Data & Graphs", difficulty="Medium",  school="Nan Hua",    marks=2,
-         text="A bar graph shows the number of times P1 pupils went to the library. The number who went 4 times = 40, 5 times = 30.\nHow many P1 pupils went to the library more than 3 times?",
+         text="The graph shows the number of times P1 pupils went to the library during the June holidays. Study the graph carefully and answer the question below.\nHow many P1 pupils went to the library more than 3 times?",
+         image="q6_graph.png",
          type="mcq", opts=["A.  65", "B.  145", "C.  180", "D.  245"], answer="A.  65"),
     dict(id=22, topic="Data & Graphs", difficulty="Medium",  school="Nan Hua",    marks=2,
-         text="A bar graph shows hair dryers sold over 5 days (Brand A and Brand B).\nBrand A totals: Mon=12, Tue=8, Wed=7, Thur=15, Fri=11\nBrand B totals: Mon=6, Tue=8, Wed=4, Thur=2, Fri=6\n(a) Which day had the most hair dryers sold?\n(b) How many more Brand A dryers were sold than Brand B overall?",
+         text="The graph shows the number of hair dryers sold at Sunshine Shop in 5 days.\nStudy the graph carefully and answer the questions (a) and (b).\n(a) Which day had the most number of hair dryers sold?\n(b) How many more Brand A hair dryers were sold compared to Brand B?",
+         image="img_p3_q9_graph.png",
          type="short", answer="(a) Thursday  (b) 13"),
     dict(id=23, topic="Data & Graphs", difficulty="Medium",  school="Henry Park", marks=2,
          text="A bar graph shows fruits sold by Grocer Pan: Apple=40, Peach=15, Durian=35, Orange=50.\n(a) How many apples and durians did Grocer Pan sell in total?\n(b) Grocer Pan sold twice as many watermelons as peaches. How many watermelons were sold?",
@@ -302,16 +373,20 @@ P4_QUESTIONS = [
 P5_QUESTIONS = [
     # ── Triangles & Area ────────────────────────────────────────────────────────
     dict(id=1, topic="Triangles & Area", difficulty="Easy", school="Raffles Girls'", marks=1,
-         text="VWX is a triangle. If the base is VX, the height is ___.",
+         text="VWX is a triangle. If the base is VX, the height is ___.\n(Refer to diagram for points W, Z, V, Y, X.)",
+         image="img_p5_q1a_triangle.png",
          type="short", answer="YW"),
     dict(id=2, topic="Triangles & Area", difficulty="Easy", school="Raffles Girls'", marks=1,
-         text="DCB is a straight line.\nD is 3 cm to the left of C, and C is 9 cm to the left of B.\nA is 5 cm above D, and AC = 6 cm.\nFind the area of triangle ABC.",
+         text="DCB is a straight line.\nD is 3 cm to the left of C, and C is 9 cm to the left of B.\nA is 5 cm above D. Find the area of triangle ABC.",
+         image="img_p5_q1b_triangle.png",
          type="short", answer="22.5 cm²"),
     dict(id=3, topic="Triangles & Area", difficulty="Medium", school="Raffles Girls'", marks=2,
-         text="ABCD is a square of side 18 m. E is the midpoint of AB and F is the midpoint of DC.\nFind the total area of the shaded triangles formed by the diagonals of each half.",
+         text="ABCD is a square of side 18 m. E is the midpoint of AB and F is the midpoint of DC.\nFind the total area of the shaded parts.",
+         image="img_p5_q8_square.png",
          type="short", answer="162 m²"),
     dict(id=4, topic="Triangles & Area", difficulty="Hard", school="Raffles Girls'", marks=4,
-         text="The figure is made up of a rectangle ABFG and a square CDEF.\nAB = 11 cm, AG = 12 cm + 16 cm = 28 cm (height of rectangle), CDEF has side 16 cm.\nAH = HG and GF = FE.\nFind the area of the shaded part.",
+         text="The figure is made up of a rectangle ABFG and a square CDEF.\nAH = HG and GF = FE.\nFind the area of the shaded part.",
+         image="img_p5_q9_rect.png",
          type="short", answer="252 cm²"),
     dict(id=5, topic="Triangles & Area", difficulty="Medium", school="Ai Tong", marks=2,
          text="Find the area of the shaded triangle with base 25 m and perpendicular height 16 m.\n(Note: The 15 m and 4 m are other sides, not the height.)",
@@ -321,16 +396,19 @@ P5_QUESTIONS = [
          type="short", answer="(a) 45 cm²  (b) 162 cm²"),
     # ── Volume ──────────────────────────────────────────────────────────────────
     dict(id=7, topic="Volume", difficulty="Easy", school="Raffles Girls'", marks=1,
-         text="Find the volume of a cube with side 7 cm.",
+         text="Find the volume of the cube shown.",
+         image="img_p5_q2a_cube.png",
          type="short", answer="343 cm³"),
     dict(id=8, topic="Volume", difficulty="Easy", school="Raffles Girls'", marks=1,
          text="The figure shows some cubes in a glass tank.\nThe tank is 5 cubes long, 3 cubes wide and 3 cubes tall. 25 cubes are already placed.\nHow many more cubes are needed to fill the tank completely?",
-         type="short", answer="20"),
-    dict(id=9, topic="Volume", difficulty="Medium", school="Raffles Girls'", marks=2,
+         image="img_p5_q2b_tank.png",
+         type="short", answer="20"),    dict(id=9, topic="Volume", difficulty="Medium", school="Raffles Girls'", marks=2,
          text="The figure shows a solid made up of 1-cm cubes.\nHow many more cubes must be added to make a solid of 30 cm³?",
+         image="img_p5_q6_solid.png",
          type="short", answer="18"),
     dict(id=10, topic="Volume", difficulty="Hard", school="Raffles Girls'", marks=5,
-         text="The figure shows a rectangular tank P and an empty cubical tank Q.\nTank P measures 30 cm × 24 cm × 18 cm. Tank Q has side 18 cm.\nTank P was 1/5 filled with water. Johan then poured another 1.3 l into tank P.\n(a) What was the total volume of water in tank P?\n(b) Johan poured all the water from tank P into tank Q.\nHow much more water was needed to fill tank Q? Leave your answer in litres.",
+         text="The figure shows a rectangular tank P and an empty cubical tank Q.\nTank P was 1/5 filled with water. Johan then poured another 1.3 l into tank P.\n(a) What was the total volume of water in tank P?\n(b) Johan poured all the water from tank P into tank Q.\nHow much more water was needed to fill tank Q? Leave your answer in litres.",
+         image="img_p5_q10_tanks.png",
          type="short", answer="(a) 3.892 l  (b) 1.94 l"),
     dict(id=11, topic="Volume", difficulty="Easy", school="Ai Tong", marks=2,
          text="The cuboid has a height of 8 cm and a square base of side 3 cm. Find its volume.",
@@ -360,6 +438,7 @@ P5_QUESTIONS = [
     # ── 3D Solids & Views ───────────────────────────────────────────────────────
     dict(id=19, topic="3D Solids & Views", difficulty="Medium", school="Raffles Girls'", marks=2,
          text="Nisha built a solid using 10 unit cubes.\n(a) Draw the top view of the solid on the given square grid.\n(b) Nisha has 4 more unit cubes. What is the greatest number of unit cubes she can add without changing the top view and front view?",
+         image="img_p5_q7_solid_grid.png",
          type="short", answer="(a) See diagram  (b) 2"),
     dict(id=20, topic="3D Solids & Views", difficulty="Medium", school="Ai Tong", marks=2,
          text="7 unit cubes were stacked and glued together to form a solid.\nDraw the side view and the top view of the solid on the grid provided.",
@@ -374,6 +453,7 @@ P5_QUESTIONS = [
     # ── Word Problems ───────────────────────────────────────────────────────────
     dict(id=23, topic="Word Problems", difficulty="Medium", school="Raffles Girls'", marks=2,
          text="At a bookshop, pencils are sold in boxes of 12 for $9.60 and erasers in boxes of 7 for $3.50.\n(a) Mrs Lee needs 42 pencils and 20 erasers. What is the least amount she needs to spend?\n(b) Mr Ali bought 8 more pencils than erasers. The total number was fewer than 70. How much did he spend altogether?",
+         image="img_p5_q11_pencils.png",
          type="short", answer="(a) $48.90  (b) $42.80"),
     dict(id=24, topic="Word Problems", difficulty="Medium", school="Ai Tong", marks=3,
          text="The cost of 2 pens and 4 files is $23.90. The cost of a file is $1.40 more than the cost of a pen.\nFind the cost of a pen.",
@@ -384,134 +464,84 @@ P5_QUESTIONS = [
     dict(id=26, topic="Word Problems", difficulty="Hard", school="Ai Tong", marks=4,
          text="Daryl and Ben had an equal amount of money at first.\nEach day, Daryl spent $5.50 and Ben spent $3.20.\nAfter some days, Daryl had $95.20 left and Ben had $132 left.\nHow much money did each of them have at first?",
          type="short", answer="$183.20"),
+    # ── Rosyth WA2 2025 — Booklet A (MCQ) ─────────────────────────────────────
+    dict(id=27, topic="Volume", difficulty="Easy", school="Rosyth", marks=1,
+         text="A solid cuboid of height 12 cm has a square base of side 4 cm. What is its volume?",
+         image="img_p5_rosyth_q1_cuboid.png",
+         type="mcq",
+         opts=["(1)  16 cm³", "(2)  48 cm³", "(3)  96 cm³", "(4)  192 cm³"],
+         answer="(4)  192 cm³"),
+    dict(id=28, topic="Triangles & Area", difficulty="Easy", school="Rosyth", marks=1,
+         text="Given that the base of triangle ABC is BC, what is the corresponding height?",
+         image="img_p5_rosyth_q2_triangle.png",
+         type="mcq",
+         opts=["(1)  AD", "(2)  AC", "(3)  BC", "(4)  CE"],
+         answer="(1)  AD"),
+    dict(id=29, topic="Fractions", difficulty="Easy", school="Rosyth", marks=1,
+         text="Find the value of 5/8 × 7/10 in its simplest form.",
+         type="mcq",
+         opts=["(1)  2/3", "(2)  7/16", "(3)  25/28", "(4)  1 13/40"],
+         answer="(2)  7/16"),
+    dict(id=30, topic="Ratio", difficulty="Easy", school="Rosyth", marks=1,
+         text="Charles has 30 marbles and David has 25 marbles.\nFind the ratio of David's marbles to the total number of marbles that Charles and David have.",
+         type="mcq",
+         opts=["(1)  5 : 6", "(2)  6 : 5", "(3)  5 : 11", "(4)  11 : 5"],
+         answer="(3)  5 : 11"),
+    dict(id=31, topic="Decimals & Measurement", difficulty="Easy", school="Rosyth", marks=1,
+         text="In the number line below, what is the value represented by A?",
+         image="img_p5_rosyth_q5_numberline.png",
+         type="mcq",
+         opts=["(1)  8 7/10", "(2)  8 7/12", "(3)  9 1/5", "(4)  9 1/6"],
+         answer="(1)  8 7/10"),
+    # ── Rosyth WA2 2025 — Booklet B (Short Answer) ─────────────────────────────
+    dict(id=32, topic="Whole Numbers", difficulty="Easy", school="Rosyth", marks=1,
+         text="Find the value of 20 − 3 × 4 + 6 ÷ 2.",
+         type="short", answer="11"),
+    dict(id=33, topic="Ratio", difficulty="Easy", school="Rosyth", marks=1,
+         text="The ratio of Clara's money to Devi's money is 3 : 8.\nClara has $21. How much money does Devi have?",
+         type="short", answer="$56"),
+    dict(id=34, topic="Triangles & Area", difficulty="Easy", school="Rosyth", marks=1,
+         text="Find the area of the triangle shown below.",
+         image="img_p5_rosyth_q8_triangle.png",
+         type="short", answer="30 cm²"),
+    dict(id=35, topic="Fractions", difficulty="Easy", school="Rosyth", marks=2,
+         text="Express 15/4 as a decimal.",
+         type="short", answer="3.75"),
+    dict(id=36, topic="Ratio", difficulty="Medium", school="Rosyth", marks=2,
+         text="The ratio of the number of stickers Edward has to the number Ahmad has is 1 : 4.\nAhmad has 160 stickers.\nHow many stickers must Ahmad give to Edward so that both will have the same number in the end?",
+         type="short", answer="60"),
+    dict(id=37, topic="Fractions", difficulty="Medium", school="Rosyth", marks=2,
+         text="Mandy had 8 kg of sugar.\nShe used 3/4 of it to bake cookies and gave 5/6 kg of sugar to her mother.\nHow much sugar did she have left? Leave your answer in kilograms.",
+         type="short", answer="1 1/6 kg"),
+    dict(id=38, topic="Word Problems", difficulty="Hard", school="Rosyth", marks=2,
+         text="The cost of a present was to be shared equally among 8 friends.\nHowever, 3 of the friends decided not to pay for the present.\nAs a result, the remaining friends each had to pay $126 more.\nHow much did each of the 8 friends have to pay at first?",
+         type="short", answer="$210"),
+    dict(id=39, topic="Triangles & Area", difficulty="Hard", school="Rosyth", marks=2,
+         text="Raju drew three triangles to form a figure as shown below.\nThe areas of the triangles were in the ratio 1 : 4 : 15.\nHe then shaded some parts of the figure.\nThe unshaded area of the figure is 33 cm².\nFind the total shaded area of the figure.",
+         image="img_p5_rosyth_q14_shaded.png",
+         type="short", answer="132 cm²"),
+    # ── Rosyth WA2 2025 — Paper 2 (Long Answer) ────────────────────────────────
+    dict(id=40, topic="Word Problems", difficulty="Medium", school="Rosyth", marks=2,
+         text="Sandra was given some money to buy some books.\nIf she bought 13 books, she would need $9 more.\nIf she bought 9 books, she would be left with $15.\nHow much did each book cost?",
+         type="short", answer="$6"),
+    dict(id=41, topic="Volume", difficulty="Hard", school="Rosyth", marks=3,
+         text="Tank X, measuring 80 cm by 45 cm by 70 cm, is half-filled with water.\nTank Y, measuring 40 cm by 40 cm by 100 cm, is filled with 12 l of water.\nMr Leo pours all the water from Tank X into Tank Y without spilling.\nHow much more water is needed to fill Tank Y to its brim?",
+         image="img_p5_rosyth_q16_tanks.png",
+         type="short", answer="22 000 cm³"),
+    dict(id=42, topic="Word Problems", difficulty="Hard", school="Rosyth", marks=3,
+         text="Randy spent $189 on a table and 4/9 of his remaining money on a chair.\nHe had 1/6 of his original sum of money left.\nHow much money did he have at first?",
+         type="short", answer="$270"),
+    dict(id=43, topic="Fractions", difficulty="Hard", school="Rosyth", marks=4,
+         text="Mrs Ho baked some cookies.\nShe sold 1/5 of her cookies and an additional 8 cookies on Monday.\nShe sold 2/3 of the remaining cookies and an additional 5 cookies on Tuesday.\nShe gave the rest of her 31 cookies to Mrs Lim.\nHow many cookies did Mrs Ho bake at first?",
+         type="short", answer="145"),
+    dict(id=44, topic="Word Problems", difficulty="Hard", school="Rosyth", marks=4,
+         text="Betty sold brownies at $3 each.\nFor every 5 brownies purchased, she gave 2 free brownies to her customers.\nOn Friday, she sold and gave away a total of 240 brownies.\n(a) What was the largest possible number of brownies given free on Friday?\n(b) What was the least possible amount of money she collected from the 240 brownies sold and given away on Friday?",
+         type="short", answer="(a) 68  (b) $516"),
 ]
 
-P6_QUESTIONS = [
-    # ── Whole Numbers & Decimals ─────────────────────────────────────────────────
-    dict(id=1,  topic="Whole Numbers & Decimals", difficulty="Easy",   school="Nan Hua",       marks=1,
-         text="How many hundredths are there in 0.8?",
-         type="mcq", opts=["(1)  0.08", "(2)  0.8", "(3)  8", "(4)  80"], answer="(4)  80"),
-    dict(id=2,  topic="Whole Numbers & Decimals", difficulty="Easy",   school="Nan Hua",       marks=1,
-         text="What is the sum of all the factors of 9?",
-         type="mcq", opts=["(1)  12", "(2)  13", "(3)  15", "(4)  16"], answer="(2)  13"),
-    dict(id=3,  topic="Whole Numbers & Decimals", difficulty="Easy",   school="Nan Hua",       marks=1,
-         text="Express 8 km 20 m in km.",
-         type="mcq", opts=["(1)  8020 m", "(2)  8.002 km", "(3)  8.02 km", "(4)  8.2 km"], answer="(3)  8.02 km"),
-    dict(id=4,  topic="Whole Numbers & Decimals", difficulty="Easy",   school="Nan Hua",       marks=1,
-         text="Express 3/8 as a decimal correct to 2 decimal places.",
-         type="mcq", opts=["(1)  0.308", "(2)  0.38", "(3)  3.08", "(4)  3.8"], answer="(2)  0.38"),
-    dict(id=5,  topic="Whole Numbers & Decimals", difficulty="Easy",   school="Nan Hua",       marks=1,
-         text="Express 8% as a fraction in its simplest form.",
-         type="short", answer="2/25"),
-    dict(id=6,  topic="Whole Numbers & Decimals", difficulty="Easy",   school="Nan Hua",       marks=1,
-         text="Round 589.02 to the nearest tenth.",
-         type="short", answer="589.0"),
-    dict(id=7,  topic="Whole Numbers & Decimals", difficulty="Easy",   school="Nan Hua",       marks=1,
-         text="What is the greatest possible whole number that gives 9300 when rounded to the nearest ten?",
-         type="short", answer="9304"),
-    dict(id=8,  topic="Whole Numbers & Decimals", difficulty="Medium",  school="Nan Hua",       marks=1,
-         text="Give a fraction that is halfway between 1/5 and 1/3.",
-         type="short", answer="4/15"),
-    dict(id=9,  topic="Whole Numbers & Decimals", difficulty="Medium",  school="Nan Hua",       marks=2,
-         text="James paid $20 for 40 rulers. How much did each ruler cost?",
-         type="mcq", opts=["(1)  5 cents", "(2)  2 cents", "(3)  50 cents", "(4)  20 cents"], answer="(3)  50 cents"),
-    # ── Fractions, Ratio & Percentage ────────────────────────────────────────────
-    dict(id=10, topic="Fractions, Ratio & Percentage", difficulty="Medium",  school="Nan Hua",  marks=2,
-         text="There were a total of 50 blue, red and white marbles in a box.\nThe number of blue and red marbles was 2/5 of the total.\nThe number of red and white marbles was 9/10 of the total.\nFind the number of red marbles.",
-         type="mcq", opts=["(1)  15", "(2)  20", "(3)  25", "(4)  45"], answer="(1)  15"),
-    dict(id=11, topic="Fractions, Ratio & Percentage", difficulty="Medium",  school="Nan Hua",  marks=2,
-         text="In a school, 40% of the pupils are boys.\n5% of the boys and 20% of the girls walk to school.\nWhat percentage of the pupils in the school walk to school?",
-         type="mcq", opts=["(1)  14%", "(2)  15%", "(3)  25%", "(4)  65%"], answer="(1)  14%"),
-    dict(id=12, topic="Fractions, Ratio & Percentage", difficulty="Medium",  school="Nan Hua",  marks=2,
-         text="Two numbers X and Y are in the ratio 3 : 7.\nAfter Y is halved and X is increased by 4, the ratio became 1 : 1.\nWhat is the original value of X?",
-         type="short", answer="24"),
-    dict(id=13, topic="Fractions, Ratio & Percentage", difficulty="Medium",  school="Nan Hua",  marks=2,
-         text="John has just enough money to buy either 6 rulers and 3 erasers, or 4 rulers and 8 erasers.\nIf he spends all his money on erasers only, how many erasers can he buy?",
-         type="short", answer="18"),
-    dict(id=14, topic="Fractions, Ratio & Percentage", difficulty="Hard",   school="Nan Hua",   marks=2,
-         text="The figure below shows Lilian's expenditure last month.\nShe spent half of what she had on food.\nBooks cost $80 and Transport was 15% of the total.\nHow much did she spend on transport?",
-         type="mcq", opts=["(1)  $120", "(2)  $200", "(3)  $400", "(4)  $800"], answer="(1)  $120"),
-    dict(id=15, topic="Fractions, Ratio & Percentage", difficulty="Hard",   school="Catholic High", marks=2,
-         text="A bowl of noodles at a restaurant cost $27.25 including 9% GST.\nFind the cost of the bowl of noodles before GST.",
-         type="short", answer="$25.00"),
-    dict(id=16, topic="Fractions, Ratio & Percentage", difficulty="Hard",   school="Catholic High", marks=2,
-         text="The usual price of a watch is $320. After a 20% discount, how much does the watch cost?",
-         type="short", answer="$256"),
-    dict(id=17, topic="Fractions, Ratio & Percentage", difficulty="Hard",   school="Catholic High", marks=4,
-         text="The number of people who visited a museum in February increased by 20% compared to January.\nThe number in March decreased by 5% compared to February.\n855 people visited the museum in March.\nHow many people visited the museum in January?",
-         type="short", answer="750"),
-    # ── Geometry & Angles ────────────────────────────────────────────────────────
-    dict(id=18, topic="Geometry & Angles", difficulty="Medium",  school="Nan Hua",       marks=2,
-         text="A movie started at 10.35 p.m. and ended at 1.15 a.m. How long did the movie last?",
-         type="mcq", opts=["(1)  2 h 10 min", "(2)  2 h 20 min", "(3)  2 h 40 min", "(4)  2 h 50 min"], answer="(3)  2 h 40 min"),
-    dict(id=19, topic="Geometry & Angles", difficulty="Medium",  school="Nan Hua",       marks=2,
-         text="A rectangle PQRS is folded along its diagonal PR.\nGiven that angle PRS = 23°, find angle QRS after the fold.",
-         type="short", answer="44°"),
-    dict(id=20, topic="Geometry & Angles", difficulty="Medium",  school="Nan Hua",       marks=2,
-         text="In the diagram, ABCD is a parallelogram. CFE and DGE are straight lines.\nAngle DAG = 112° and angle EFB = 95°.\nFind angle BCF.",
-         type="short", answer="17°"),
-    dict(id=21, topic="Geometry & Angles", difficulty="Hard",   school="Nan Hua",        marks=2,
-         text="In the figure, ABCD is a rhombus. AEFCs and BFD are straight lines.\nAngle ADF = 25° and angle ABF = 55°.\nFind angle DAE.",
-         type="short", answer="35°"),
-    dict(id=22, topic="Geometry & Angles", difficulty="Hard",   school="Catholic High",  marks=2,
-         text="A rectangular piece of paper is folded along the dotted line as shown.\nAfter folding, the angle shown is 62°. Find angle p.",
-         type="short", answer="34°"),
-    dict(id=23, topic="Geometry & Angles", difficulty="Hard",   school="Catholic High",  marks=2,
-         text="ABCD is a square. CEFD is a rhombus. AGF and CGD are straight lines.\nAngle GDF = 44°. Find angle GFD.",
-         type="short", answer="23°"),
-    dict(id=24, topic="Geometry & Angles", difficulty="Hard",   school="Catholic High",  marks=3,
-         text="EFGH is a parallelogram and EBHA is a trapezium. AE is parallel to HB.\nAngle AEH = 34°, angle EBH = 76°, angle FGH = 108°.\nFind angle BEF.",
-         type="short", answer="38°"),
-    # ── Area & Perimeter (Circles) ───────────────────────────────────────────────
-    dict(id=25, topic="Area & Perimeter", difficulty="Medium",  school="Nan Hua",        marks=2,
-         text="The figure is made up of 2 identical semicircles of diameter 14 cm.\nFind the perimeter of the figure. Take π = 22/7",
-         type="mcq", opts=["(1)  44 cm", "(2)  62 cm", "(3)  67 cm", "(4)  72 cm"], answer="(2)  62 cm"),
-    dict(id=26, topic="Area & Perimeter", difficulty="Medium",  school="Nan Hua",        marks=2,
-         text="In the rectangle below, the total width is 14 cm (5 cm + 9 cm) and the height is 8 cm.\nFind the area of the shaded triangle.",
-         type="mcq", opts=["(1)  20 cm²", "(2)  36 cm²", "(3)  56 cm²", "(4)  72 cm²"], answer="(3)  56 cm²"),
-    dict(id=27, topic="Area & Perimeter", difficulty="Medium",  school="Catholic High",  marks=2,
-         text="The radius of a circle is 21 cm. Find the circumference of the circle.\nLeave your answer in terms of π.",
-         type="short", answer="42π cm"),
-    dict(id=28, topic="Area & Perimeter", difficulty="Hard",   school="Catholic High",   marks=2,
-         text="The diameter of a circle is 70 cm. Find the area of the circle. Take π = 22/7.",
-         type="short", answer="3850 cm²"),
-    dict(id=29, topic="Area & Perimeter", difficulty="Hard",   school="Catholic High",   marks=3,
-         text="The figure is made up of a quarter circle and a square with side 6 cm.\nFind the area of the figure. Take π = 3.14.",
-         type="short", answer="64.26 cm²"),
-    dict(id=30, topic="Area & Perimeter", difficulty="Hard",   school="Catholic High",   marks=3,
-         text="The figure shows a rectangle and two identical semicircles.\nThe length of the rectangle is 24 m and the radius of each semicircle is 4 m.\nFind the perimeter of the figure. Take π = 3.14.",
-         type="short", answer="73.12 m"),
-    # ── Data & Algebra ───────────────────────────────────────────────────────────
-    dict(id=31, topic="Data & Algebra", difficulty="Medium",  school="Nan Hua",          marks=2,
-         text="The graph shows the number of pets per household in a block of flats.\n0 pets: 15 households, 1 pet: 22 households, 2 pets: 40 households, 3 pets: 30 households, 4 pets: 11 households.\nHow many pets are there in this block of flats altogether?",
-         type="short", answer="236"),
-    dict(id=32, topic="Data & Algebra", difficulty="Medium",  school="Nan Hua",          marks=2,
-         text="Study the pattern: S Q U A R E S Q U A R E S Q U A R E...\nIf the pattern continues, what is the 99th letter?",
-         type="short", answer="U"),
-    dict(id=33, topic="Data & Algebra", difficulty="Medium",  school="Nan Hua",          marks=2,
-         text="The figure is made up of a triangle and a rectangle.\nThe area of the rectangle is twice the area of the triangle.\n1/8 of the rectangle is shaded.\nWhat is the ratio of the shaded area to the total area of the figure?",
-         type="short", answer="1 : 11"),
-    dict(id=34, topic="Data & Algebra", difficulty="Hard",   school="Nan Hua",           marks=2,
-         text="Two years ago, Andy was n years older than Belle.\nAndy is twice her age now. How old was Belle 2 years ago?",
-         type="mcq", opts=["(1)  n", "(2)  2n", "(3)  n − 2", "(4)  2n − 2"], answer="(1)  n"),
-    # ── Word Problems ────────────────────────────────────────────────────────────
-    dict(id=35, topic="Word Problems", difficulty="Medium",  school="Nan Hua",           marks=2,
-         text="Jack and Keith left Town X at the same time and travelled in opposite directions along a straight road.\nJack travelled at 7 km/h and Keith at 5 km/h.\nHow far apart would they be 2 hours later?",
-         type="short", answer="24 km"),
-    dict(id=36, topic="Word Problems", difficulty="Medium",  school="Nan Hua",           marks=2,
-         text="A group of 5 boys rented a paddle boat for 2 hours and took turns to play.\nAt any one time, there were 3 boys paddling the boat.\nOn average, how long did each boy play on the paddle boat?",
-         type="short", answer="72 min"),
-    dict(id=37, topic="Word Problems", difficulty="Hard",   school="Nan Hua",            marks=2,
-         text="Six identical cubes are glued together to form a cuboid (3 × 2 × 1 arrangement). Each cube has a side of 1 cm.\nThe cuboid is fully submerged into red paint.\nFind the total area of the cuboid that is painted red.",
-         type="short", answer="22 cm²"),
-    dict(id=38, topic="Word Problems", difficulty="Hard",   school="Catholic High",      marks=4,
-         text="There were 140 pupils in an Art Club at first.\n40% of the pupils were girls and the rest were boys.\nAfter some girls left the Art Club, 20% of the remaining pupils were girls.\n(a) How many pupils in the Art Club were boys?\n(b) How many girls left the Art Club?",
-         type="short", answer="(a) 84 boys  (b) 35 girls"),
-]
+QUESTIONS = {"P2": P2_QUESTIONS, "P3": P3_QUESTIONS, "P4": P4_QUESTIONS, "P5": P5_QUESTIONS}
 
-QUESTIONS = {"P3": P3_QUESTIONS, "P4": P4_QUESTIONS, "P5": P5_QUESTIONS, "P6": P6_QUESTIONS}
-
-LEVEL_LABELS = {"P3": "Primary 3", "P4": "Primary 4", "P5": "Primary 5", "P6": "Primary 6"}
+LEVEL_LABELS = {"P2": "Primary 2", "P3": "Primary 3", "P4": "Primary 4", "P5": "Primary 5"}
 DIFF_COLORS  = {"Easy": (GBG, GREEN), "Medium": (ABG, AMBER), "Hard": (RBG, RED)}
 
 def make_styles():
@@ -541,23 +571,30 @@ def build_pdf(output_path, level="P4", selected_topics=None, include_answers=Fal
     LOGO_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), "sgmaths_logo.png")
     PAGE_W_PT, PAGE_H_PT = A4
 
-    def draw_watermark(canvas, doc):
+    footer_text = f"sgmaths.sg  |  {LEVEL_LABELS.get(level, level)} Mathematics  |  End of Paper"
+
+    def draw_page(canvas, doc):
         import math
         canvas.saveState()
+        # Watermark
         img = ImageReader(LOGO_PATH)
         iw, ih = img.getSize()
-        # Scale to 16 cm wide
         wm_w = 16 * cm
         wm_h = wm_w * ih / iw
-        # Diagonal angle from bottom-left to top-right of A4
         angle = math.degrees(math.atan2(PAGE_H_PT, PAGE_W_PT))
-        # Translate to page centre, rotate, draw centred on origin
         canvas.translate(PAGE_W_PT / 2, PAGE_H_PT / 2)
         canvas.rotate(angle)
         canvas.setFillAlpha(0.07)
         canvas.drawImage(img, -wm_w / 2, -wm_h / 2,
                          width=wm_w, height=wm_h, mask="auto")
         canvas.restoreState()
+        # Footer on last page only
+        if canvas.getPageNumber() == doc._pageCount:
+            canvas.saveState()
+            canvas.setFont("Helvetica", 8)
+            canvas.setFillColor(HexColor("#6b7280"))
+            canvas.drawCentredString(PAGE_W_PT / 2, 1.2*cm, footer_text)
+            canvas.restoreState()
 
     doc = SimpleDocTemplate(output_path, pagesize=A4,
                             leftMargin=2*cm, rightMargin=2*cm,
@@ -706,12 +743,12 @@ def build_pdf(output_path, level="P4", selected_topics=None, include_answers=Fal
             else:
                 q_block.append(Spacer(1, 0.15*cm))
 
-        # Diagram (if available for this question)
-        diag = get_diagram(level, q["id"])
-        if diag is not None:
-            q_block.append(Spacer(1, 0.15*cm))
-            q_block.append(diag)
-            q_block.append(Spacer(1, 0.1*cm))
+        # Embed image if question has one (e.g. bar graphs, diagrams)
+        if q.get("image"):
+            img_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), q["image"])
+            q_block.append(Spacer(1, 0.2*cm))
+            q_block.append(Image(img_path, width=PAGE_W, height=5.5*cm, kind="proportional"))
+            q_block.append(Spacer(1, 0.2*cm))
 
         # Answer / working area
         if q["type"] == "mcq":
@@ -765,15 +802,23 @@ def build_pdf(output_path, level="P4", selected_topics=None, include_answers=Fal
         else:
             story.append(Spacer(1, 0.5*cm))
 
-    story.append(HRFlowable(width="100%", thickness=0.5, color=BORDER))
-    story.append(Spacer(1, 0.2*cm))
-    story.append(Paragraph(
-        f"sgmaths.sg  |  {LEVEL_LABELS.get(level, level)} Mathematics  |  End of Paper",
-        S["footer"]))
-    doc.build(story, onFirstPage=draw_watermark, onLaterPages=draw_watermark)
+    # Two-pass: dry-run on a copy to get total page count, then real build
+    import io, copy
+    _buf = io.BytesIO()
+    _doc2 = SimpleDocTemplate(_buf, pagesize=A4,
+                               leftMargin=2*cm, rightMargin=2*cm,
+                               topMargin=2*cm, bottomMargin=2*cm)
+    _page_count = [0]
+    def _count_page(canvas, doc): _page_count[0] = canvas.getPageNumber()
+    _doc2.build(copy.deepcopy(story), onFirstPage=_count_page, onLaterPages=_count_page)
+    doc._pageCount = _page_count[0]
+
+    doc.build(story, onFirstPage=draw_page, onLaterPages=draw_page)
     print(f"PDF saved: {output_path}")
 
 if __name__ == "__main__":
+    build_pdf("sgmaths_p2_worksheet.pdf",         level="P2", include_answers=False)
+    build_pdf("sgmaths_p2_worksheet_answers.pdf", level="P2", include_answers=True)
     build_pdf("sgmaths_p3_worksheet.pdf",         level="P3", include_answers=False)
     build_pdf("sgmaths_p3_worksheet_answers.pdf", level="P3", include_answers=True)
     build_pdf("sgmaths_p4_worksheet.pdf",         level="P4", include_answers=False)
