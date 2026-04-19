@@ -40,8 +40,8 @@
   <!-- Level selector -->
   <div style="font-size:13px;color:#6b7280;margin-bottom:8px">Select level:</div>
   <select class="sgm-level-select" id="sgm-level-select" onchange="sgmSetLevel(this.value)">
-    <option value="P1">Primary 1</option>
-    <option value="P2" selected>Primary 2</option>
+    <option value="P1" selected>Primary 1</option>
+    <option value="P2">Primary 2</option>
     <option value="P3">Primary 3</option>
     <option value="P4">Primary 4</option>
     <option value="P5">Primary 5</option>
@@ -78,13 +78,14 @@
 var SGM_SERVER = "https://sgmaths-worksheet.onrender.com";
 
 var SGM_TOPICS = {
+  P1: ["Numbers to 10","Addition & Subtraction","Word Problems"],
   P2: ["Numbers to 1000","Addition & Subtraction","Word Problems"],
   P3: ["Multiplication & Division","Fractions","Angles & Lines","Data & Graphs","Word Problems"],
   P4: ["Fractions","Angles & Geometry","Whole Numbers","Decimals","Data & Tables","Word Problems"],
   P5: ["Triangles & Area","Volume","Fractions","Ratio","Decimals & Measurement","3D Solids & Views","Whole Numbers","Word Problems"]
 };
 
-var currentLevel = "P2";
+var currentLevel = "P1";
 
 function sgmSetLevel(level){
   currentLevel = level;
