@@ -602,6 +602,227 @@ def parallelogram_EFGH(w=200, h=130):
     return d
 
 
+
+
+
+# ─────────────────────────────────────────────────────────────────────────────
+# P3 ANGLES & LINES DIAGRAMS
+# ─────────────────────────────────────────────────────────────────────────────
+
+def angles_obtuse_figure(w=200, h=150):
+    """P3 Q17 — Irregular polygon with marked angles, 4 of which are obtuse."""
+    import math
+    d = Drawing(w, h)
+    # Irregular hexagon-like shape with 6 marked angles
+    pts_x = [30, 80, 160, 170, 120, 40]
+    pts_y = [40, 20, 40,  110, 130, 110]
+    flat = []
+    for x, y in zip(pts_x, pts_y):
+        flat += [x, y]
+    d.add(Polygon(flat, strokeColor=BLACK, strokeWidth=1, fillColor=WHITE))
+
+    # Mark each angle with a small arc label
+    angle_labels = ["a", "b", "c", "d", "e", "f"]
+    for i, (x, y) in enumerate(zip(pts_x, pts_y)):
+        d.add(Circle(x, y, 2, fillColor=BLACK, strokeColor=None))
+        d.add(_label(x + 8, y + 4, angle_labels[i], size=7, bold=True))
+
+    # Arc marks at each vertex (small arcs indicating measured angle)
+    for x, y in zip(pts_x, pts_y):
+        d.add(Circle(x, y, 6, strokeColor=BLACK, strokeWidth=0.6,
+                     fillColor=None))
+
+    d.add(_label(100, 8, "Not drawn to scale", size=6, color=GRAY))
+    return d
+
+
+def grid_parallel_pq(w=190, h=170):
+    """P3 Q18 — Square grid with line PQ and point R; draw parallel line."""
+    d = Drawing(w, h)
+    # 7x6 grid
+    cols, rows = 8, 7
+    gx, gy = 20, 20
+    step = 22
+
+    for c in range(cols + 1):
+        d.add(Line(gx + c*step, gy, gx + c*step, gy + rows*step,
+                   strokeColor=GRAY, strokeWidth=0.5))
+    for r in range(rows + 1):
+        d.add(Line(gx, gy + r*step, gx + cols*step, gy + r*step,
+                   strokeColor=GRAY, strokeWidth=0.5))
+
+    # Line PQ — diagonal, 2 right 3 up
+    px1, py1 = gx + 1*step, gy + 1*step
+    px2, py2 = gx + 4*step, gy + 4*step
+    d.add(Line(px1, py1, px2, py2, strokeColor=BLACK, strokeWidth=1.5))
+    d.add(_label(px1 - 8, py1 - 4, "P", size=8, bold=True, anchor="end"))
+    d.add(_label(px2 + 4, py2 + 4, "Q", size=8, bold=True))
+
+    # Point R — 3 columns right of P, same row
+    rx, ry = gx + 5*step, gy + 1*step
+    d.add(Circle(rx, ry, 3, fillColor=BLACK, strokeColor=None))
+    d.add(_label(rx + 6, ry + 4, "R", size=8, bold=True))
+
+    return d
+
+
+def figures_right_angles(w=220, h=110):
+    """P3 Q19 — Five figures (a)-(e); figures (a) and (d) have more than 2 right angles."""
+    d = Drawing(w, h)
+    labels = ["(a)", "(b)", "(c)", "(d)", "(e)"]
+    ox_list = [10, 52, 94, 136, 178]
+
+    # (a) L-shape — 4 right angles
+    ox = ox_list[0]; oy = 30
+    pts = [ox, oy, ox+12, oy, ox+12, oy+12, ox+24, oy+12,
+           ox+24, oy+30, ox, oy+30]
+    d.add(Polygon(pts, strokeColor=BLACK, strokeWidth=0.8, fillColor=LGRAY))
+
+    # (b) Triangle — 0 right angles
+    ox = ox_list[1]; oy = 30
+    d.add(Polygon([ox, oy+35, ox+18, oy, ox+36, oy+35],
+                  strokeColor=BLACK, strokeWidth=0.8, fillColor=LGRAY))
+
+    # (c) Parallelogram — 0 right angles
+    ox = ox_list[2]; oy = 30
+    d.add(Polygon([ox+8, oy, ox+36, oy, ox+28, oy+30, ox, oy+30],
+                  strokeColor=BLACK, strokeWidth=0.8, fillColor=LGRAY))
+
+    # (d) T-shape — 6 right angles
+    ox = ox_list[3]; oy = 25
+    pts = [ox, oy, ox+36, oy, ox+36, oy+12, ox+24, oy+12,
+           ox+24, oy+40, ox+12, oy+40, ox+12, oy+12, ox, oy+12]
+    d.add(Polygon(pts, strokeColor=BLACK, strokeWidth=0.8, fillColor=LGRAY))
+
+    # (e) Trapezium — 2 right angles
+    ox = ox_list[4]; oy = 30
+    d.add(Polygon([ox, oy, ox+30, oy, ox+30, oy+30, ox, oy+30],
+                  strokeColor=BLACK, strokeWidth=0.8, fillColor=LGRAY))
+    # slanted top
+    d.add(Line(ox+6, oy, ox+24, oy, strokeColor=BLACK, strokeWidth=0.8))
+
+    # Labels below
+    for i, (ox, lbl) in enumerate(zip(ox_list, labels)):
+        d.add(_label(ox + 18, 12, lbl, size=7))
+
+    return d
+
+
+def grid_parallel_lines_abcdef(w=200, h=180):
+    """P3 Q20 — Grid with lines AB, BC, AF, ED, DC; AF // ED."""
+    d = Drawing(w, h)
+    cols, rows = 7, 7
+    gx, gy = 20, 18
+    step = 22
+
+    for c in range(cols + 1):
+        d.add(Line(gx + c*step, gy, gx + c*step, gy + rows*step,
+                   strokeColor=GRAY, strokeWidth=0.4))
+    for r in range(rows + 1):
+        d.add(Line(gx, gy + r*step, gx + cols*step, gy + r*step,
+                   strokeColor=GRAY, strokeWidth=0.4))
+
+    # Points (col, row from bottom-left)
+    pts = {
+        "A": (gx + 0*step, gy + 5*step),
+        "B": (gx + 3*step, gy + 7*step),
+        "C": (gx + 7*step, gy + 5*step),
+        "D": (gx + 5*step, gy + 0*step),
+        "E": (gx + 2*step, gy + 0*step),
+        "F": (gx + 2*step, gy + 2*step),
+    }
+
+    # Draw lines
+    for p1, p2 in [("A","B"), ("B","C"), ("A","F"), ("E","D"), ("D","C")]:
+        x1, y1 = pts[p1]; x2, y2 = pts[p2]
+        d.add(Line(x1, y1, x2, y2, strokeColor=BLACK, strokeWidth=1.2))
+
+    # Label points
+    offsets = {"A":(-8,4), "B":(0,6), "C":(4,4), "D":(4,-8), "E":(-8,-8), "F":(4,0)}
+    for name, (x, y) in pts.items():
+        ox2, oy2 = offsets[name]
+        d.add(Circle(x, y, 2.5, fillColor=BLACK, strokeColor=None))
+        d.add(_label(x+ox2, y+oy2, name, size=8, bold=True))
+
+    return d
+
+
+# ─────────────────────────────────────────────────────────────────────────────
+# P3 DATA & GRAPHS DIAGRAMS
+# ─────────────────────────────────────────────────────────────────────────────
+
+def bar_chart_grocer_pan(w=240, h=150):
+    """P3 Q23 — Bar chart: fruits sold by Grocer Pan."""
+    d = Drawing(w, h)
+    data = [("Apple", 40), ("Peach", 15), ("Durian", 35), ("Orange", 50)]
+    max_v = 60
+    ox, oy = 42, 18
+    chart_w, chart_h = 180, 105
+    bar_w = 28
+
+    d.add(Line(ox, oy, ox, oy + chart_h, strokeColor=BLACK, strokeWidth=0.9))
+    d.add(Line(ox, oy, ox + chart_w, oy, strokeColor=BLACK, strokeWidth=0.9))
+
+    for v in range(0, 70, 10):
+        y = oy + (v / max_v) * chart_h
+        d.add(Line(ox, y, ox + chart_w, y, strokeColor=GRAY, strokeWidth=0.3))
+        d.add(_label(ox - 4, y - 3, str(v), size=6, anchor="end"))
+
+    for i, (label, val) in enumerate(data):
+        bx = ox + 14 + i * 42
+        bh = (val / max_v) * chart_h
+        d.add(Rect(bx, oy, bar_w, bh,
+                   strokeColor=BLACK, strokeWidth=0.6,
+                   fillColor=HexColor("#b0c4d8")))
+        d.add(_label(bx + bar_w // 2, oy - 10, label, size=6.5))
+
+    ylabel = String(0, 0, "Number of fruits sold", fontSize=6.5,
+                    fillColor=BLACK, textAnchor="middle", fontName="Helvetica")
+    g = Group(ylabel)
+    g.transform = (0, 1, -1, 0, 10, oy + chart_h // 2)
+    d.add(g)
+
+    d.add(_label(ox + chart_w // 2, oy + chart_h + 8,
+                 "Fruits Sold by Grocer Pan", size=6.5, bold=True))
+    return d
+
+
+def bar_chart_paperclips(w=220, h=140):
+    """P3 Q24 — Bar chart: paper clips in Box A, B, C, D."""
+    d = Drawing(w, h)
+    data = [("Box A", 12), ("Box B", 44), ("Box C", 32), ("Box D", 20)]
+    max_v = 50
+    ox, oy = 42, 18
+    chart_w, chart_h = 162, 100
+    bar_w = 26
+
+    d.add(Line(ox, oy, ox, oy + chart_h, strokeColor=BLACK, strokeWidth=0.9))
+    d.add(Line(ox, oy, ox + chart_w, oy, strokeColor=BLACK, strokeWidth=0.9))
+
+    for v in range(0, 60, 10):
+        y = oy + (v / max_v) * chart_h
+        d.add(Line(ox, y, ox + chart_w, y, strokeColor=GRAY, strokeWidth=0.3))
+        d.add(_label(ox - 4, y - 3, str(v), size=6, anchor="end"))
+
+    for i, (label, val) in enumerate(data):
+        bx = ox + 12 + i * 38
+        bh = (val / max_v) * chart_h
+        d.add(Rect(bx, oy, bar_w, bh,
+                   strokeColor=BLACK, strokeWidth=0.6,
+                   fillColor=HexColor("#b0c4d8")))
+        d.add(_label(bx + bar_w // 2, oy - 10, label, size=6.5))
+
+    ylabel = String(0, 0, "Number of paper clips", fontSize=6.5,
+                    fillColor=BLACK, textAnchor="middle", fontName="Helvetica")
+    g = Group(ylabel)
+    g.transform = (0, 1, -1, 0, 10, oy + chart_h // 2)
+    d.add(g)
+
+    d.add(_label(ox + chart_w // 2, oy + chart_h + 8,
+                 "Paper Clips in Each Box", size=6.5, bold=True))
+    return d
+
+
 # ─────────────────────────────────────────────────────────────────────────────
 # DIAGRAM REGISTRY — maps question (level, id) to a drawing function
 # ─────────────────────────────────────────────────────────────────────────────
@@ -611,6 +832,12 @@ DIAGRAM_REGISTRY = {
     ("P3", 5):  number_pattern_diamond,
     ("P3", 6):  bar_chart_library,
     ("P3", 9):  bar_chart_hairdryers,
+    ("P3", 17): angles_obtuse_figure,
+    ("P3", 18): grid_parallel_pq,
+    ("P3", 19): figures_right_angles,
+    ("P3", 20): grid_parallel_lines_abcdef,
+    ("P3", 23): bar_chart_grocer_pan,
+    ("P3", 24): bar_chart_paperclips,
     # P5
     ("P5", 5):  shaded_triangle_16x15,
     ("P5", 6):  rectangle_aceh,
