@@ -927,23 +927,16 @@ def p1_count_balls(w=280, h=100):
     d.add(_label(259, 45, "?", size=16, bold=True, color=GRAY))
     return d
 
-def p1_count_dogs(w=280, h=120):
-    """P1 Q2 — Count 8 circles, write in words."""
+def p1_count_dogs(w=300, h=110):
+    """P1 Q2 — Count 8 dots in 2 rows of 4."""
     d = Drawing(w, h)
-    d.add(Rect(10, 30, 258, 85, strokeColor=BLACK, strokeWidth=1, fillColor=WHITE))
-    # Row 1: 5 circles
-    for i in range(5):
-        cx = 35 + i * 48
-        cy = 78
-        d.add(Circle(cx, cy, 18, strokeColor=BLACK, strokeWidth=1.2, fillColor=HexColor("#d0e8f0")))
-    # Row 2: 3 circles
-    for i in range(3):
-        cx = 35 + i * 48
-        cy = 42
-        d.add(Circle(cx, cy, 18, strokeColor=BLACK, strokeWidth=1.2, fillColor=HexColor("#d0e8f0")))
-    # Answer line
-    d.add(Rect(10, 5, 258, 20, strokeColor=BLACK, strokeWidth=0.8, fillColor=LGRAY))
-    d.add(_label(139, 11, "Write the number in words:", size=7, color=GRAY))
+    d.add(Rect(10, 5, 278, 100, strokeColor=BLACK, strokeWidth=1, fillColor=WHITE))
+    for row in range(2):
+        for col in range(4):
+            cx = 45 + col * 60
+            cy = 70 - row * 42
+            d.add(Circle(cx, cy, 18, strokeColor=BLACK, strokeWidth=1.2,
+                         fillColor=HexColor("#d0e8f0")))
     return d
 
 def p1_sets_comparison(w=300, h=120):
@@ -971,24 +964,36 @@ def p1_sets_comparison(w=300, h=120):
 
     return d
 
-def p1_count_compare(w=320, h=110):
-    """P1 Q4 — 8 circles left, 3 circles right; blank answer boxes beside each."""
+def p1_count_compare(w=340, h=120):
+    """P1 Q4 — Two equal diagram boxes (8 and 3 circles), small answer box beside each."""
     d = Drawing(w, h)
-    # Left group — 8 circles (4+4)
-    d.add(Rect(5, 5, 130, 100, strokeColor=BLACK, strokeWidth=1, fillColor=WHITE))
-    for i in range(4):
-        d.add(Circle(22 + i*30, 75, 12, strokeColor=BLACK, strokeWidth=1, fillColor=HexColor("#d0e8f0")))
-    for i in range(4):
-        d.add(Circle(22 + i*30, 40, 12, strokeColor=BLACK, strokeWidth=1, fillColor=HexColor("#d0e8f0")))
-    # Blank answer box beside left group
-    d.add(Rect(142, 30, 38, 42, strokeColor=BLACK, strokeWidth=1, fillColor=WHITE))
+    BOX_W, BOX_H = 130, 110
+    ANS_W, ANS_H = 36, 36
 
-    # Right group — 3 circles
-    d.add(Rect(190, 5, 90, 100, strokeColor=BLACK, strokeWidth=1, fillColor=WHITE))
+    # Left diagram box — 8 circles (2 rows of 4)
+    d.add(Rect(5, 5, BOX_W, BOX_H, strokeColor=BLACK, strokeWidth=1, fillColor=WHITE))
+    for row in range(2):
+        for col in range(4):
+            cx = 5 + 16 + col * 30
+            cy = 75 - row * 38
+            d.add(Circle(cx, cy, 12, strokeColor=BLACK, strokeWidth=1,
+                         fillColor=HexColor("#d0e8f0")))
+    # Small answer box beside left
+    ax = 5 + BOX_W + 8
+    ay = 5 + (BOX_H - ANS_H) // 2
+    d.add(Rect(ax, ay, ANS_W, ANS_H, strokeColor=BLACK, strokeWidth=1, fillColor=WHITE))
+
+    # Right diagram box — 3 circles (same size as left)
+    rx = ax + ANS_W + 14
+    d.add(Rect(rx, 5, BOX_W, BOX_H, strokeColor=BLACK, strokeWidth=1, fillColor=WHITE))
     for i in range(3):
-        d.add(Circle(213 + i*28, 55, 12, strokeColor=BLACK, strokeWidth=1, fillColor=HexColor("#d0e8f0")))
-    # Blank answer box beside right group
-    d.add(Rect(287, 30, 28, 42, strokeColor=BLACK, strokeWidth=1, fillColor=WHITE))
+        cx = rx + 22 + i * 40
+        cy = 5 + BOX_H // 2
+        d.add(Circle(cx, cy, 12, strokeColor=BLACK, strokeWidth=1,
+                     fillColor=HexColor("#d0e8f0")))
+    # Small answer box beside right
+    ax2 = rx + BOX_W + 8
+    d.add(Rect(ax2, ay, ANS_W, ANS_H, strokeColor=BLACK, strokeWidth=1, fillColor=WHITE))
 
     return d
 
@@ -1078,16 +1083,32 @@ def p1_clouds(w=290, h=80):
         d.add(_label(cx, cy - 5, expr, size=11, bold=True))
     return d
 
-def p1_cupcakes(w=260, h=100):
-    """P1 Q12 — 7 trapezium shapes labelled C; 2 full (remaining), 5 plain (eaten)."""
+def p1_cupcakes(w=300, h=115):
+    """P1 Q12 — 7 trapeziums with C centred in box; 2 yellow (remaining), 5 grey (eaten)."""
     d = Drawing(w, h)
-    d.add(Rect(5, 5, 248, 90, strokeColor=BLACK, strokeWidth=1, fillColor=WHITE))
-    for i in range(7):
-        cx = 24 + (i % 4) * 57
-        cy = 65 if i < 4 else 28
-        eaten = i >= 2   # first 2 are remaining, rest are eaten
+    d.add(Rect(5, 5, 288, 105, strokeColor=BLACK, strokeWidth=1, fillColor=WHITE))
+
+    # 7 items: row 1 = 4, row 2 = 3, centred in box
+    tw = 36   # trapezium total width slot
+    gap = 8
+    row1_count, row2_count = 4, 3
+    row1_total = row1_count * tw + (row1_count - 1) * gap
+    row2_total = row2_count * tw + (row2_count - 1) * gap
+    box_cx = 5 + 288 // 2
+
+    items = list(range(7))
+    for idx, i in enumerate(items):
+        eaten = idx >= 2
         fill = HexColor("#ffd580") if not eaten else HexColor("#f0f0f0")
-        # Trapezium: wider at bottom
+        if idx < 4:   # row 1
+            col = idx
+            cx = box_cx - row1_total // 2 + col * (tw + gap) + tw // 2
+            cy = 75
+        else:         # row 2
+            col = idx - 4
+            cx = box_cx - row2_total // 2 + col * (tw + gap) + tw // 2
+            cy = 33
+
         d.add(Polygon([cx-18, cy+14, cx+18, cy+14, cx+12, cy-14, cx-12, cy-14],
                       strokeColor=BLACK, strokeWidth=1, fillColor=fill))
         d.add(_label(cx, cy - 4, "C", size=11, bold=True,
