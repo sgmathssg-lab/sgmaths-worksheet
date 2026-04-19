@@ -687,17 +687,20 @@ def build_pdf(output_path, level="P4", selected_topics=None, include_answers=Fal
     BADGE_W = 3.0*cm
     LINE_H  = round(fsize * 2.2)  # scales with font size
 
-    # Name / Date row
+    # Name / Date row — label only, bottom border acts as the blank line
     name_data = [[
-        Paragraph("Name: ________________________________", S["fl"]),
-        Paragraph("Class: __________", S["fl"]),
-        Paragraph("Date: ______________", S["fl"]),
+        Paragraph("Name:", S["fl"]),
+        Paragraph("Class:", S["fl"]),
+        Paragraph("Date:", S["fl"]),
     ]]
-    name_tbl = Table(name_data, colWidths=[8.5*cm, 4.5*cm, 4.0*cm])
+    name_tbl = Table(name_data, colWidths=[9.0*cm, 4.0*cm, 4.0*cm])
     name_tbl.setStyle(TableStyle([
         ("VALIGN",        (0,0), (-1,-1), "MIDDLE"),
         ("LEFTPADDING",   (0,0), (-1,-1), 0),
         ("RIGHTPADDING",  (0,0), (-1,-1), 0),
+        ("LINEBELOW",     (0,0), (-1,-1), 0.8, colors.black),
+        ("BOTTOMPADDING", (0,0), (-1,-1), 4),
+        ("TOPPADDING",    (0,0), (-1,-1), 2),
     ]))
     story.append(name_tbl)
     story.append(Spacer(1, 0.3*cm))
