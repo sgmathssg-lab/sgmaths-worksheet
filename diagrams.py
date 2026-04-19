@@ -79,108 +79,107 @@ def number_pattern_diamond(w=220, h=170):
     return d
 
 
-def bar_chart_library(w=230, h=145):
-    """P3 Q6 — Bar chart: number of P1 pupils vs library visits (1–5 times)."""
+def bar_chart_library(w=260, h=160):
+    """P3 Q6 — Bar chart: number of P1 pupils vs library visits (1-5 times)."""
     d = Drawing(w, h)
     data = [("1", 65), ("2", 35), ("3", 80), ("4", 40), ("5", 28)]
     max_v = 90
-    ox, oy = 38, 18
-    chart_w, chart_h = 178, 105
-    bar_w = 26
+    ox, oy = 50, 22
+    chart_w, chart_h = 192, 112
+    bar_w = 28
 
     # Axes
-    d.add(Line(ox, oy, ox, oy + chart_h,
-               strokeColor=BLACK, strokeWidth=0.9))
-    d.add(Line(ox, oy, ox + chart_w, oy,
-               strokeColor=BLACK, strokeWidth=0.9))
+    d.add(Line(ox, oy, ox, oy + chart_h, strokeColor=BLACK, strokeWidth=0.9))
+    d.add(Line(ox, oy, ox + chart_w, oy, strokeColor=BLACK, strokeWidth=0.9))
 
-    # Y gridlines and labels
+    # Y gridlines and numeric labels
     for v in range(0, 100, 10):
         y = oy + (v / max_v) * chart_h
-        d.add(Line(ox, y, ox + chart_w, y,
-                   strokeColor=GRAY, strokeWidth=0.3))
+        d.add(Line(ox, y, ox + chart_w, y, strokeColor=GRAY, strokeWidth=0.3))
         d.add(_label(ox - 4, y - 3, str(v), size=6, anchor="end"))
 
     # Bars
     for i, (label, val) in enumerate(data):
-        bx = ox + 12 + i * 34
+        bx = ox + 10 + i * 36
         bh = (val / max_v) * chart_h
         d.add(Rect(bx, oy, bar_w, bh,
                    strokeColor=BLACK, strokeWidth=0.6,
                    fillColor=HexColor("#b0c4d8")))
-        d.add(_label(bx + bar_w // 2, oy - 10, label, size=7))
+        d.add(_label(bx + bar_w // 2, oy - 11, label, size=7))
 
-    # Axis titles
-    d.add(_label(ox + chart_w // 2, 4,
-                 "Number of visits to the library", size=6.5))
-    # Y-axis title (rotated via manual placement)
-    for i, ch in enumerate("Number of pupils"):
-        d.add(_label(7, oy + chart_h - 10 - i * 7, ch, size=5.5))
+    # X-axis title
+    d.add(_label(ox + chart_w // 2, 4, "Number of visits to the library", size=6.5))
+
+    # Y-axis title rotated 90 degrees
+    ylabel = String(0, 0, "Number of pupils", fontSize=6.5,
+                    fillColor=BLACK, textAnchor="middle", fontName="Helvetica")
+    g = Group(ylabel)
+    g.transform = (0, 1, -1, 0, 10, oy + chart_h // 2)
+    d.add(g)
+
+    # Chart title
+    d.add(_label(ox + chart_w // 2, oy + chart_h + 8,
+                 "Number of Times P1 Pupils Went to the Library", size=6.5, bold=True))
 
     return d
 
 
-def bar_chart_hairdryers(w=240, h=150):
-    """P3 Q9 — Grouped bar chart: Brand A & B hair dryers sold Mon–Fri."""
+def bar_chart_hairdryers(w=260, h=160):
+    """P3 Q9 — Grouped bar chart: Brand A & B hair dryers sold Mon-Fri."""
     d = Drawing(w, h)
-    days     = ["Mon", "Tues", "Wed", "Thurs", "Fri"]
-    brand_a  = [12,    8,      7,     15,       11]
-    brand_b  = [8,     10,     13,    3,        6]
-    max_v    = 18
-    ox, oy   = 38, 22
-    chart_w  = 185
-    chart_h  = 100
-    bar_w    = 14
-    group_w  = 38    # spacing between groups
+    days    = ["Mon", "Tues", "Wed", "Thurs", "Fri"]
+    brand_a = [12, 8, 7, 15, 11]
+    brand_b = [8, 10, 13, 3, 6]
+    max_v   = 18
+    ox, oy  = 50, 28
+    chart_w = 195
+    chart_h = 105
+    bar_w   = 14
+    group_w = 38
 
     # Axes
-    d.add(Line(ox, oy, ox, oy + chart_h,
-               strokeColor=BLACK, strokeWidth=0.9))
-    d.add(Line(ox, oy, ox + chart_w, oy,
-               strokeColor=BLACK, strokeWidth=0.9))
+    d.add(Line(ox, oy, ox, oy + chart_h, strokeColor=BLACK, strokeWidth=0.9))
+    d.add(Line(ox, oy, ox + chart_w, oy, strokeColor=BLACK, strokeWidth=0.9))
 
-    # Y gridlines and labels (every 2)
+    # Y gridlines and numeric labels (every 2)
     for v in range(0, max_v + 1, 2):
         y = oy + (v / max_v) * chart_h
-        d.add(Line(ox, y, ox + chart_w, y,
-                   strokeColor=GRAY, strokeWidth=0.3))
+        d.add(Line(ox, y, ox + chart_w, y, strokeColor=GRAY, strokeWidth=0.3))
         d.add(_label(ox - 4, y - 3, str(v), size=6, anchor="end"))
 
     # Grouped bars
     for i, day in enumerate(days):
         gx = ox + 8 + i * group_w
-
-        # Brand A — solid blue
         bh_a = (brand_a[i] / max_v) * chart_h
         d.add(Rect(gx, oy, bar_w, bh_a,
                    strokeColor=BLACK, strokeWidth=0.5,
                    fillColor=HexColor("#5b7faa")))
-
-        # Brand B — light blue hatched (approximated with lighter fill)
         bh_b = (brand_b[i] / max_v) * chart_h
         d.add(Rect(gx + bar_w + 2, oy, bar_w, bh_b,
                    strokeColor=BLACK, strokeWidth=0.5,
                    fillColor=HexColor("#c8d8e8")))
-
-        # Day label centred under both bars
-        d.add(_label(gx + bar_w + 1, oy - 10, day, size=6.5))
+        d.add(_label(gx + bar_w + 1, oy - 11, day, size=6.5))
 
     # Legend
-    legend_x = ox + 30
-    legend_y = oy + chart_h + 8
-    d.add(Rect(legend_x, legend_y, 10, 8,
-               fillColor=HexColor("#5b7faa"),
+    lx = ox + 20
+    ly = oy + chart_h + 10
+    d.add(Rect(lx, ly, 10, 8, fillColor=HexColor("#5b7faa"),
                strokeColor=BLACK, strokeWidth=0.5))
-    d.add(_label(legend_x + 13, legend_y + 2, "Brand A", size=6.5, anchor="start"))
-
-    d.add(Rect(legend_x + 60, legend_y, 10, 8,
-               fillColor=HexColor("#c8d8e8"),
+    d.add(_label(lx + 13, ly + 2, "Brand A", size=6.5, anchor="start"))
+    d.add(Rect(lx + 65, ly, 10, 8, fillColor=HexColor("#c8d8e8"),
                strokeColor=BLACK, strokeWidth=0.5))
-    d.add(_label(legend_x + 73, legend_y + 2, "Brand B", size=6.5, anchor="start"))
+    d.add(_label(lx + 78, ly + 2, "Brand B", size=6.5, anchor="start"))
 
-    # Y-axis title
-    for i, ch in enumerate("No. of hair dryers sold"):
-        d.add(_label(7, oy + chart_h - 8 - i * 6, ch, size=5))
+    # Y-axis title rotated 90 degrees
+    ylabel = String(0, 0, "No. of hair dryers sold", fontSize=6.5,
+                    fillColor=BLACK, textAnchor="middle", fontName="Helvetica")
+    g = Group(ylabel)
+    g.transform = (0, 1, -1, 0, 10, oy + chart_h // 2)
+    d.add(g)
+
+    # Chart title
+    d.add(_label(ox + chart_w // 2, oy + chart_h + 24,
+                 "Number of Hair Dryers Sold at Sunshine Shop", size=6.5, bold=True))
 
     return d
 
