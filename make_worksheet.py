@@ -779,11 +779,11 @@ def build_pdf(output_path, level="P4", selected_topics=None, include_answers=Fal
 
         if include_answers:
             ak_line  = MixedLine(_parse_segs(str(q["answer"])), fsize=10,
-                                 bold_prefix="Answer:", leading=LINE_H, color=GREEN)
+                                 bold_prefix="Answer:", leading=LINE_H, color=HexColor("#991b1b"))
             ak_outer = Table([[ak_line]], colWidths=[PAGE_W])
             ak_outer.setStyle(TableStyle([
-                ("BACKGROUND",    (0,0), (-1,-1), GBG),
-                ("BOX",           (0,0), (-1,-1), 0.5, HexColor("#86efac")),
+                ("BACKGROUND",    (0,0), (-1,-1), HexColor("#fee2e2")),
+                ("BOX",           (0,0), (-1,-1), 0.5, HexColor("#fca5a5")),
                 ("TOPPADDING",    (0,0), (-1,-1), 4),
                 ("BOTTOMPADDING", (0,0), (-1,-1), 4),
                 ("LEFTPADDING",   (0,0), (-1,-1), 8),
