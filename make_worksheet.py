@@ -139,7 +139,7 @@ P1_QUESTIONS = [
          diagram=("P1", 1),
          type="short", answer="6"),
     dict(id=2,  topic="Numbers to 10", difficulty="Easy", school="Henry Park", marks=1,
-         text="Count and write the number of dogs in words.",
+         text="Count and write the number of dots in words.",
          diagram=("P1", 2),
          type="short", answer="eight"),
     dict(id=3,  topic="Numbers to 10", difficulty="Easy", school="Henry Park", marks=1,
