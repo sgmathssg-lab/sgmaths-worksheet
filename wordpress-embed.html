@@ -3,10 +3,8 @@
 #sgm-gen *{box-sizing:border-box}
 #sgm-gen{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;max-width:640px;margin:0 auto;padding:1.5rem 0}
 #sgm-gen h3{font-size:16px;font-weight:600;color:#1e3a5f;margin:0 0 1rem}
-.sgm-levels{display:flex;gap:8px;margin-bottom:1.2rem}
-.sgm-level{flex:1;padding:10px;border:1px solid #e5e7eb;border-radius:8px;cursor:pointer;font-size:14px;font-weight:500;text-align:center;background:#fff;color:#374151;transition:all .15s;font-family:inherit}
-.sgm-level:hover{border-color:#1e3a5f;color:#1e3a5f}
-.sgm-level.active{background:#1e3a5f;color:#fff;border-color:#1e3a5f}
+.sgm-level-select{width:100%;padding:10px 14px;border:1px solid #e5e7eb;border-radius:8px;font-size:14px;font-weight:500;color:#1e3a5f;background:#fff;cursor:pointer;font-family:inherit;margin-bottom:1.2rem;appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%231e3a5f' d='M6 8L1 3h10z'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 14px center}
+.sgm-level-select:focus{outline:none;border-color:#1e3a5f}
 .sgm-topics{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:1.2rem}
 .sgm-topic{display:flex;align-items:center;gap:8px;padding:10px 14px;border:1px solid #e5e7eb;border-radius:8px;cursor:pointer;font-size:14px;color:#111;background:#fff;transition:all .15s}
 .sgm-topic:hover{border-color:#6b7280;background:#f9fafb}
@@ -41,12 +39,13 @@
 
   <!-- Level selector -->
   <div style="font-size:13px;color:#6b7280;margin-bottom:8px">Select level:</div>
-  <div class="sgm-levels" id="sgm-levels">
-    <button class="sgm-level active" data-level="P2" onclick="sgmSetLevel('P2')">Primary 2</button>
-    <button class="sgm-level" data-level="P3" onclick="sgmSetLevel('P3')">Primary 3</button>
-    <button class="sgm-level" data-level="P4" onclick="sgmSetLevel('P4')">Primary 4</button>
-    <button class="sgm-level" data-level="P5" onclick="sgmSetLevel('P5')">Primary 5</button>
-  </div>
+  <select class="sgm-level-select" id="sgm-level-select" onchange="sgmSetLevel(this.value)">
+    <option value="P1">Primary 1</option>
+    <option value="P2" selected>Primary 2</option>
+    <option value="P3">Primary 3</option>
+    <option value="P4">Primary 4</option>
+    <option value="P5">Primary 5</option>
+  </select>
 
   <div class="sgm-divider" style="margin-top:0"></div>
 
@@ -89,9 +88,6 @@ var currentLevel = "P2";
 
 function sgmSetLevel(level){
   currentLevel = level;
-  document.querySelectorAll('.sgm-level').forEach(function(b){
-    b.classList.toggle('active', b.dataset.level === level);
-  });
   sgmRenderTopics();
 }
 
