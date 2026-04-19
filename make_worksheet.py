@@ -53,7 +53,7 @@ class InlineFrac(Flowable):
         c.drawString(x + (self.frac_w - self.den_w) / 2, bar_y - self.nh - 0.5, self.den)
         c.restoreState()
 
-FRAC_RE = re.compile(r'(\b\d+\s+)?(\d+)\s*/\s*(\d+)')
+FRAC_RE = re.compile(r'(\b\d+\s+)?([\d?□_]+)\s*/\s*(\d+)')
 
 def _parse_segs(line):
     segs, last = [], 0
@@ -232,7 +232,7 @@ P3_QUESTIONS = [
          type="short", answer="60"),
     # Fractions
     dict(id=9,  topic="Fractions", difficulty="Easy",   school="Henry Park", marks=1,
-         text="5/9 = ?/72. What is the missing numerator?",
+         text="5/9 = __/72. What is the missing numerator?",
          type="mcq", opts=["A.  10", "B.  18", "C.  40", "D.  68"], answer="C.  40"),
     dict(id=10, topic="Fractions", difficulty="Medium",  school="Maha Bodhi", marks=2,
          text="Write 14/42 in its simplest form.",
