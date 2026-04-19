@@ -617,29 +617,33 @@ QUESTIONS = {"P1": P1_QUESTIONS, "P2": P2_QUESTIONS, "P3": P3_QUESTIONS, "P4": P
 LEVEL_LABELS = {"P1": "Primary 1", "P2": "Primary 2", "P3": "Primary 3", "P4": "Primary 4", "P5": "Primary 5"}
 DIFF_COLORS  = {"Easy": (GBG, GREEN), "Medium": (ABG, AMBER), "Hard": (RBG, RED)}
 
-def make_styles():
+def make_styles(fsize=10):
+    lh = round(fsize * 1.5)        # leading scales with font
     return {
-        "section":   ParagraphStyle("section",   fontName=BOLD_FONT, fontSize=11,
+        "section":   ParagraphStyle("section",   fontName=BOLD_FONT, fontSize=fsize+2,
                                     textColor=NAVY, spaceBefore=14, spaceAfter=6),
-        "qtext":     ParagraphStyle("qtext",     fontName=BODY_FONT, fontSize=10,
-                                    textColor=colors.black, leading=15, spaceAfter=4),
-        "qbold":     ParagraphStyle("qbold",     fontName=BOLD_FONT, fontSize=10,
-                                    textColor=colors.black, leading=15, spaceAfter=4),
-        "opt":       ParagraphStyle("opt",       fontName=BODY_FONT, fontSize=10,
-                                    textColor=colors.black, leading=14, leftIndent=12),
-        "ans_label": ParagraphStyle("ans_label", fontName=BODY_FONT, fontSize=9,
+        "qtext":     ParagraphStyle("qtext",     fontName=BODY_FONT, fontSize=fsize,
+                                    textColor=colors.black, leading=lh, spaceAfter=4),
+        "qbold":     ParagraphStyle("qbold",     fontName=BOLD_FONT, fontSize=fsize,
+                                    textColor=colors.black, leading=lh, spaceAfter=4),
+        "opt":       ParagraphStyle("opt",       fontName=BODY_FONT, fontSize=fsize,
+                                    textColor=colors.black, leading=lh-1, leftIndent=12),
+        "ans_label": ParagraphStyle("ans_label", fontName=BODY_FONT, fontSize=max(8, fsize-1),
                                     textColor=MGRAY),
-        "ans":       ParagraphStyle("ans",       fontName=BOLD_FONT, fontSize=10,
+        "ans":       ParagraphStyle("ans",       fontName=BOLD_FONT, fontSize=fsize,
                                     textColor=RED),
         "footer":    ParagraphStyle("footer",    fontName=BODY_FONT, fontSize=8,
                                     textColor=MGRAY, alignment=TA_CENTER),
-        "fl":        ParagraphStyle("fl",        fontName=BODY_FONT, fontSize=10,
+        "fl":        ParagraphStyle("fl",        fontName=BODY_FONT, fontSize=fsize,
                                     textColor=colors.black),
     }
 
-def build_pdf(output_path, level="P4", selected_topics=None, include_answers=False):
+def build_pdf(output_path, level="P4", selected_topics=None, include_answers=False, fsize=None):
     import re as _re
-    S   = make_styles()
+    # Default font size by level if not explicitly set
+    if fsize is None:
+        fsize = 13 if level == "P1" else 10
+    S = make_styles(fsize=fsize)
 
     LOGO_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), "sgmaths_logo.png")
     PAGE_W_PT, PAGE_H_PT = A4
@@ -681,7 +685,7 @@ def build_pdf(output_path, level="P4", selected_topics=None, include_answers=Fal
     # ── Page header ────────────────────────────────────────────────────────────
     PAGE_W  = 17.0*cm
     BADGE_W = 3.0*cm
-    LINE_H  = 22   # uniform line height for all text (plain and fraction)
+    LINE_H  = round(fsize * 2.2)  # scales with font size
 
     # Name / Date row
     name_data = [[
@@ -703,7 +707,7 @@ def build_pdf(output_path, level="P4", selected_topics=None, include_answers=Fal
     # ── Helpers ────────────────────────────────────────────────────────────────
     PART_RE = _re.compile(r'^\(([a-z])\)\s*')
 
-    def smart_line(text, bold_prefix=None, fsize=10):
+    def smart_line(text, bold_prefix=None, fsize=fsize):
         segs = _parse_segs(text)
         has_frac = any(s[0] == "frac" for s in segs)
         if has_frac:
@@ -788,7 +792,7 @@ def build_pdf(output_path, level="P4", selected_topics=None, include_answers=Fal
         # Badge
         badge = Paragraph(
             f"{q['difficulty']}  |  {q['marks']} mark{'s' if q['marks']>1 else ''}",
-            ParagraphStyle("b", fontName=BODY_FONT, fontSize=8,
+            ParagraphStyle("b", fontName=BODY_FONT, fontSize=max(8, fsize-2),
                            textColor=diff_fg, alignment=TA_CENTER))
         badge_tbl = Table([[badge]], colWidths=[BADGE_W])
         badge_tbl.setStyle(TableStyle([
@@ -808,11 +812,11 @@ def build_pdf(output_path, level="P4", selected_topics=None, include_answers=Fal
 
         # Question text lines
         all_lines = q["text"].split("\n")
-        first_cell = smart_line(all_lines[0], bold_prefix=f"Q{q_counter}.", fsize=10)
+        first_cell = smart_line(all_lines[0], bold_prefix=f"Q{q_counter}.", fsize=fsize)
         q_block = [first_cell]
         for extra in all_lines[1:]:
             if extra.strip():
-                q_block.append(smart_line(extra, fsize=10))
+                q_block.append(smart_line(extra, fsize=fsize))
             else:
                 q_block.append(Spacer(1, 0.15*cm))
 
@@ -834,7 +838,7 @@ def build_pdf(output_path, level="P4", selected_topics=None, include_answers=Fal
         if q["type"] == "mcq":
             q_block.append(Spacer(1, 0.1*cm))
             for opt in q["opts"]:
-                q_block.append(smart_line(opt, fsize=10))
+                q_block.append(smart_line(opt, fsize=fsize))
             q_block.append(Spacer(1, 0.1*cm))
             q_block.append(badge_row)
             q_block.append(make_ans_boxes([]))
@@ -858,7 +862,7 @@ def build_pdf(output_path, level="P4", selected_topics=None, include_answers=Fal
             q_block.append(make_ans_boxes(parts))
 
         if include_answers:
-            ak_line  = MixedLine(_parse_segs(str(q["answer"])), fsize=10,
+            ak_line  = MixedLine(_parse_segs(str(q["answer"])), fsize=fsize,
                                  bold_prefix="Answer:", leading=LINE_H, color=HexColor("#991b1b"))
             ak_outer = Table([[ak_line]], colWidths=[PAGE_W])
             ak_outer.setStyle(TableStyle([
