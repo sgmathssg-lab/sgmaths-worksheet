@@ -928,77 +928,68 @@ def p1_count_balls(w=280, h=100):
     return d
 
 def p1_count_dogs(w=280, h=120):
-    """P1 Q2 — Count 8 dogs, write in words."""
+    """P1 Q2 — Count 8 circles, write in words."""
     d = Drawing(w, h)
     d.add(Rect(10, 30, 258, 85, strokeColor=BLACK, strokeWidth=1, fillColor=WHITE))
-    # Row 1: 5 dogs
+    # Row 1: 5 circles
     for i in range(5):
         cx = 35 + i * 48
-        cy = 90
-        # Simple dog: body circle + head circle + ears
-        d.add(Circle(cx, cy, 12, strokeColor=BLACK, strokeWidth=1, fillColor=HexColor("#f5deb3")))
-        d.add(Circle(cx, cy + 18, 8, strokeColor=BLACK, strokeWidth=1, fillColor=HexColor("#f5deb3")))
-        d.add(Circle(cx - 6, cy + 24, 4, strokeColor=BLACK, strokeWidth=0.8, fillColor=HexColor("#d2a679")))
-        d.add(Circle(cx + 6, cy + 24, 4, strokeColor=BLACK, strokeWidth=0.8, fillColor=HexColor("#d2a679")))
-    # Row 2: 3 dogs
+        cy = 78
+        d.add(Circle(cx, cy, 18, strokeColor=BLACK, strokeWidth=1.2, fillColor=HexColor("#d0e8f0")))
+    # Row 2: 3 circles
     for i in range(3):
         cx = 35 + i * 48
-        cy = 50
-        d.add(Circle(cx, cy, 12, strokeColor=BLACK, strokeWidth=1, fillColor=HexColor("#f5deb3")))
-        d.add(Circle(cx, cy + 18, 8, strokeColor=BLACK, strokeWidth=1, fillColor=HexColor("#f5deb3")))
+        cy = 42
+        d.add(Circle(cx, cy, 18, strokeColor=BLACK, strokeWidth=1.2, fillColor=HexColor("#d0e8f0")))
     # Answer line
     d.add(Rect(10, 5, 258, 20, strokeColor=BLACK, strokeWidth=0.8, fillColor=LGRAY))
     d.add(_label(139, 11, "Write the number in words:", size=7, color=GRAY))
     return d
 
 def p1_sets_comparison(w=300, h=120):
-    """P1 Q3 — Set A (5 cars) vs Set B (4 trucks)."""
+    """P1 Q3 — Set A (5 triangles) vs Set B (4 triangles)."""
     d = Drawing(w, h)
-    # Set A box
+
+    def tri(bx, by, s=24, col=HexColor("#ffd580")):
+        d.add(Polygon([bx, by+s, bx+s, by+s, bx+s//2, by],
+                      strokeColor=BLACK, strokeWidth=1.2, fillColor=col))
+
+    # Set A box — 5 triangles (3+2)
     d.add(Rect(5, 5, 140, 110, strokeColor=BLACK, strokeWidth=1, fillColor=WHITE))
     d.add(_label(75, 105, "Set A", size=9, bold=True))
-    # 5 simple cars in Set A (2 rows: 3+2)
     for i in range(3):
-        cx, cy = 28 + i*42, 75
-        d.add(Rect(cx-16, cy-8, 32, 16, strokeColor=BLACK, strokeWidth=0.8, fillColor=HexColor("#add8e6"), rx=4))
-        d.add(Circle(cx-9, cy+8, 5, strokeColor=BLACK, strokeWidth=0.8, fillColor=GRAY))
-        d.add(Circle(cx+9, cy+8, 5, strokeColor=BLACK, strokeWidth=0.8, fillColor=GRAY))
+        tri(18 + i*42, 62)
     for i in range(2):
-        cx, cy = 49 + i*42, 42
-        d.add(Rect(cx-16, cy-8, 32, 16, strokeColor=BLACK, strokeWidth=0.8, fillColor=HexColor("#add8e6"), rx=4))
-        d.add(Circle(cx-9, cy+8, 5, strokeColor=BLACK, strokeWidth=0.8, fillColor=GRAY))
-        d.add(Circle(cx+9, cy+8, 5, strokeColor=BLACK, strokeWidth=0.8, fillColor=GRAY))
-    # Set B box
+        tri(39 + i*42, 28)
+
+    # Set B box — 4 triangles (2+2)
     d.add(Rect(155, 5, 140, 110, strokeColor=BLACK, strokeWidth=1, fillColor=WHITE))
     d.add(_label(225, 105, "Set B", size=9, bold=True))
-    # 4 trucks in Set B (2 rows: 2+2)
     for row in range(2):
         for col in range(2):
-            cx = 185 + col*58
-            cy = 42 + row*38
-            d.add(Rect(cx-18, cy-10, 36, 20, strokeColor=BLACK, strokeWidth=0.8, fillColor=HexColor("#90ee90"), rx=2))
-            d.add(Rect(cx-18, cy-18, 18, 8, strokeColor=BLACK, strokeWidth=0.8, fillColor=HexColor("#90ee90")))
-            d.add(Circle(cx-10, cy+10, 5, strokeColor=BLACK, strokeWidth=0.8, fillColor=GRAY))
-            d.add(Circle(cx+10, cy+10, 5, strokeColor=BLACK, strokeWidth=0.8, fillColor=GRAY))
+            tri(168 + col*58, 28 + row*42)
+
     return d
 
-def p1_count_compare(w=310, h=110):
-    """P1 Q4 — 8 cats left box, 3 cats right box; compare."""
+def p1_count_compare(w=320, h=110):
+    """P1 Q4 — 8 circles left, 3 circles right; blank answer boxes beside each."""
     d = Drawing(w, h)
-    # Left box — 8 cats (3+3+2)
-    d.add(Rect(5, 5, 155, 100, strokeColor=BLACK, strokeWidth=1, fillColor=WHITE))
-    positions_l = [(25,80),(65,80),(105,80),(145,80),(25,50),(65,50),(105,50),(25,20)]
-    for i, (cx, cy) in enumerate(positions_l[:8]):
-        d.add(Circle(cx, cy, 12, strokeColor=BLACK, strokeWidth=0.9, fillColor=HexColor("#ffe4b5")))
-        d.add(_label(cx, cy-4, "🐱", size=9))
-    d.add(Rect(165, 5, 40, 100, strokeColor=BLACK, strokeWidth=1, fillColor=WHITE))
-    d.add(_label(185, 52, "8", size=18, bold=True))
-    # Right box — 3 cats
-    d.add(Rect(215, 5, 95, 100, strokeColor=BLACK, strokeWidth=1, fillColor=WHITE))
-    for i, (cx, cy) in enumerate([(240,70),(270,70),(255,35)]):
-        d.add(Circle(cx, cy, 12, strokeColor=BLACK, strokeWidth=0.9, fillColor=HexColor("#ffe4b5")))
-    d.add(Rect(265, 5, 40, 100, strokeColor=BLACK, strokeWidth=1, fillColor=WHITE))
-    d.add(_label(285, 52, "3", size=18, bold=True))
+    # Left group — 8 circles (4+4)
+    d.add(Rect(5, 5, 130, 100, strokeColor=BLACK, strokeWidth=1, fillColor=WHITE))
+    for i in range(4):
+        d.add(Circle(22 + i*30, 75, 12, strokeColor=BLACK, strokeWidth=1, fillColor=HexColor("#d0e8f0")))
+    for i in range(4):
+        d.add(Circle(22 + i*30, 40, 12, strokeColor=BLACK, strokeWidth=1, fillColor=HexColor("#d0e8f0")))
+    # Blank answer box beside left group
+    d.add(Rect(142, 30, 38, 42, strokeColor=BLACK, strokeWidth=1, fillColor=WHITE))
+
+    # Right group — 3 circles
+    d.add(Rect(190, 5, 90, 100, strokeColor=BLACK, strokeWidth=1, fillColor=WHITE))
+    for i in range(3):
+        d.add(Circle(213 + i*28, 55, 12, strokeColor=BLACK, strokeWidth=1, fillColor=HexColor("#d0e8f0")))
+    # Blank answer box beside right group
+    d.add(Rect(287, 30, 28, 42, strokeColor=BLACK, strokeWidth=1, fillColor=WHITE))
+
     return d
 
 def p1_addition_objects(w=280, h=90):
@@ -1059,66 +1050,48 @@ def p1_apples_crossed(w=310, h=70):
     return d
 
 def p1_butterflies(w=280, h=110):
-    """P1 Q10 — Group of 10 butterflies, 4 flying away: ___ - ___ = ___"""
+    """P1 Q10 — 10 ovals total: 6 inside a large oval, 4 outside."""
     d = Drawing(w, h)
-    import math
-    def butterfly(bx, by, small=False):
-        r = 10 if not small else 8
-        d.add(Ellipse(bx-r, by, r, r*0.6, strokeColor=BLACK, strokeWidth=0.8,
-                      fillColor=HexColor("#dda0dd")))
-        d.add(Ellipse(bx+r, by, r, r*0.6, strokeColor=BLACK, strokeWidth=0.8,
-                      fillColor=HexColor("#dda0dd")))
-        d.add(Ellipse(bx-r*0.7, by-r*0.5, r*0.7, r*0.4, strokeColor=BLACK,
-                      strokeWidth=0.8, fillColor=HexColor("#da70d6")))
-        d.add(Ellipse(bx+r*0.7, by-r*0.5, r*0.7, r*0.4, strokeColor=BLACK,
-                      strokeWidth=0.8, fillColor=HexColor("#da70d6")))
-        d.add(Line(bx, by-r*0.6, bx, by+r*0.6, strokeColor=BLACK, strokeWidth=0.8))
+    # Large containing oval (6 inside)
+    d.add(Ellipse(78, 55, 70, 48, strokeColor=BLACK, strokeWidth=1.2, fillColor=None))
+    inside = [(30,70),(55,85),(80,72),(105,80),(50,45),(95,45)]
+    for cx, cy in inside:
+        d.add(Ellipse(cx, cy, 16, 11, strokeColor=BLACK, strokeWidth=1,
+                      fillColor=HexColor("#d0e8f0")))
 
-    # Left oval: 6 butterflies staying
-    d.add(Ellipse(70, 55, 65, 48, strokeColor=BLACK, strokeWidth=1, fillColor=None))
-    positions_in = [(30,70),(55,85),(80,75),(50,55),(75,45),(95,60)]
-    for bx, by in positions_in:
-        butterfly(bx, by)
-
-    # Right area: 4 flying away
-    positions_out = [(170,80),(200,65),(225,85),(195,45)]
-    for bx, by in positions_out:
-        butterfly(bx, by, small=True)
+    # 4 ovals outside
+    outside = [(168,78),(200,62),(228,80),(200,38)]
+    for cx, cy in outside:
+        d.add(Ellipse(cx, cy, 16, 11, strokeColor=BLACK, strokeWidth=1,
+                      fillColor=HexColor("#d0e8f0")))
 
     return d
 
 def p1_clouds(w=290, h=80):
-    """P1 Q11 — Three clouds: 4+5, 2+8, 3+6"""
-    import math
+    """P1 Q11 — Three circles each encircling an expression: 4+5, 2+8, 3+6"""
     d = Drawing(w, h)
     expressions = ["4 + 5", "2 + 8", "3 + 6"]
     for i, expr in enumerate(expressions):
         cx = 48 + i * 97
-        cy = 42
-        # Cloud shape: overlapping circles
-        for dx, dy, r in [(-12, 5, 16), (0, -2, 18), (14, 5, 14), (-20, 10, 12), (22, 10, 12)]:
-            d.add(Circle(cx+dx, cy+dy, r, strokeColor=BLACK, strokeWidth=0.8,
-                         fillColor=WHITE))
-        d.add(_label(cx, cy - 4, expr, size=10, bold=True))
+        cy = 40
+        d.add(Circle(cx, cy, 28, strokeColor=BLACK, strokeWidth=1.2, fillColor=WHITE))
+        d.add(_label(cx, cy - 5, expr, size=11, bold=True))
     return d
 
 def p1_cupcakes(w=260, h=100):
-    """P1 Q12 — 7 cupcakes, 5 without icing (eaten), 2 with icing remaining."""
+    """P1 Q12 — 7 trapezium shapes labelled C; 2 full (remaining), 5 plain (eaten)."""
     d = Drawing(w, h)
     d.add(Rect(5, 5, 248, 90, strokeColor=BLACK, strokeWidth=1, fillColor=WHITE))
     for i in range(7):
         cx = 24 + (i % 4) * 57
         cy = 65 if i < 4 else 28
-        has_icing = i < 2  # first 2 have icing (not eaten)
-        # Cup base
-        d.add(Polygon([cx-14, cy-12, cx+14, cy-12, cx+10, cy+12, cx-10, cy+12],
-                      strokeColor=BLACK, strokeWidth=0.8, fillColor=HexColor("#deb887")))
-        if has_icing:
-            # Icing swirl
-            d.add(Ellipse(cx, cy-16, 14, 10, strokeColor=BLACK, strokeWidth=0.8,
-                          fillColor=HexColor("#fffacd")))
-            d.add(Circle(cx, cy-24, 6, strokeColor=BLACK, strokeWidth=0.8,
-                         fillColor=HexColor("#fffacd")))
+        eaten = i >= 2   # first 2 are remaining, rest are eaten
+        fill = HexColor("#ffd580") if not eaten else HexColor("#f0f0f0")
+        # Trapezium: wider at bottom
+        d.add(Polygon([cx-18, cy+14, cx+18, cy+14, cx+12, cy-14, cx-12, cy-14],
+                      strokeColor=BLACK, strokeWidth=1, fillColor=fill))
+        d.add(_label(cx, cy - 4, "C", size=11, bold=True,
+                     color=GRAY if eaten else BLACK))
     return d
 
 def p1_flower_pattern(w=310, h=80):
