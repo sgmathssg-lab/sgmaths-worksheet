@@ -24,6 +24,168 @@ def _label(x, y, text, size=8, bold=False, anchor="middle", color=BLACK):
     return s
 
 # ─────────────────────────────────────────────────────────────────────────────
+# P3 DIAGRAMS
+# ─────────────────────────────────────────────────────────────────────────────
+
+def number_pattern_diamond(w=220, h=170):
+    """P3 Q5 — Diamond number pattern with 72 centre, 18/9/12/? around it."""
+    import math
+    d = Drawing(w, h)
+    cx, cy = 110, 85
+
+    # Centre square
+    d.add(Rect(cx - 22, cy - 22, 44, 44,
+               strokeColor=BLACK, strokeWidth=1.2, fillColor=WHITE))
+    d.add(_label(cx, cy - 7, "72", size=15, bold=True))
+
+    # (outer_x, outer_y, value, multiplier_label, arrow direction)
+    nodes = [
+        (cx,       cy + 68, "18", "4",  "top"),
+        (cx - 68,  cy,      "9",  "8",  "left"),
+        (cx + 68,  cy,      "12", "6",  "right"),
+        (cx,       cy - 68, "?",  "3",  "bottom"),
+    ]
+
+    for ox, oy, val, mult, direction in nodes:
+        # Outer circle
+        d.add(Circle(ox, oy, 20,
+                     strokeColor=BLACK, strokeWidth=1.2, fillColor=WHITE))
+        d.add(_label(ox, oy - 6, val, size=12, bold=True))
+
+        # Arrow line between circle edge and centre square edge
+        if direction == "top":
+            lx1, ly1 = cx, cy + 22          # top of centre square
+            lx2, ly2 = cx, oy - 20          # bottom of outer circle
+            mx, my   = cx + 6, cy + 45
+        elif direction == "bottom":
+            lx1, ly1 = cx, cy - 22
+            lx2, ly2 = cx, oy + 20
+            mx, my   = cx + 6, cy - 45
+        elif direction == "left":
+            lx1, ly1 = cx - 22, cy
+            lx2, ly2 = ox + 20, cy
+            mx, my   = cx - 45, cy + 8
+        else:  # right
+            lx1, ly1 = cx + 22, cy
+            lx2, ly2 = ox - 20, cy
+            mx, my   = cx + 45, cy + 8
+
+        d.add(Line(lx1, ly1, lx2, ly2,
+                   strokeColor=BLACK, strokeWidth=0.9))
+
+        # Multiplier label alongside arrow
+        d.add(_label(mx, my, mult, size=8, bold=True))
+
+    return d
+
+
+def bar_chart_library(w=230, h=145):
+    """P3 Q6 — Bar chart: number of P1 pupils vs library visits (1–5 times)."""
+    d = Drawing(w, h)
+    data = [("1", 65), ("2", 35), ("3", 80), ("4", 40), ("5", 28)]
+    max_v = 90
+    ox, oy = 38, 18
+    chart_w, chart_h = 178, 105
+    bar_w = 26
+
+    # Axes
+    d.add(Line(ox, oy, ox, oy + chart_h,
+               strokeColor=BLACK, strokeWidth=0.9))
+    d.add(Line(ox, oy, ox + chart_w, oy,
+               strokeColor=BLACK, strokeWidth=0.9))
+
+    # Y gridlines and labels
+    for v in range(0, 100, 10):
+        y = oy + (v / max_v) * chart_h
+        d.add(Line(ox, y, ox + chart_w, y,
+                   strokeColor=GRAY, strokeWidth=0.3))
+        d.add(_label(ox - 4, y - 3, str(v), size=6, anchor="end"))
+
+    # Bars
+    for i, (label, val) in enumerate(data):
+        bx = ox + 12 + i * 34
+        bh = (val / max_v) * chart_h
+        d.add(Rect(bx, oy, bar_w, bh,
+                   strokeColor=BLACK, strokeWidth=0.6,
+                   fillColor=HexColor("#b0c4d8")))
+        d.add(_label(bx + bar_w // 2, oy - 10, label, size=7))
+
+    # Axis titles
+    d.add(_label(ox + chart_w // 2, 4,
+                 "Number of visits to the library", size=6.5))
+    # Y-axis title (rotated via manual placement)
+    for i, ch in enumerate("Number of pupils"):
+        d.add(_label(7, oy + chart_h - 10 - i * 7, ch, size=5.5))
+
+    return d
+
+
+def bar_chart_hairdryers(w=240, h=150):
+    """P3 Q9 — Grouped bar chart: Brand A & B hair dryers sold Mon–Fri."""
+    d = Drawing(w, h)
+    days     = ["Mon", "Tues", "Wed", "Thurs", "Fri"]
+    brand_a  = [12,    8,      7,     15,       11]
+    brand_b  = [8,     10,     13,    3,        6]
+    max_v    = 18
+    ox, oy   = 38, 22
+    chart_w  = 185
+    chart_h  = 100
+    bar_w    = 14
+    group_w  = 38    # spacing between groups
+
+    # Axes
+    d.add(Line(ox, oy, ox, oy + chart_h,
+               strokeColor=BLACK, strokeWidth=0.9))
+    d.add(Line(ox, oy, ox + chart_w, oy,
+               strokeColor=BLACK, strokeWidth=0.9))
+
+    # Y gridlines and labels (every 2)
+    for v in range(0, max_v + 1, 2):
+        y = oy + (v / max_v) * chart_h
+        d.add(Line(ox, y, ox + chart_w, y,
+                   strokeColor=GRAY, strokeWidth=0.3))
+        d.add(_label(ox - 4, y - 3, str(v), size=6, anchor="end"))
+
+    # Grouped bars
+    for i, day in enumerate(days):
+        gx = ox + 8 + i * group_w
+
+        # Brand A — solid blue
+        bh_a = (brand_a[i] / max_v) * chart_h
+        d.add(Rect(gx, oy, bar_w, bh_a,
+                   strokeColor=BLACK, strokeWidth=0.5,
+                   fillColor=HexColor("#5b7faa")))
+
+        # Brand B — light blue hatched (approximated with lighter fill)
+        bh_b = (brand_b[i] / max_v) * chart_h
+        d.add(Rect(gx + bar_w + 2, oy, bar_w, bh_b,
+                   strokeColor=BLACK, strokeWidth=0.5,
+                   fillColor=HexColor("#c8d8e8")))
+
+        # Day label centred under both bars
+        d.add(_label(gx + bar_w + 1, oy - 10, day, size=6.5))
+
+    # Legend
+    legend_x = ox + 30
+    legend_y = oy + chart_h + 8
+    d.add(Rect(legend_x, legend_y, 10, 8,
+               fillColor=HexColor("#5b7faa"),
+               strokeColor=BLACK, strokeWidth=0.5))
+    d.add(_label(legend_x + 13, legend_y + 2, "Brand A", size=6.5, anchor="start"))
+
+    d.add(Rect(legend_x + 60, legend_y, 10, 8,
+               fillColor=HexColor("#c8d8e8"),
+               strokeColor=BLACK, strokeWidth=0.5))
+    d.add(_label(legend_x + 73, legend_y + 2, "Brand B", size=6.5, anchor="start"))
+
+    # Y-axis title
+    for i, ch in enumerate("No. of hair dryers sold"):
+        d.add(_label(7, oy + chart_h - 8 - i * 6, ch, size=5))
+
+    return d
+
+
+# ─────────────────────────────────────────────────────────────────────────────
 # GEOMETRY DIAGRAMS
 # ─────────────────────────────────────────────────────────────────────────────
 
@@ -91,7 +253,7 @@ def rectangle_aceh(w=170, h=110):
     d.add(_label(85, 100, "21 cm", size=7))
     d.add(_label(163, 28, "6 cm", size=7, anchor="start"))
     d.add(_label(7, 90, "H", size=7, anchor="end"))
-    d.add(_label(7, 10, "A", size=7, anchor="end"))  # actually top-left
+    d.add(_label(7, 10, "A", size=7, anchor="end"))
     d.add(_label(163, 10, "C", size=7, anchor="start"))
     d.add(_label(163, 46, "D", size=7, anchor="start"))
     d.add(_label(163, 100, "E", size=7, anchor="start"))
@@ -152,10 +314,8 @@ def garden_rectangle_lightbulbs(w=200, h=130):
 def parallelogram_angles(w=180, h=110):
     """P6 Q20 — Parallelogram ABCD with angles 112° and 95°."""
     d = Drawing(w, h)
-    # Parallelogram ABCD
     pts = [20, 20, 80, 90, 170, 90, 110, 20]
     d.add(Polygon(pts, strokeColor=BLACK, strokeWidth=1, fillColor=WHITE))
-    # Labels
     d.add(_label(18, 18, "D", size=8, anchor="end"))
     d.add(_label(18, 90, "A", size=8, anchor="end"))
     d.add(_label(172, 92, "B", size=8))
@@ -165,7 +325,6 @@ def parallelogram_angles(w=180, h=110):
     d.add(_label(145, 105, "E", size=7))
     d.add(_label(35, 80, "112°", size=7))
     d.add(_label(138, 80, "95°", size=7))
-    # Lines CFE and DGE
     d.add(Line(80, 90, 155, 25, strokeColor=BLACK, strokeWidth=0.8))
     d.add(Line(20, 20, 155, 25, strokeColor=BLACK, strokeWidth=0.8))
     return d
@@ -173,20 +332,17 @@ def parallelogram_angles(w=180, h=110):
 def rhombus_angles(w=150, h=150):
     """P6 Q21 — Rhombus ABCD with angles 25° and 55°."""
     d = Drawing(w, h)
-    # Rhombus
     pts = [75, 140, 130, 90, 75, 15, 20, 65]
     d.add(Polygon(pts, strokeColor=BLACK, strokeWidth=1, fillColor=WHITE))
     d.add(_label(75, 145, "A", size=8, anchor="middle"))
     d.add(_label(135, 90, "B", size=8))
     d.add(_label(75, 8, "C", size=8, anchor="middle"))
     d.add(_label(12, 65, "D", size=8, anchor="end"))
-    # Intersection point F roughly at centre
     fx, fy = 80, 80
     d.add(_label(fx, fy+4, "F", size=7))
     d.add(_label(fx-20, fy+15, "E", size=7))
     d.add(_label(28, 78, "25°", size=7))
     d.add(_label(118, 100, "55°", size=7))
-    # Diagonal lines
     d.add(Line(75, 140, 75, 15, strokeColor=BLACK, strokeWidth=0.7))
     d.add(Line(20, 65, 130, 90, strokeColor=BLACK, strokeWidth=0.7))
     return d
@@ -194,18 +350,14 @@ def rhombus_angles(w=150, h=150):
 def rectangle_folded_prs23(w=180, h=100):
     """P6 Q19 — Rectangle PQRS folded along diagonal PR, angle PRS=23°."""
     d = Drawing(w, h)
-    # Original rectangle
     d.add(Rect(10, 40, 70, 50, strokeColor=BLACK, strokeWidth=0.8, fillColor=WHITE))
     d.add(_label(8, 92, "P", size=8, anchor="end"))
     d.add(_label(83, 92, "Q", size=8))
     d.add(_label(83, 38, "R", size=8))
     d.add(_label(8, 38, "S", size=8, anchor="end"))
-    # Diagonal PR
     d.add(Line(10, 90, 80, 40, strokeColor=BLACK, strokeWidth=0.8, strokeDashArray=[3,2]))
     d.add(_label(50, 42, "23°", size=7))
-    # Arrow
     d.add(_label(100, 65, "→", size=14))
-    # Folded result
     d.add(Rect(115, 40, 55, 50, strokeColor=BLACK, strokeWidth=0.8, fillColor=WHITE))
     d.add(Polygon([115, 90, 170, 90, 145, 55],
                   strokeColor=BLACK, strokeWidth=0.8,
@@ -215,6 +367,7 @@ def rectangle_folded_prs23(w=180, h=100):
     d.add(_label(172, 38, "Q", size=8))
     d.add(_label(113, 38, "S", size=8, anchor="end"))
     return d
+
 
 # ─────────────────────────────────────────────────────────────────────────────
 # AREA & PERIMETER DIAGRAMS
@@ -245,12 +398,10 @@ def shaded_triangle_rectangle(w=180, h=100):
     """P6 Q26 — Shaded triangle inside rectangle, 5cm+9cm wide, 8cm tall."""
     d = Drawing(w, h)
     d.add(Rect(10, 10, 160, 80, strokeColor=BLACK, strokeWidth=0.8, fillColor=WHITE))
-    # Shaded triangle
     shade = Polygon([10, 10, 60, 90, 170, 90],
                     strokeColor=BLACK, strokeWidth=0.8,
                     fillColor=HexColor("#c0c8d0"))
     d.add(shade)
-    # Dimension lines
     d.add(Line(10, 95, 60, 95, strokeColor=BLACK, strokeWidth=0.5))
     d.add(Line(60, 95, 170, 95, strokeColor=BLACK, strokeWidth=0.5))
     d.add(_label(35, 98, "5 cm", size=7))
@@ -274,8 +425,10 @@ def quarter_circle_square(w=120, h=110):
     d.add(_label(ox + r//2, oy - 8, "6 cm", size=7))
     d.add(_label(ox + r + 3, oy + r//2, "6 cm", size=7, anchor="start"))
     return d
+
 def rectangle_two_semicircles(w=200, h=80):
     """P6 Q30 / Catholic High — Rectangle 24m with semicircles radius 4m on each end."""
+    import math
     d = Drawing(w, h)
     ox, oy = 30, 10
     rw, rh = 130, 55
@@ -284,10 +437,8 @@ def rectangle_two_semicircles(w=200, h=80):
     cx_r = ox + rw
     cy = oy + r
 
-    # Left semicircle
-    p_l = Path(fillColor=WHITE, strokeColor=BLACK, strokeWidth=0.8)
-    import math
     steps = 20
+    p_l = Path(fillColor=WHITE, strokeColor=BLACK, strokeWidth=0.8)
     pts_l = [(cx_l + r*math.cos(math.pi/2 + math.pi*i/steps),
               cy + r*math.sin(math.pi/2 + math.pi*i/steps)) for i in range(steps+1)]
     p_l.moveTo(pts_l[0][0], pts_l[0][1])
@@ -295,7 +446,6 @@ def rectangle_two_semicircles(w=200, h=80):
         p_l.lineTo(px, py)
     d.add(p_l)
 
-    # Right semicircle
     pts_r = [(cx_r + r*math.cos(-math.pi/2 + math.pi*i/steps),
               cy + r*math.sin(-math.pi/2 + math.pi*i/steps)) for i in range(steps+1)]
     p_r = Path(fillColor=WHITE, strokeColor=BLACK, strokeWidth=0.8)
@@ -304,9 +454,7 @@ def rectangle_two_semicircles(w=200, h=80):
         p_r.lineTo(px, py)
     d.add(p_r)
 
-    # Rectangle body
     d.add(Rect(ox, oy, rw, rh, strokeColor=BLACK, strokeWidth=0.8, fillColor=WHITE))
-    # Dimension labels
     d.add(Line(ox, oy + rh + 8, ox + rw, oy + rh + 8, strokeColor=BLACK, strokeWidth=0.5))
     d.add(_label(ox + rw//2, oy + rh + 11, "24 m", size=7))
     d.add(_label(cx_r + 4, cy, "4 m", size=7, anchor="start"))
@@ -335,6 +483,7 @@ def circle_diameter(w=120, h=120, label="d = 70 cm"):
     d.add(_label(cx, cy + 6, label, size=7))
     return d
 
+
 # ─────────────────────────────────────────────────────────────────────────────
 # DATA DIAGRAMS
 # ─────────────────────────────────────────────────────────────────────────────
@@ -348,17 +497,14 @@ def bar_chart_pets(w=200, h=130):
     chart_w, chart_h = 155, 90
     bar_w = 22
 
-    # Axes
     d.add(Line(ox, oy, ox, oy + chart_h, strokeColor=BLACK, strokeWidth=0.8))
     d.add(Line(ox, oy, ox + chart_w, oy, strokeColor=BLACK, strokeWidth=0.8))
 
-    # Y gridlines and labels
     for v in [0, 10, 20, 30, 40]:
         y = oy + (v / max_v) * chart_h
         d.add(Line(ox, y, ox + chart_w, y, strokeColor=GRAY, strokeWidth=0.3))
         d.add(_label(ox - 3, y - 3, str(v), size=6, anchor="end"))
 
-    # Bars
     for i, (label, val) in enumerate(data):
         bx = ox + 10 + i * 30
         bh = (val / max_v) * chart_h
@@ -378,28 +524,25 @@ def pie_chart_lilian(w=160, h=140):
     d.add(Circle(cx, cy, r, strokeColor=BLACK, strokeWidth=0.8, fillColor=WHITE))
 
     segments = [
-        ("Food", 0.50,   HexColor("#c8d8e8")),
-        ("Transport", 0.15, HexColor("#b0c4d8")),
+        ("Food",          0.50, HexColor("#c8d8e8")),
+        ("Transport",     0.15, HexColor("#b0c4d8")),
         ("Entertainment", 0.10, HexColor("#e8e0d0")),
-        ("Books\n$80", 0.25, HexColor("#d0d8c8")),
+        ("Books\n$80",    0.25, HexColor("#d0d8c8")),
     ]
-    start = 90  # degrees
+    start = 90
     for name, pct, col in segments:
-        end = start - pct * 360
-        # Draw filled wedge approximation
         steps = max(4, int(abs(pct) * 36))
         pts = [cx, cy]
         for s in range(steps + 1):
             ang = math.radians(start - pct * 360 * s / steps)
             pts += [cx + r * math.cos(ang), cy + r * math.sin(ang)]
         d.add(Polygon(pts, fillColor=col, strokeColor=BLACK, strokeWidth=0.5))
-        # Label at midpoint angle
         mid_ang = math.radians(start - pct * 180)
         lx = cx + (r * 0.65) * math.cos(mid_ang)
         ly = cy + (r * 0.65) * math.sin(mid_ang)
         short = name.split("\n")[0]
         d.add(_label(lx, ly, short, size=6))
-        start = end
+        start -= pct * 360
 
     d.add(_label(cx, 8, "15% Transport", size=6))
     return d
@@ -407,18 +550,15 @@ def pie_chart_lilian(w=160, h=140):
 def symmetry_grid(w=130, h=130):
     """P6 Q5 — Grid with diagonal line PQ for symmetry question."""
     d = Drawing(w, h)
-    # 6x6 grid
     for i in range(7):
         d.add(Line(10 + i*18, 10, 10 + i*18, 118, strokeColor=GRAY, strokeWidth=0.5))
         d.add(Line(10, 10 + i*18, 118, 10 + i*18, strokeColor=GRAY, strokeWidth=0.5))
-    # Shaded cells (upper-left diagonal region)
     shaded = [(0,5),(1,4),(1,5),(2,3),(2,4),(3,2),(3,3),(4,1),(4,2)]
     for col, row in shaded:
         x = 10 + col * 18
         y = 10 + row * 18
         d.add(Rect(x, y, 18, 18, fillColor=HexColor("#b8b8b8"), strokeColor=BLACK,
                    strokeWidth=0.3))
-    # Diagonal line PQ
     d.add(Line(10, 118, 118, 10, strokeColor=BLACK, strokeWidth=1.2))
     d.add(_label(120, 8, "P", size=8, bold=True))
     d.add(_label(5, 120, "Q", size=8, bold=True, anchor="end"))
@@ -427,15 +567,13 @@ def symmetry_grid(w=130, h=130):
 def six_cubes_cuboid(w=140, h=80):
     """P6 Q37 — 6 unit cubes in 3×2×1 arrangement."""
     d = Drawing(w, h)
-    cw, ch, off = 30, 30, 12  # cube face size and isometric offset
+    cw, ch, off = 30, 30, 12
     for col in range(3):
         for row in range(2):
             ox = 10 + col * cw + row * off//2
             oy = 8 + row * ch//2
-            # front face
             d.add(Rect(ox, oy, cw, ch, strokeColor=BLACK, strokeWidth=0.7,
                        fillColor=WHITE))
-            # top face
             top = Polygon([ox, oy+ch, ox+off, oy+ch+off//2,
                             ox+cw+off, oy+ch+off//2, ox+cw, oy+ch],
                           strokeColor=BLACK, strokeWidth=0.7,
@@ -448,17 +586,14 @@ def six_cubes_cuboid(w=140, h=80):
 def parallelogram_EFGH(w=200, h=130):
     """P6 Q24 / Catholic High — Parallelogram EFGH + trapezium EBHA."""
     d = Drawing(w, h)
-    # Parallelogram EFGH
     pts_efgh = [25, 20, 80, 110, 185, 110, 130, 20]
     d.add(Polygon(pts_efgh, strokeColor=BLACK, strokeWidth=0.8, fillColor=WHITE))
-    # Trapezium EBHA inside
     pts_ebha = [25, 20, 60, 110, 80, 110, 60, 20]
     d.add(Polygon(pts_ebha, strokeColor=BLACK, strokeWidth=0.8,
                   fillColor=HexColor("#e0e8f0")))
-    # Labels
     d.add(_label(25, 115, "E", size=8, bold=True, anchor="middle"))
     d.add(_label(130, 115, "F", size=8, bold=True))
-    d.add(_label(185, 113, "G", size=8, bold=True))  # actually bottom right
+    d.add(_label(185, 113, "G", size=8, bold=True))
     d.add(_label(80, 113, "H", size=8, bold=True))
     d.add(_label(60, 113, "B", size=8, bold=True))
     d.add(_label(25, 18, "A", size=8, bold=True, anchor="end"))
@@ -473,6 +608,10 @@ def parallelogram_EFGH(w=200, h=130):
 # ─────────────────────────────────────────────────────────────────────────────
 
 DIAGRAM_REGISTRY = {
+    # P3
+    ("P3", 5):  number_pattern_diamond,
+    ("P3", 6):  bar_chart_library,
+    ("P3", 9):  bar_chart_hairdryers,
     # P5
     ("P5", 5):  shaded_triangle_16x15,
     ("P5", 6):  rectangle_aceh,
