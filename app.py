@@ -7,6 +7,9 @@ app = Flask(__name__)
 CORS(app)
 
 LEVELS = {
+    "P1": {
+        "topics": ["Numbers to 10", "Addition & Subtraction", "Word Problems"],
+    },
     "P2": {
         "topics": ["Numbers to 1000", "Addition & Subtraction", "Word Problems"],
     },
