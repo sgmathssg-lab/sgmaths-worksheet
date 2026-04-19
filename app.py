@@ -7,6 +7,9 @@ app = Flask(__name__)
 CORS(app)
 
 LEVELS = {
+    "P2": {
+        "topics": ["Numbers to 1000", "Addition & Subtraction", "Word Problems"],
+    },
     "P3": {
         "topics": ["Multiplication & Division", "Fractions", "Angles & Lines",
                    "Data & Graphs", "Word Problems"],
@@ -16,13 +19,9 @@ LEVELS = {
                    "Decimals", "Data & Tables", "Word Problems"],
     },
     "P5": {
-        "topics": ["Triangles & Area", "Volume", "Decimals & Measurement",
-                   "3D Solids & Views", "Fractions", "Word Problems"],
-    },
-    "P6": {
-        "topics": ["Whole Numbers & Decimals", "Fractions, Ratio & Percentage",
-                   "Geometry & Angles", "Area & Perimeter",
-                   "Data & Algebra", "Word Problems"],
+        "topics": ["Triangles & Area", "Volume", "Fractions",
+                   "Ratio", "Decimals & Measurement", "3D Solids & Views",
+                   "Whole Numbers", "Word Problems"],
     },
 }
 
