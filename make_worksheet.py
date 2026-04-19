@@ -216,7 +216,7 @@ P3_QUESTIONS = [
          type="mcq", opts=["A.  5", "B.  6", "C.  7", "D.  8"], answer="D.  8"),
     dict(id=5,  topic="Multiplication & Division", difficulty="Medium",  school="Nan Hua",    marks=2,
          text="Look at the number pattern. What is the missing number?",
-         image="img_p3_q5_pattern.png",
+         diagram=("P3", 5),
          type="mcq", opts=["A.  12", "B.  15", "C.  22", "D.  24"], answer="D.  24"),
     dict(id=55, topic="Multiplication & Division", difficulty="Medium",  school="Nan Hua",    marks=2,
          text="Find the quotient and remainder when 803 is divided by 5.",
@@ -271,11 +271,11 @@ P3_QUESTIONS = [
     # Data & Graphs
     dict(id=21, topic="Data & Graphs", difficulty="Medium",  school="Nan Hua",    marks=2,
          text="The graph shows the number of times P1 pupils went to the library during the June holidays. Study the graph carefully and answer the question below.\nHow many P1 pupils went to the library more than 3 times?",
-         image="q6_graph.png",
+         diagram=("P3", 6),
          type="mcq", opts=["A.  65", "B.  145", "C.  180", "D.  245"], answer="A.  65"),
     dict(id=22, topic="Data & Graphs", difficulty="Medium",  school="Nan Hua",    marks=2,
          text="The graph shows the number of hair dryers sold at Sunshine Shop in 5 days.\nStudy the graph carefully and answer the questions (a) and (b).\n(a) Which day had the most number of hair dryers sold?\n(b) How many more Brand A hair dryers were sold compared to Brand B?",
-         image="img_p3_q9_graph.png",
+         diagram=("P3", 9),
          type="short", answer="(a) Thursday  (b) 13"),
     dict(id=23, topic="Data & Graphs", difficulty="Medium",  school="Henry Park", marks=2,
          text="A bar graph shows fruits sold by Grocer Pan: Apple=40, Peach=15, Durian=35, Orange=50.\n(a) How many apples and durians did Grocer Pan sell in total?\n(b) Grocer Pan sold twice as many watermelons as peaches. How many watermelons were sold?",
@@ -743,12 +743,19 @@ def build_pdf(output_path, level="P4", selected_topics=None, include_answers=Fal
             else:
                 q_block.append(Spacer(1, 0.15*cm))
 
-        # Embed image if question has one (e.g. bar graphs, diagrams)
+        # Embed image or vector diagram if question has one
         if q.get("image"):
             img_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), q["image"])
             q_block.append(Spacer(1, 0.2*cm))
             q_block.append(Image(img_path, width=PAGE_W, height=5.5*cm, kind="proportional"))
             q_block.append(Spacer(1, 0.2*cm))
+        elif q.get("diagram"):
+            from diagrams import get_diagram
+            diag = get_diagram(*q["diagram"])
+            if diag is not None:
+                q_block.append(Spacer(1, 0.2*cm))
+                q_block.append(diag)
+                q_block.append(Spacer(1, 0.2*cm))
 
         # Answer / working area
         if q["type"] == "mcq":
