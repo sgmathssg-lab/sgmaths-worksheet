@@ -557,7 +557,7 @@ def make_styles():
         "ans_label": ParagraphStyle("ans_label", fontName=BODY_FONT, fontSize=9,
                                     textColor=MGRAY),
         "ans":       ParagraphStyle("ans",       fontName=BOLD_FONT, fontSize=10,
-                                    textColor=GREEN),
+                                    textColor=RED),
         "footer":    ParagraphStyle("footer",    fontName=BODY_FONT, fontSize=8,
                                     textColor=MGRAY, alignment=TA_CENTER),
         "fl":        ParagraphStyle("fl",        fontName=BODY_FONT, fontSize=10,
