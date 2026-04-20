@@ -475,7 +475,8 @@ P5_QUESTIONS = [
     dict(id=8, topic="Volume", difficulty="Easy", school="Raffles Girls'", marks=1,
          text="The figure shows some cubes in a glass tank.\nThe tank is 5 cubes long, 3 cubes wide and 3 cubes tall. 25 cubes are already placed.\nHow many more cubes are needed to fill the tank completely?",
          image="img_p5_q2b_tank.png",
-         type="short", answer="20"),    dict(id=9, topic="Volume", difficulty="Medium", school="Raffles Girls'", marks=2,
+         type="short", answer="20"),
+    dict(id=9, topic="Volume", difficulty="Medium", school="Raffles Girls'", marks=2,
          text="The figure shows a solid made up of 1-cm cubes.\nHow many more cubes must be added to make a solid of 30 cm³?",
          image="img_p5_q6_solid.png",
          type="short", answer="18"),
@@ -612,9 +613,142 @@ P5_QUESTIONS = [
          type="short", answer="(a) 68  (b) $516"),
 ]
 
-QUESTIONS = {"P1": P1_QUESTIONS, "P2": P2_QUESTIONS, "P3": P3_QUESTIONS, "P4": P4_QUESTIONS, "P5": P5_QUESTIONS}
+# ── P6 Questions (Ai Tong 2025 Prelim) ───────────────────────────────────────
+P6_QUESTIONS = [
+    # ── Paper 1 Booklet A — MCQ (1 mark each) ─────────────────────────────────
+    dict(id=1,  topic="Whole Numbers",  difficulty="Easy",   school="Ai Tong", marks=1,
+         text="Which of the following is forty-five thousand and thirty in numerals?",
+         type="mcq",
+         opts=["(1)  4530", "(2)  45 030", "(3)  45 300", "(4)  450 030"],
+         answer="(2)  45 030"),
+    dict(id=2,  topic="Whole Numbers",  difficulty="Easy",   school="Ai Tong", marks=1,
+         text="Round 7549 to the nearest hundred.",
+         type="mcq",
+         opts=["(1)  7000", "(2)  7500", "(3)  7600", "(4)  8000"],
+         answer="(2)  7500"),
+    dict(id=3,  topic="Percentage",     difficulty="Easy",   school="Ai Tong", marks=1,
+         text="Express 2.4 as a percentage.",
+         type="mcq",
+         opts=["(1)  0.024%", "(2)  0.24%", "(3)  24%", "(4)  240%"],
+         answer="(4)  240%"),
+    dict(id=4,  topic="Decimals",       difficulty="Easy",   school="Ai Tong", marks=1,
+         text="What is the missing number in the box?\n7.216 = 7 + 0.2 + [?]",
+         type="mcq",
+         opts=["(1)  0.016", "(2)  0.16", "(3)  1.6", "(4)  16"],
+         answer="(1)  0.016"),
+    dict(id=5,  topic="Fractions",      difficulty="Easy",   school="Ai Tong", marks=1,
+         text="Which fraction is smaller than 1/2?",
+         type="mcq",
+         opts=["(1)  5/7", "(2)  4/9", "(3)  3/6", "(4)  2/3"],
+         answer="(2)  4/9"),
+    dict(id=6,  topic="Measurement",    difficulty="Easy",   school="Ai Tong", marks=1,
+         text="Which of the following could be the mass of a mobile phone?",
+         type="mcq",
+         opts=["(1)  0.05 kg", "(2)  1.5 kg", "(3)  15 g", "(4)  150 g"],
+         answer="(4)  150 g"),
+    dict(id=7,  topic="Fractions",      difficulty="Easy",   school="Ai Tong", marks=1,
+         text="Arrange the following fractions from the smallest to the greatest:\n6/11,  7/10,  3/5",
+         type="mcq",
+         opts=["(1)  6/11, 3/5, 7/10", "(2)  6/11, 7/10, 3/5",
+               "(3)  3/5, 6/11, 7/10", "(4)  3/5, 7/10, 6/11"],
+         answer="(1)  6/11, 3/5, 7/10"),
+    dict(id=8,  topic="Algebra",        difficulty="Easy",   school="Ai Tong", marks=1,
+         text="Find the value of 4y/2 + 10 − 4 when y = 4.",
+         type="mcq",
+         opts=["(1)  11", "(2)  14", "(3)  22", "(4)  28"],
+         answer="(2)  14"),
+    # ── Paper 1 Booklet A — MCQ (2 marks each) ────────────────────────────────
+    dict(id=9,  topic="Percentage",     difficulty="Medium", school="Ai Tong", marks=2,
+         text="Hassan spent 35% of his monthly allowance on food and 2/5 of the remaining allowance on transport.\nWhat percentage of his allowance was left?",
+         type="mcq",
+         opts=["(1)  65%", "(2)  61%", "(3)  39%", "(4)  25%"],
+         answer="(3)  39%"),
+    dict(id=10, topic="Ratio",          difficulty="Hard",   school="Ai Tong", marks=2,
+         text="4 years ago, the ratio of Calvin's age to Lina's age is 2 : 7.\nIn 8 years' time, Calvin's age will be 2/5 of Lina's age.\nHow old is Calvin now?",
+         type="mcq",
+         opts=["(1)  10 years old", "(2)  18 years old",
+               "(3)  22 years old",  "(4)  30 years old"],
+         answer="(3)  22 years old"),
+    # ── Paper 1 Booklet B — Short Answer (1 mark each) ────────────────────────
+    dict(id=11, topic="Order of Operations", difficulty="Easy", school="Ai Tong", marks=1,
+         text="What is the value of 30 − (8 + 16) ÷ 3 × 2?",
+         type="short", answer="14"),
+    dict(id=12, topic="Average",        difficulty="Easy",   school="Ai Tong", marks=1,
+         text="Find the average of 15, 17, 0 and 4.",
+         type="short", answer="9"),
+    dict(id=13, topic="Ratio",          difficulty="Easy",   school="Ai Tong", marks=1,
+         text="A ribbon was cut into two pieces in the ratio 3 : 5.\nThe length of the longer piece was 35 cm.\nWhat was the length of the ribbon at first?",
+         type="short", answer="56 cm"),
+    # ── Paper 1 Booklet B — Short Answer (2 marks each) ───────────────────────
+    dict(id=14, topic="Volume",         difficulty="Easy",   school="Ai Tong", marks=2,
+         text="A solid cuboid of height 21 cm has a square base of side 9 cm.\nWhat is its volume?",
+         type="short", answer="1701 cm³"),
+    dict(id=15, topic="Algebra",        difficulty="Medium", school="Ai Tong", marks=2,
+         text="Jen wants to spend the least amount of money to buy 25 muffins.\nEach muffin is sold at $n.\nSpecial offer: Buy 2 muffins and get 1 free.\nHow much will she pay for the muffins? Express your answer in terms of n.",
+         type="short", answer="$17n"),
+    dict(id=16, topic="Measurement",    difficulty="Easy",   school="Ai Tong", marks=2,
+         text="Three beakers are filled with some water.\nThe first beaker contains 1000 ml, the second 750 ml, and the third 200 ml.\nWhat is the total volume of water in the three beakers? Give your answer in litres.",
+         type="short", answer="1.95 l"),
+    dict(id=17, topic="Fractions",      difficulty="Hard",   school="Ai Tong", marks=2,
+         text="A shop had some bags for sale.\nAfter selling 28 bags in the morning and 5/8 of the remaining bags in the afternoon, 1/4 of the bags were left unsold.\nHow many bags were sold altogether?",
+         type="short", answer="63"),
+    # ── Paper 2 — Short Answer (2 marks each) ─────────────────────────────────
+    dict(id=18, topic="Money",          difficulty="Medium", school="Ai Tong", marks=2,
+         text="The table shows water charges:\n- First 40 m³: $1.40 per m³\n- Each additional m³: unknown rate\n\nMr Chan paid $89 for using 60 m³ of water.\nHow much did he pay per cubic metre for water consumption more than 40 m³?",
+         type="short", answer="$1.65"),
+    dict(id=19, topic="Measurement",    difficulty="Easy",   school="Ai Tong", marks=2,
+         text="Deena had 2.07 kg of flour at first. She used 459 g of it.\nHow many kilograms of flour was left?",
+         type="short", answer="1.611 kg"),
+    dict(id=20, topic="Percentage",     difficulty="Medium", school="Ai Tong", marks=2,
+         text="The line graph shows the growth of a plant over 4 weeks.\nAt Week 1 the height was 14 cm and at Week 3 the height was 56 cm.\nWhat was the percentage increase in the height of the plant from Week 1 to Week 3?",
+         type="short", answer="300%"),
+    dict(id=21, topic="Perimeter & Area", difficulty="Medium", school="Ai Tong", marks=2,
+         text="A figure is formed using 2 squares and 2 equilateral triangles.\nThe perimeter of the figure is 120 cm. PQ is a straight line.\nWhat is the length of PQ?",
+         type="short", answer="24 cm"),
+    # ── Paper 2 — Long Answer ─────────────────────────────────────────────────
+    dict(id=22, topic="Ratio",          difficulty="Hard",   school="Ai Tong", marks=3,
+         text="Kai read part of a book in the morning.\nThe ratio of the number of pages he read to the number of pages that were unread was 6 : 5.\nAfter reading another 195 pages in the afternoon, Kai still had 10% of the book unread.\nHow many pages were there in the book?",
+         type="short", answer="550"),
+    dict(id=23, topic="Speed",          difficulty="Hard",   school="Ai Tong", marks=3,
+         text="Town X and Town Y were 455 km apart.\nSam left Town X for Town Y, travelling at a constant speed of 85 km/h.\nAt the same time, Dan left Town Y for Town X, travelling along the same route at a constant speed of 90 km/h.\nHow long had they travelled when they met each other? Express your answer in h and min.",
+         type="short", answer="2 h 36 min"),
+    dict(id=24, topic="Fractions",      difficulty="Hard",   school="Ai Tong", marks=2,
+         text="A fruit seller had some mangoes.\nHe sold 2/5 of them and donated 104 of them.\nHe was left with 1/3 of the mangoes and packed them into 24 bags.\nSome bags contained 4 mangoes each while the rest contained 6 mangoes each.\n(a) How many mangoes were packed?",
+         type="short", answer="130"),
+    dict(id=25, topic="Fractions",      difficulty="Hard",   school="Ai Tong", marks=2,
+         text="A fruit seller had some mangoes.\nHe sold 2/5 of them and donated 104 of them.\nHe was left with 1/3 of the mangoes and packed them into 24 bags.\nSome bags contained 4 mangoes each while the rest contained 6 mangoes each.\n(b) How many bags contained 6 mangoes each?",
+         type="short", answer="17"),
+    dict(id=26, topic="Volume",         difficulty="Hard",   school="Ai Tong", marks=2,
+         text="Tank A measures 48 cm × 20 cm × 36 cm.\nTank B measures 60 cm × 10 cm × 45 cm.\nAt first, Tank A was 1/3-filled with water and Tank B was empty.\n(a) What was the volume of water in Tank A at first?",
+         type="short", answer="11 520 cm³"),
+    dict(id=27, topic="Number Patterns", difficulty="Medium", school="Ai Tong", marks=1,
+         text="Selvi used rods to form figures following a pattern.\nFigure 1: 7 rods, Figure 2: 10 rods, Figure 3: 12 rods, Figure 4: 15 rods.\n(a) What is the difference between the number of rods used for Figure 7 and Figure 9?",
+         type="short", answer="5"),
+    dict(id=28, topic="Number Patterns", difficulty="Medium", school="Ai Tong", marks=2,
+         text="Selvi used rods to form figures following a pattern.\nFigure 1: 7 rods, Figure 2: 10 rods, Figure 3: 12 rods, Figure 4: 15 rods.\n(b) How many rods would she use for Figure 99?",
+         type="short", answer="252"),
+    dict(id=29, topic="Word Problems",  difficulty="Hard",   school="Ai Tong", marks=4,
+         text="There were 16 more students in Team A than in Team B in a competition.\n1/4 of the students in Team A and 3/7 of the students in Team B were girls.\nThe number of boys was twice the number of girls in the competition.\nHow many boys were there altogether?",
+         type="short", answer="160"),
+]
 
-LEVEL_LABELS = {"P1": "Primary 1", "P2": "Primary 2", "P3": "Primary 3", "P4": "Primary 4", "P5": "Primary 5"}
+QUESTIONS = {
+    "P1": P1_QUESTIONS,
+    "P2": P2_QUESTIONS,
+    "P3": P3_QUESTIONS,
+    "P4": P4_QUESTIONS,
+    "P5": P5_QUESTIONS,
+    "P6": P6_QUESTIONS,   # ← NEW
+}
+
+LEVEL_LABELS = {
+    "P1": "Primary 1",
+    "P2": "Primary 2",
+    "P3": "Primary 3",
+    "P4": "Primary 4",
+    "P5": "Primary 5",
+    "P6": "Primary 6",    # ← NEW
+}
 DIFF_COLORS  = {"Easy": (GBG, GREEN), "Medium": (ABG, AMBER), "Hard": (RBG, RED)}
 
 def make_styles(fsize=10):
@@ -912,3 +1046,5 @@ if __name__ == "__main__":
     build_pdf("sgmaths_p4_worksheet_answers.pdf", level="P4", include_answers=True)
     build_pdf("sgmaths_p5_worksheet.pdf",         level="P5", include_answers=False)
     build_pdf("sgmaths_p5_worksheet_answers.pdf", level="P5", include_answers=True)
+    build_pdf("sgmaths_p6_worksheet.pdf",         level="P6", include_answers=False)
+    build_pdf("sgmaths_p6_worksheet_answers.pdf", level="P6", include_answers=True)
