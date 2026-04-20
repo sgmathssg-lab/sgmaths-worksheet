@@ -1,66 +1,69 @@
-# ============================================================
-# CHANGES NEEDED IN app.py
-# ============================================================
-# Find wherever you define your LEVELS list/dict and add "P6".
-# Example — if you have something like:
-#
-#   LEVELS = ["P4", "P5"]
-#
-# Change it to:
-#
-#   LEVELS = ["P4", "P5", "P6"]
-#
-# ============================================================
-# Then, wherever you build your question pool (e.g. in a
-# route like /generate or /worksheet), add a branch for P6:
-#
-#   from make_worksheet import P6_QUESTIONS   # (adjust import to match your file)
-#
-#   QUESTION_BANK = {
-#       "P4": P4_QUESTIONS,
-#       "P5": P5_QUESTIONS,
-#       "P6": P6_QUESTIONS,   # <-- ADD THIS
-#   }
-#
-# ============================================================
-# If you have per-level topic dropdowns, also add:
-#
-#   TOPIC_MAP = {
-#       "P4": P4_TOPICS,
-#       "P5": P5_TOPICS,
-#       "P6": P6_TOPICS,    # <-- ADD THIS
-#   }
-#
-# ============================================================
-# Minimal Flask route pattern (adapt to your existing style):
-# ============================================================
-
-from flask import Flask, request, send_file, jsonify
-# from make_worksheet import QUESTION_BANK, TOPIC_MAP  # your existing import
+from flask import Flask, request, send_file
+from flask_cors import CORS
+import tempfile, os
+from make_worksheet import build_pdf, QUESTIONS
 
 app = Flask(__name__)
+CORS(app)
 
-@app.route("/topics")
-def get_topics():
-    level = request.args.get("level", "P6")
-    topics = TOPIC_MAP.get(level, [])
-    return jsonify(topics)
+LEVELS = {
+    "P1": {
+        "topics": ["Numbers to 10", "Addition & Subtraction", "Word Problems"],
+    },
+    "P2": {
+        "topics": ["Numbers to 1000", "Addition & Subtraction", "Word Problems"],
+    },
+    "P3": {
+        "topics": ["Multiplication & Division", "Fractions", "Angles & Lines",
+                   "Data & Graphs", "Word Problems"],
+    },
+    "P4": {
+        "topics": ["Fractions", "Angles & Geometry", "Whole Numbers",
+                   "Decimals", "Data & Tables", "Word Problems"],
+    },
+    "P5": {
+        "topics": ["Triangles & Area", "Volume", "Fractions",
+                   "Ratio", "Decimals & Measurement", "3D Solids & Views",
+                   "Whole Numbers", "Word Problems"],
+    },
+    "P6": {
+        "topics": ["Whole Numbers", "Fractions", "Decimals", "Percentage",
+                   "Ratio", "Algebra", "Average", "Speed", "Measurement",
+                   "Volume", "Perimeter & Area", "Number Patterns",
+                   "Money", "Order of Operations", "Word Problems"],
+    },
+}
+
+@app.route("/")
+def index():
+    return "SGMaths Worksheet Generator is running."
 
 @app.route("/generate", methods=["POST"])
 def generate():
-    data = request.json
-    level = data.get("level")          # e.g. "P6"
-    topic = data.get("topic")          # e.g. "Fractions"
-    qtype = data.get("type")           # e.g. "MCQ", "SHORT_ANSWER", "LONG_ANSWER"
-    num_q = int(data.get("num_q", 10))
+    data            = request.get_json(force=True)
+    level           = data.get("level", "P4")
+    include_answers = data.get("include_answers", False)
 
-    bank = QUESTION_BANK.get(level, {}).get(qtype, [])
-    if topic and topic != "All":
-        bank = [q for q in bank if q["topic"] == topic]
+    if level not in LEVELS:
+        level = "P4"
 
-    import random
-    selected = random.sample(bank, min(num_q, len(bank)))
+    all_topics = LEVELS[level]["topics"]
+    topics     = data.get("topics", all_topics)
+    topics     = [t for t in topics if t in all_topics] or all_topics
 
-    # Pass `selected` to your existing PDF generation function
-    pdf_path = build_pdf(level, selected)   # your existing function
-    return send_file(pdf_path, as_attachment=True)
+    # Use a named temp file that we delete AFTER Flask sends it
+    tmp_fd, tmp_path = tempfile.mkstemp(suffix=".pdf")
+    os.close(tmp_fd)
+
+    build_pdf(tmp_path, level=level,
+              selected_topics=topics,
+              include_answers=include_answers)
+
+    fname = f"sgmaths_{level}_worksheet{'_answers' if include_answers else ''}.pdf"
+    return send_file(tmp_path, as_attachment=True,
+                     download_name=fname,
+                     mimetype="application/pdf")
+
+if __name__ == "__main__":
+    port = int(os.environ.get("PORT", 5000))
+    app.run(host="0.0.0.0", port=port)
