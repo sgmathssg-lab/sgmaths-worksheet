@@ -53,7 +53,7 @@ class InlineFrac(Flowable):
         c.drawString(x + (self.frac_w - self.den_w) / 2, bar_y - self.nh - 0.5, self.den)
         c.restoreState()
 
-FRAC_RE = re.compile(r'(\b\d+\s+)?([\d?□_]+)\s*/\s*(\d+)')
+FRAC_RE = re.compile(r'(\b\d+\s+)?([\d?□_]+[a-zA-Z]?[\d]*)\s*/\s*(\d+)')
 
 def _parse_segs(line):
     segs, last = [], 0
@@ -632,7 +632,7 @@ P6_QUESTIONS = [
          opts=["(1)  0.024%", "(2)  0.24%", "(3)  24%", "(4)  240%"],
          answer="(4)  240%"),
     dict(id=4,  topic="Decimals",       difficulty="Easy",   school="Ai Tong", marks=1,
-         text="What is the missing number in the box?\n7.216 = 7 + 0.2 + [?]",
+         text="What is the missing number in the box?\n7.216 = 7 + 0.2 + ___",
          type="mcq",
          opts=["(1)  0.016", "(2)  0.16", "(3)  1.6", "(4)  16"],
          answer="(1)  0.016"),
@@ -652,82 +652,161 @@ P6_QUESTIONS = [
          opts=["(1)  6/11, 3/5, 7/10", "(2)  6/11, 7/10, 3/5",
                "(3)  3/5, 6/11, 7/10", "(4)  3/5, 7/10, 6/11"],
          answer="(1)  6/11, 3/5, 7/10"),
-    dict(id=8,  topic="Algebra",        difficulty="Easy",   school="Ai Tong", marks=1,
+    dict(id=8,  topic="Geometry",       difficulty="Medium", school="Ai Tong", marks=2,
+         text="The figure shows a cube.\nWhich one of the following is a net of a cube?",
+         image="p6_q8_cube_nets.jpg",
+         type="mcq",
+         opts=["(1)", "(2)", "(3)", "(4)"],
+         answer="(4)"),
+    dict(id=9,  topic="Data Analysis",  difficulty="Medium", school="Ai Tong", marks=2,
+         text="The table below shows the number of students in four groups A, B, C and D.\nGroup A: 15, Group B: 30, Group C: 25, Group D: 30.\nWhich of the following pie charts best represents the information?",
+         image="p6_q9_pie_charts.jpg",
+         type="mcq",
+         opts=["(1)", "(2)", "(3)", "(4)"],
+         answer="(3)"),
+    dict(id=10, topic="Algebra",        difficulty="Easy",   school="Ai Tong", marks=1,
          text="Find the value of 4y/2 + 10 − 4 when y = 4.",
          type="mcq",
          opts=["(1)  11", "(2)  14", "(3)  22", "(4)  28"],
          answer="(2)  14"),
     # ── Paper 1 Booklet A — MCQ (2 marks each) ────────────────────────────────
-    dict(id=9,  topic="Percentage",     difficulty="Medium", school="Ai Tong", marks=2,
+    dict(id=11, topic="Geometry",       difficulty="Medium", school="Ai Tong", marks=2,
+         text="Amelia used identical unit cubes to build a solid. She drew the top and side views of the solid as shown. Which of the following could be the solid built by Amelia?",
+         image="p6_q11_3d_solids.jpg", img_height=14.0,
+         type="mcq",
+         opts=["(1)", "(2)", "(3)", "(4)"],
+         answer="(3)"),
+    dict(id=12, topic="Percentage",     difficulty="Medium", school="Ai Tong", marks=2,
          text="Hassan spent 35% of his monthly allowance on food and 2/5 of the remaining allowance on transport.\nWhat percentage of his allowance was left?",
          type="mcq",
          opts=["(1)  65%", "(2)  61%", "(3)  39%", "(4)  25%"],
          answer="(3)  39%"),
-    dict(id=10, topic="Ratio",          difficulty="Hard",   school="Ai Tong", marks=2,
+    dict(id=13, topic="Perimeter & Area", difficulty="Medium", school="Ai Tong", marks=2,
+         text="The figure is made up of two identical semicircles with radius of 21 m.\nFind the perimeter of the figure in terms of π.",
+         image="p6_q13_semicircles.jpg",
+         type="mcq",
+         opts=["(1)  21π m", "(2)  (21π + 21) m", "(3)  42π m", "(4)  (42π + 42) m"],
+         answer="(4)  (42π + 42) m"),
+    dict(id=14, topic="Ratio",          difficulty="Hard",   school="Ai Tong", marks=2,
+         text="Jack drew three triangles to form a figure. The areas of the triangles were in the ratio of 1 : 8 : 12. He then shaded some parts of the figure as shown.\nWhat is the ratio of the total area of the shaded parts to the area of the figure?",
+         image="p6_q14_triangles.jpg",
+         type="mcq",
+         opts=["(1)  5 : 12", "(2)  5 : 21", "(3)  7 : 12", "(4)  2 : 3"],
+         answer="(1)  5 : 12"),
+    dict(id=15, topic="Ratio",          difficulty="Hard",   school="Ai Tong", marks=2,
          text="4 years ago, the ratio of Calvin's age to Lina's age is 2 : 7.\nIn 8 years' time, Calvin's age will be 2/5 of Lina's age.\nHow old is Calvin now?",
          type="mcq",
          opts=["(1)  10 years old", "(2)  18 years old",
                "(3)  22 years old",  "(4)  30 years old"],
          answer="(3)  22 years old"),
     # ── Paper 1 Booklet B — Short Answer (1 mark each) ────────────────────────
-    dict(id=11, topic="Order of Operations", difficulty="Easy", school="Ai Tong", marks=1,
+    dict(id=16, topic="Order of Operations", difficulty="Easy", school="Ai Tong", marks=1,
          text="What is the value of 30 − (8 + 16) ÷ 3 × 2?",
          type="short", answer="14"),
-    dict(id=12, topic="Average",        difficulty="Easy",   school="Ai Tong", marks=1,
+    dict(id=17, topic="Geometry",       difficulty="Medium", school="Ai Tong", marks=1,
+         text="In the figure, EOH, FOJ and GOK are straight lines.\n∠EOF = 31° and ∠KOH = 96°. Find ∠GOF.",
+         image="p6_q17_angles.jpg", img_height=8.0,
+         type="short", answer="65°"),
+    dict(id=18, topic="Average",        difficulty="Easy",   school="Ai Tong", marks=1,
          text="Find the average of 15, 17, 0 and 4.",
          type="short", answer="9"),
-    dict(id=13, topic="Ratio",          difficulty="Easy",   school="Ai Tong", marks=1,
+    dict(id=19, topic="Ratio",          difficulty="Easy",   school="Ai Tong", marks=1,
          text="A ribbon was cut into two pieces in the ratio 3 : 5.\nThe length of the longer piece was 35 cm.\nWhat was the length of the ribbon at first?",
          type="short", answer="56 cm"),
     # ── Paper 1 Booklet B — Short Answer (2 marks each) ───────────────────────
-    dict(id=14, topic="Volume",         difficulty="Easy",   school="Ai Tong", marks=2,
+    dict(id=20, topic="Volume",         difficulty="Easy",   school="Ai Tong", marks=2,
          text="A solid cuboid of height 21 cm has a square base of side 9 cm.\nWhat is its volume?",
+         image="p6_q22_cuboid.jpg",
          type="short", answer="1701 cm³"),
-    dict(id=15, topic="Algebra",        difficulty="Medium", school="Ai Tong", marks=2,
-         text="Jen wants to spend the least amount of money to buy 25 muffins.\nEach muffin is sold at $n.\nSpecial offer: Buy 2 muffins and get 1 free.\nHow much will she pay for the muffins? Express your answer in terms of n.",
+    dict(id=21, topic="Data Analysis",  difficulty="Easy",   school="Ai Tong", marks=2,
+         text="The bar graph shows the time taken by 5 children to complete a race.\n(a) Who was the fastest runner?\n(b) How much longer did Dan take than Elvin to complete the race?",
+         image="p6_q21_bargraph.jpg",
+         type="short", answer="(a) Arif  (b) 16 s"),
+    dict(id=22, topic="Fractions",      difficulty="Medium", school="Ai Tong", marks=2,
+         text="In the figure, rectangle WXYZ is made up of 8 identical smaller rectangles.\nWhat fraction of rectangle WXYZ is shaded? Express your answer in the simplest form.",
+         image="p6_q23_shaded_rect.jpg",
+         type="short", answer="5/8"),
+    dict(id=23, topic="Geometry",       difficulty="Hard",   school="Ai Tong", marks=2,
+         text="A triangular piece of paper ABC is folded along the dotted line as shown. AB = AC. Find ∠p.",
+         image="p6_q24_paper_fold.jpg",
+         type="short", answer="46°"),
+    dict(id=24, topic="Algebra",        difficulty="Medium", school="Ai Tong", marks=2,
+         text="Jen wants to spend the least amount of money to buy 25 muffins.\nEach muffin is sold at $n.\nHow much will she pay for the muffins? Express your answer in terms of n.",
+         image="p6_q25_muffins.jpg", img_height=3.0,
          type="short", answer="$17n"),
-    dict(id=16, topic="Measurement",    difficulty="Easy",   school="Ai Tong", marks=2,
-         text="Three beakers are filled with some water.\nThe first beaker contains 1000 ml, the second 750 ml, and the third 200 ml.\nWhat is the total volume of water in the three beakers? Give your answer in litres.",
+    dict(id=25, topic="Geometry",       difficulty="Medium", school="Ai Tong", marks=2,
+         text="In the square grid, AB and BC are straight lines.\n(a) Measure and write down the size of ∠ABC.\n(b) AB and BC form two sides of a parallelogram ABCD. Complete the drawing of the parallelogram ABCD. Label Point D.",
+         image="p6_q26_parallelogram.jpg",
+         type="short", answer="(a) 141°"),
+    dict(id=26, topic="Measurement",    difficulty="Easy",   school="Ai Tong", marks=2,
+         text="Three beakers are filled with some water. What is the total volume of water in the three beakers?",
+         image="p6_q27_beakers.jpg", img_height=3.5,
          type="short", answer="1.95 l"),
-    dict(id=17, topic="Fractions",      difficulty="Hard",   school="Ai Tong", marks=2,
+    dict(id=27, topic="Geometry",       difficulty="Hard",   school="Ai Tong", marks=2,
+         text="In the figure, ABCD is a trapezium with AD // BC.\nBCF is an isosceles triangle. EFC is a straight line. Find ∠ABF.",
+         image="p6_q28_trapezium.jpg",
+         type="short", answer="26°"),
+    dict(id=28, topic="Perimeter & Area", difficulty="Hard", school="Ai Tong", marks=2,
+         text="The figure is made up of two identical right-angled triangles overlapping each other. XY = 3 cm and PQ is a straight line.\nFind the area of the shaded part.",
+         image="p6_q29_triangles.jpg",
+         type="short", answer="32.5 cm²"),
+    dict(id=29, topic="Fractions",      difficulty="Hard",   school="Ai Tong", marks=2,
          text="A shop had some bags for sale.\nAfter selling 28 bags in the morning and 5/8 of the remaining bags in the afternoon, 1/4 of the bags were left unsold.\nHow many bags were sold altogether?",
          type="short", answer="63"),
-    # ── Paper 2 — Short Answer (2 marks each) ─────────────────────────────────
-    dict(id=18, topic="Money",          difficulty="Medium", school="Ai Tong", marks=2,
-         text="The table shows water charges:\n- First 40 m³: $1.40 per m³\n- Each additional m³: unknown rate\n\nMr Chan paid $89 for using 60 m³ of water.\nHow much did he pay per cubic metre for water consumption more than 40 m³?",
+    # ── Paper 2 — Short Answer ────────────────────────────────────────────────
+    dict(id=30, topic="Money",          difficulty="Medium", school="Ai Tong", marks=2,
+         text="The table shows water charges:\n\nMr Chan paid $89 for using 60 m³ of water.\nHow much did he pay per cubic metre for water consumption more than 40 m³?",
+         image="p6_p2q1_water_table.jpg", img_height=3.0,
          type="short", answer="$1.65"),
-    dict(id=19, topic="Measurement",    difficulty="Easy",   school="Ai Tong", marks=2,
+    dict(id=31, topic="Measurement",    difficulty="Easy",   school="Ai Tong", marks=2,
          text="Deena had 2.07 kg of flour at first. She used 459 g of it.\nHow many kilograms of flour was left?",
          type="short", answer="1.611 kg"),
-    dict(id=20, topic="Percentage",     difficulty="Medium", school="Ai Tong", marks=2,
-         text="The line graph shows the growth of a plant over 4 weeks.\nAt Week 1 the height was 14 cm and at Week 3 the height was 56 cm.\nWhat was the percentage increase in the height of the plant from Week 1 to Week 3?",
+    dict(id=32, topic="Percentage",     difficulty="Medium", school="Ai Tong", marks=2,
+         text="The line graph shows the growth of a plant over 4 weeks.\nWhat was the percentage increase in the height of the plant from Week 1 to Week 3?",
+         image="p6_p2q3_linegraph.jpg", img_height=8.0,
          type="short", answer="300%"),
-    dict(id=21, topic="Perimeter & Area", difficulty="Medium", school="Ai Tong", marks=2,
-         text="A figure is formed using 2 squares and 2 equilateral triangles.\nThe perimeter of the figure is 120 cm. PQ is a straight line.\nWhat is the length of PQ?",
+    dict(id=33, topic="Perimeter & Area", difficulty="Hard", school="Ai Tong", marks=2,
+         text="Triangle ABC is an isosceles triangle that lies within a figure made up of a semicircle and a rectangle. AB = AC. Find the area of Triangle ABC.",
+         image="p6_p2q4_triangle.jpg",
+         type="short", answer="123.75 m²"),
+    dict(id=34, topic="Perimeter & Area", difficulty="Hard", school="Ai Tong", marks=2,
+         text="The figure is formed using 2 squares and 2 equilateral triangles. The perimeter of the figure is 120 cm. PQ is a straight line. What is the length of PQ?",
+         image="p6_p2q5_figure.jpg",
          type="short", answer="24 cm"),
     # ── Paper 2 — Long Answer ─────────────────────────────────────────────────
-    dict(id=22, topic="Ratio",          difficulty="Hard",   school="Ai Tong", marks=3,
+    dict(id=35, topic="Data Analysis",  difficulty="Medium", school="Ai Tong", marks=3,
+         text="A group of students were asked to choose their favourite fruit. The result was represented in the pie chart. Half of the number of students chose mango or orange as their favourite fruit.\n(a) What fraction of the students chose apple as their favourite fruit? Express your answer in its simplest form.\n(b) Each of the statements below is either true, false or not possible to tell. Put a tick to indicate your answer.",
+         image="p6_p2q6_piechart.jpg", img_height=13.0, img_align="centre",
+         type="short", answer="(a) 3/20"),
+    dict(id=36, topic="Volume",         difficulty="Hard",   school="Ai Tong", marks=3,
+         text="Figure 1 shows an empty container with a rectangular base area of 30 cm².\nThe container was filled with some water. Figure 2 shows the front view with water level at 4.6 cm. Figure 3 shows the container turned upside down with water level at 5.5 cm.\nWhat is the capacity of the container?",
+         image="p6_p2q7_container.jpg",
+         type="short", answer="234 cm³"),
+    dict(id=37, topic="Geometry",       difficulty="Hard",   school="Ai Tong", marks=3,
+         text="JKLM is a rhombus. KLN and KLO are triangles. LM = MN.\n(a) Find ∠LOK.\n(b) Find ∠LNM.",
+         image="p6_p2q8_rhombus.jpg", img_height=9.0,
+         type="short", answer="(a) 21°  (b) 27°"),
+    dict(id=38, topic="Ratio",          difficulty="Hard",   school="Ai Tong", marks=3,
          text="Kai read part of a book in the morning.\nThe ratio of the number of pages he read to the number of pages that were unread was 6 : 5.\nAfter reading another 195 pages in the afternoon, Kai still had 10% of the book unread.\nHow many pages were there in the book?",
          type="short", answer="550"),
-    dict(id=23, topic="Speed",          difficulty="Hard",   school="Ai Tong", marks=3,
-         text="Town X and Town Y were 455 km apart.\nSam left Town X for Town Y, travelling at a constant speed of 85 km/h.\nAt the same time, Dan left Town Y for Town X, travelling along the same route at a constant speed of 90 km/h.\nHow long had they travelled when they met each other? Express your answer in h and min.",
+    dict(id=39, topic="Speed",          difficulty="Hard",   school="Ai Tong", marks=3,
+         text="Town X and Town Y were 455 km apart.\nSam left Town X for Town Y, travelling at a constant speed of 85 km/h.\nAt the same time, Dan left Town Y for Town X, travelling along the same route at a constant speed of 90 km/h. How long had they travelled when they met each other?\nExpress your answer in h and min.",
          type="short", answer="2 h 36 min"),
-    dict(id=24, topic="Fractions",      difficulty="Hard",   school="Ai Tong", marks=2,
-         text="A fruit seller had some mangoes.\nHe sold 2/5 of them and donated 104 of them.\nHe was left with 1/3 of the mangoes and packed them into 24 bags.\nSome bags contained 4 mangoes each while the rest contained 6 mangoes each.\n(a) How many mangoes were packed?",
-         type="short", answer="130"),
-    dict(id=25, topic="Fractions",      difficulty="Hard",   school="Ai Tong", marks=2,
-         text="A fruit seller had some mangoes.\nHe sold 2/5 of them and donated 104 of them.\nHe was left with 1/3 of the mangoes and packed them into 24 bags.\nSome bags contained 4 mangoes each while the rest contained 6 mangoes each.\n(b) How many bags contained 6 mangoes each?",
-         type="short", answer="17"),
-    dict(id=26, topic="Volume",         difficulty="Hard",   school="Ai Tong", marks=2,
-         text="Tank A measures 48 cm × 20 cm × 36 cm.\nTank B measures 60 cm × 10 cm × 45 cm.\nAt first, Tank A was 1/3-filled with water and Tank B was empty.\n(a) What was the volume of water in Tank A at first?",
-         type="short", answer="11 520 cm³"),
-    dict(id=27, topic="Number Patterns", difficulty="Medium", school="Ai Tong", marks=1,
-         text="Selvi used rods to form figures following a pattern.\nFigure 1: 7 rods, Figure 2: 10 rods, Figure 3: 12 rods, Figure 4: 15 rods.\n(a) What is the difference between the number of rods used for Figure 7 and Figure 9?",
-         type="short", answer="5"),
-    dict(id=28, topic="Number Patterns", difficulty="Medium", school="Ai Tong", marks=2,
-         text="Selvi used rods to form figures following a pattern.\nFigure 1: 7 rods, Figure 2: 10 rods, Figure 3: 12 rods, Figure 4: 15 rods.\n(b) How many rods would she use for Figure 99?",
-         type="short", answer="252"),
-    dict(id=29, topic="Word Problems",  difficulty="Hard",   school="Ai Tong", marks=4,
+    dict(id=40, topic="Fractions",      difficulty="Hard",   school="Ai Tong", marks=4,
+         text="A fruit seller had some mangoes.\nHe sold 2/5 of them and donated 104 of them.\nHe was left with 1/3 of the mangoes and packed them into 24 bags.\nSome bags contained 4 mangoes each while the rest contained 6 mangoes each.\n(a) How many mangoes were packed?\n(b) How many bags contained 6 mangoes each?",
+         type="short", answer="(a) 130  (b) 17"),
+    dict(id=42, topic="Perimeter & Area", difficulty="Hard", school="Ai Tong", marks=5,
+         text="The figure is made up of four identical quarter circles, two identical squares of sides 14 cm and a rectangle of breadth 19 cm. Four identical semicircles lie within the figure. (Take π = 3.14)\n(a) Find the perimeter of the unshaded part.\n(b) Find the area of the shaded parts.",
+         image="p6_p2q12_circles.jpg",
+         type="short", answer="(a) 169.88 cm  (b) 315.07 cm²"),
+    dict(id=43, topic="Volume",         difficulty="Hard",   school="Ai Tong", marks=5,
+         text="Two rectangular tanks, Tank A and Tank B, are shown. Tank A: 48 cm × 20 cm × 36 cm. Tank B: 60 cm × 10 cm × 45 cm. At first, Tank A was 1/3-filled with water and Tank B was empty.\n(a) What was the volume of water in Tank A at first?\n(b) Both taps were turned on at the same time at 2.4 litres per minute. How long did it take for the height of water in both tanks to be the same?",
+         image="1776767678258_image.png",
+         type="short", answer="(a) 11 520 cm³  (b) 8 min"),
+    dict(id=44, topic="Number Patterns", difficulty="Medium", school="Ai Tong", marks=3,
+         text="Selvi used rods to form figures following a pattern.\nFigure 1: 7 rods, Figure 2: 10 rods, Figure 3: 12 rods, Figure 4: 15 rods.\n(a) What is the difference between the number of rods used for Figure 7 and Figure 9?\n(b) How many rods would she use for Figure 99?",
+         type="short", answer="(a) 5  (b) 252"),
+    dict(id=46, topic="Word Problems",  difficulty="Hard",   school="Ai Tong", marks=4,
          text="There were 16 more students in Team A than in Team B in a competition.\n1/4 of the students in Team A and 3/7 of the students in Team B were girls.\nThe number of boys was twice the number of girls in the competition.\nHow many boys were there altogether?",
          type="short", answer="160"),
 ]
@@ -821,23 +900,26 @@ def build_pdf(output_path, level="P4", selected_topics=None, include_answers=Fal
     BADGE_W = 3.0*cm
     LINE_H  = round(fsize * 2.2)  # scales with font size
 
-    # Name / Date row — label only, bottom border acts as the blank line
+    # Name / Class / Date — single row with inline underscores, matching P2-P5 style
+    UNDERLINE_NAME  = "_" * 32
+    UNDERLINE_CLASS = "_" * 10
+    UNDERLINE_DATE  = "_" * 14
+    header_style = ParagraphStyle("hdr", fontName=BODY_FONT, fontSize=fsize,
+                                  textColor=colors.black, leading=fsize * 1.5)
     name_data = [[
-        Paragraph("Name:", S["fl"]),
-        Paragraph("Class:", S["fl"]),
-        Paragraph("Date:", S["fl"]),
+        Paragraph(f"Name: {UNDERLINE_NAME}", header_style),
+        Paragraph(f"Class: {UNDERLINE_CLASS}", header_style),
+        Paragraph(f"Date: {UNDERLINE_DATE}", header_style),
     ]]
-    name_tbl = Table(name_data, colWidths=[9.0*cm, 4.0*cm, 4.0*cm])
+    name_tbl = Table(name_data, colWidths=[8.5*cm, 4.0*cm, 4.5*cm])
     name_tbl.setStyle(TableStyle([
         ("VALIGN",        (0,0), (-1,-1), "MIDDLE"),
         ("LEFTPADDING",   (0,0), (-1,-1), 0),
         ("RIGHTPADDING",  (0,0), (-1,-1), 0),
-        ("LINEBELOW",     (0,0), (-1,-1), 0.8, colors.black),
-        ("BOTTOMPADDING", (0,0), (-1,-1), 4),
-        ("TOPPADDING",    (0,0), (-1,-1), 2),
+        ("TOPPADDING",    (0,0), (-1,-1), 0),
+        ("BOTTOMPADDING", (0,0), (-1,-1), 6),
     ]))
     story.append(name_tbl)
-    story.append(Spacer(1, 0.3*cm))
     story.append(HRFlowable(width="100%", thickness=1.5, color=NAVY))
     story.append(Spacer(1, 0.3*cm))
 
@@ -960,8 +1042,13 @@ def build_pdf(output_path, level="P4", selected_topics=None, include_answers=Fal
         # Embed image or vector diagram if question has one
         if q.get("image"):
             img_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), q["image"])
+            img_h = q.get("img_height", 5.5) * cm
+            img_align = q.get("img_align", "left")
             q_block.append(Spacer(1, 0.2*cm))
-            q_block.append(Image(img_path, width=PAGE_W, height=5.5*cm, kind="proportional"))
+            _img = Image(img_path, width=PAGE_W, height=img_h, kind="proportional")
+            if img_align == "centre":
+                _img.hAlign = "CENTER"
+            q_block.append(_img)
             q_block.append(Spacer(1, 0.2*cm))
         elif q.get("diagram"):
             from diagrams import get_diagram
