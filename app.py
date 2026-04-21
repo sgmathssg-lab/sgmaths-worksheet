@@ -1,4 +1,4 @@
-from flask import Flask, request, send_file
+from flask import Flask, request, send_file, jsonify
 from flask_cors import CORS
 import tempfile, os
 from make_worksheet import build_pdf, QUESTIONS
@@ -38,6 +38,10 @@ LEVELS = {
 def index():
     return "SGMaths Worksheet Generator is running."
 
+@app.route("/ping")
+def ping():
+    return jsonify({"status": "ok"})
+
 @app.route("/generate", methods=["POST"])
 def generate():
     data            = request.get_json(force=True)
@@ -51,18 +55,21 @@ def generate():
     topics     = data.get("topics", all_topics)
     topics     = [t for t in topics if t in all_topics] or all_topics
 
-    # Use a named temp file that we delete AFTER Flask sends it
     tmp_fd, tmp_path = tempfile.mkstemp(suffix=".pdf")
     os.close(tmp_fd)
 
-    build_pdf(tmp_path, level=level,
-              selected_topics=topics,
-              include_answers=include_answers)
+    try:
+        build_pdf(tmp_path, level=level,
+                  selected_topics=topics,
+                  include_answers=include_answers)
 
-    fname = f"sgmaths_{level}_worksheet{'_answers' if include_answers else ''}.pdf"
-    return send_file(tmp_path, as_attachment=True,
-                     download_name=fname,
-                     mimetype="application/pdf")
+        fname = f"sgmaths_{level}_worksheet{'_answers' if include_answers else ''}.pdf"
+        return send_file(tmp_path, as_attachment=True,
+                         download_name=fname,
+                         mimetype="application/pdf")
+    except Exception as e:
+        os.unlink(tmp_path)
+        return jsonify({"error": str(e)}), 500
 
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 5000))
