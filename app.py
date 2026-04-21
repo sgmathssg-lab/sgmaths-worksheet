@@ -29,8 +29,8 @@ LEVELS = {
     "P6": {
         "topics": ["Whole Numbers", "Fractions", "Decimals", "Percentage",
                    "Ratio", "Algebra", "Average", "Speed", "Measurement",
-                   "Volume", "Perimeter & Area", "Number Patterns",
-                   "Money", "Order of Operations", "Word Problems"],
+                   "Volume", "Perimeter & Area", "Geometry", "Data Analysis",
+                   "Number Patterns", "Money", "Order of Operations", "Word Problems"],
     },
 }
 
