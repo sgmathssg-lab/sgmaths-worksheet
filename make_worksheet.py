@@ -1066,6 +1066,13 @@ def build_pdf(output_path, level="P4", selected_topics=None, include_answers=Fal
                 q_block.append(placeholder)
                 q_block.append(Spacer(1, 0.2*cm))
         elif q.get("diagram"):
+            from diagrams import get_diagram
+            diag = get_diagram(*q["diagram"])
+            if diag is not None:
+                q_block.append(Spacer(1, 0.2*cm))
+                q_block.append(diag)
+                q_block.append(Spacer(1, 0.2*cm))
+
         
         # Answer / working area
         if q["type"] == "mcq":
