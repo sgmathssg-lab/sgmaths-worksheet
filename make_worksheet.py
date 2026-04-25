@@ -1041,23 +1041,34 @@ def build_pdf(output_path, level="P4", selected_topics=None, include_answers=Fal
 
         # Embed image or vector diagram if question has one
         if q.get("image"):
-            img_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), q["image"])
-            img_h = q.get("img_height", 5.5) * cm
-            img_align = q.get("img_align", "left")
-            q_block.append(Spacer(1, 0.2*cm))
-            _img = Image(img_path, width=PAGE_W, height=img_h, kind="proportional")
-            if img_align == "centre":
-                _img.hAlign = "CENTER"
-            q_block.append(_img)
-            q_block.append(Spacer(1, 0.2*cm))
-        elif q.get("diagram"):
-            from diagrams import get_diagram
-            diag = get_diagram(*q["diagram"])
-            if diag is not None:
-                q_block.append(Spacer(1, 0.2*cm))
-                q_block.append(diag)
-                q_block.append(Spacer(1, 0.2*cm))
+    img_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), q["image"])
+    if os.path.exists(img_path):
+        img_h = q.get("img_height", 5.5) * cm
+        img_align = q.get("img_align", "left")
+        q_block.append(Spacer(1, 0.2*cm))
+        _img = Image(img_path, width=PAGE_W, height=img_h, kind="proportional")
+        if img_align == "centre":
+            _img.hAlign = "CENTER"
+        q_block.append(_img)
+        q_block.append(Spacer(1, 0.2*cm))
+    else:
+        # Image not available — show a placeholder box instead
+        from reportlab.platypus import Table, TableStyle
+        placeholder = Table(
+            [[Paragraph(f"[Diagram: see original paper]", S["ans_label"])]],
+            colWidths=[PAGE_W], rowHeights=[2.5*cm]
+        )
+        placeholder.setStyle(TableStyle([
+            ("BOX",           (0,0), (-1,-1), 0.5, BORDER),
+            ("BACKGROUND",    (0,0), (-1,-1), LGRAY),
+            ("TOPPADDING",    (0,0), (-1,-1), 8),
+            ("LEFTPADDING",   (0,0), (-1,-1), 8),
+        ]))
+        q_block.append(Spacer(1, 0.2*cm))
+        q_block.append(placeholder)
+        q_block.append(Spacer(1, 0.2*cm))
 
+        
         # Answer / working area
         if q["type"] == "mcq":
             q_block.append(Spacer(1, 0.1*cm))
