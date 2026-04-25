@@ -1065,7 +1065,7 @@ def build_pdf(output_path, level="P4", selected_topics=None, include_answers=Fal
                 q_block.append(Spacer(1, 0.2*cm))
                 q_block.append(placeholder)
                 q_block.append(Spacer(1, 0.2*cm))
-
+        elif q.get("diagram"):
         
         # Answer / working area
         if q["type"] == "mcq":
