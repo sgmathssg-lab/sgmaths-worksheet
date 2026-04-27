@@ -520,7 +520,7 @@ P5_QUESTIONS = [
          type="short", answer="(a) See diagram  (b) 2"),
     dict(id=20, topic="3D Solids & Views", difficulty="Medium", school="Ai Tong", marks=2,
          text="7 unit cubes were stacked and glued together to form a solid.\nDraw the side view and the top view of the solid on the grid provided.",
-         image="img_p5_aitong_q20_cubes.png", img_height=13.0,
+         image="img_p5_aitong_q20_cubes.png", img_height=22.0,
          type="draw", answer="Side view: 3 rows (3-wide, 2-wide, 1-wide). Top view: 3×1 + 1 extra = L-shape"),
     # ── Fractions (Word Problems) ───────────────────────────────────────────────
     dict(id=21, topic="Fractions", difficulty="Hard", school="Ai Tong", marks=3,
