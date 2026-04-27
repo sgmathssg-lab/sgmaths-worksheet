@@ -447,12 +447,12 @@ P5_QUESTIONS = [
     # ── Triangles & Area ────────────────────────────────────────────────────────
     dict(id=1, topic="Triangles & Area", difficulty="Easy", school="Raffles Girls'", marks=1,
          text="VWX is a triangle. If the base is VX, the height is ___.\n(Refer to diagram for points W, Z, V, Y, X.)",
-         image="img_p5_q1a_triangle.png", img_height=5.5,
+         image="img_p5_q1a_triangle.png", img_height=4.5,
          group_with_next=True,
          type="short", answer="YW"),
     dict(id=2, topic="Triangles & Area", difficulty="Easy", school="Raffles Girls'", marks=1,
          text="DCB is a straight line.\nD is 3 cm to the left of C, and C is 9 cm to the left of B.\nA is 5 cm above D. Find the area of triangle ABC.",
-         image="img_p5_q1b_triangle.png", img_height=4.0,
+         image="img_p5_q1b_triangle.png", img_height=3.5,
          type="short", answer="22.5 cm²"),
     dict(id=3, topic="Triangles & Area", difficulty="Medium", school="Raffles Girls'", marks=2,
          text="ABCD is a square of side 18 m. E is the midpoint of AB and F is the midpoint of DC.\nFind the total area of the shaded parts.",
@@ -951,7 +951,9 @@ def build_pdf(output_path, level="P4", selected_topics=None, include_answers=Fal
             else:
                 h = 10.0*cm
         else:
-            if marks <= 2:
+            if marks <= 1:
+                h = 1.5*cm
+            elif marks <= 2:
                 h = 2.5*cm
             elif marks <= 4:
                 h = 4.5*cm
