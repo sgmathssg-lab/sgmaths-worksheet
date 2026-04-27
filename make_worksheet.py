@@ -521,7 +521,7 @@ P5_QUESTIONS = [
     dict(id=20, topic="3D Solids & Views", difficulty="Medium", school="Ai Tong", marks=2,
          text="7 unit cubes were stacked and glued together to form a solid.\nDraw the side view and the top view of the solid on the grid provided.",
          image="img_p5_aitong_q20_cubes.png", img_height=22.0,
-         type="draw", answer="Side view: 3 rows (3-wide, 2-wide, 1-wide). Top view: 3×1 + 1 extra = L-shape"),
+         type="image_only", answer="Side view: 3 rows (3-wide, 2-wide, 1-wide). Top view: 3×1 + 1 extra = L-shape"),
     # ── Fractions (Word Problems) ───────────────────────────────────────────────
     dict(id=21, topic="Fractions", difficulty="Hard", school="Ai Tong", marks=3,
          text="In a competition, 3/5 of the participants were men.\n1/3 of the remaining participants were women and the rest were children.\nThere were 225 more men than children.\nHow many participants were there in the competition?",
@@ -1100,6 +1100,9 @@ def build_pdf(output_path, level="P4", selected_topics=None, include_answers=Fal
                 ("LEFTPADDING",   (0,0), (-1,-1), 8),
             ]))
             q_block.append(draw_tbl)
+        elif q["type"] == "image_only":
+            q_block.append(Spacer(1, 0.1*cm))
+            q_block.append(badge_row)
         else:
             q_block.append(Spacer(1, 0.1*cm))
             q_block.append(badge_row)
