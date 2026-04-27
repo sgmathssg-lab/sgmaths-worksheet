@@ -447,11 +447,12 @@ P5_QUESTIONS = [
     # ── Triangles & Area ────────────────────────────────────────────────────────
     dict(id=1, topic="Triangles & Area", difficulty="Easy", school="Raffles Girls'", marks=1,
          text="VWX is a triangle. If the base is VX, the height is ___.\n(Refer to diagram for points W, Z, V, Y, X.)",
-         image="img_p5_q1a_triangle.png",
+         image="img_p5_q1a_triangle.png", img_height=5.5,
+         group_with_next=True,
          type="short", answer="YW"),
     dict(id=2, topic="Triangles & Area", difficulty="Easy", school="Raffles Girls'", marks=1,
          text="DCB is a straight line.\nD is 3 cm to the left of C, and C is 9 cm to the left of B.\nA is 5 cm above D. Find the area of triangle ABC.",
-         image="img_p5_q1b_triangle.png",
+         image="img_p5_q1b_triangle.png", img_height=4.0,
          type="short", answer="22.5 cm²"),
     dict(id=3, topic="Triangles & Area", difficulty="Medium", school="Raffles Girls'", marks=2,
          text="ABCD is a square of side 18 m. E is the midpoint of AB and F is the midpoint of DC.\nFind the total area of the shaded parts.",
@@ -1005,6 +1006,7 @@ def build_pdf(output_path, level="P4", selected_topics=None, include_answers=Fal
 
     # ── Questions ──────────────────────────────────────────────────────────────
     q_counter = 0
+    pending_group = []   # accumulates blocks when group_with_next=True
     for q in qs:
         q_counter += 1
         diff_bg, diff_fg = DIFF_COLORS[q["difficulty"]]
@@ -1123,7 +1125,16 @@ def build_pdf(output_path, level="P4", selected_topics=None, include_answers=Fal
             ]))
             q_block.append(ak_outer)
 
-        story.append(KeepTogether(q_block))
+        if q.get("group_with_next"):
+            pending_group.extend(q_block)
+            pending_group.append(Spacer(1, 0.5*cm))
+        else:
+            if pending_group:
+                pending_group.extend(q_block)
+                story.append(KeepTogether(pending_group))
+                pending_group = []
+            else:
+                story.append(KeepTogether(q_block))
 
         # Word problems: 2 per page → hard page break after every 2nd one
         if is_word:
