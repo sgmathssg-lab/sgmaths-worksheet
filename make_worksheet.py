@@ -814,6 +814,7 @@ P6_QUESTIONS = [
     dict(id=44, topic="Number Patterns", difficulty="Medium", school="Ai Tong", marks=3,
          text="Selvi used rods to form figures following a pattern.\nThe first four figures are shown.\n(a) What is the difference between the number of rods used for Figure 7 and Figure 9?\n(b) How many rods would she use for Figure 99?",
          image="1777456071153_image.png",
+         img_height=8,
          img_after_line=1,
          type="short", answer="(a) 5  (b) 252"),
     dict(id=46, topic="Word Problems",  difficulty="Hard",   school="Ai Tong", marks=4,
