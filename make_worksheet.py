@@ -808,7 +808,7 @@ P6_QUESTIONS = [
          type="short", answer="(a) 169.88 cm  (b) 315.07 cm²"),
     dict(id=43, topic="Volume",         difficulty="Hard",   school="Ai Tong", marks=5,
          text="Two rectangular tanks, Tank A and Tank B, are shown. Tank A: 48 cm × 20 cm × 36 cm. Tank B: 60 cm × 10 cm × 45 cm. At first, Tank A was 1/3-filled with water and Tank B was empty.\n(a) What was the volume of water in Tank A at first?\n(b) Both taps were turned on at the same time at 2.4 litres per minute. How long did it take for the height of water in both tanks to be the same?",
-         image="1776767678258_image.png",
+         image="1777455013275_image.png",
          type="short", answer="(a) 11 520 cm³  (b) 8 min"),
     dict(id=44, topic="Number Patterns", difficulty="Medium", school="Ai Tong", marks=3,
          text="Selvi used rods to form figures following a pattern.\nFigure 1: 7 rods, Figure 2: 10 rods, Figure 3: 12 rods, Figure 4: 15 rods.\n(a) What is the difference between the number of rods used for Figure 7 and Figure 9?\n(b) How many rods would she use for Figure 99?",
