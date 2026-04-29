@@ -807,8 +807,9 @@ P6_QUESTIONS = [
          image="p6_p2q12_circles.jpg",
          type="short", answer="(a) 169.88 cm  (b) 315.07 cm²"),
     dict(id=43, topic="Volume",         difficulty="Hard",   school="Ai Tong", marks=5,
-         text="Two rectangular tanks, Tank A and Tank B, are shown. Tank A: 48 cm × 20 cm × 36 cm. Tank B: 60 cm × 10 cm × 45 cm. At first, Tank A was 1/3-filled with water and Tank B was empty.\n(a) What was the volume of water in Tank A at first?\n(b) Both taps were turned on at the same time at 2.4 litres per minute. How long did it take for the height of water in both tanks to be the same?",
+         text="Two rectangular tanks, Tank A and Tank B, are shown below.\nAt first, Tank A was 1/3 filled with water and Tank B was empty.\n(a) What was the volume of water in Tank A at first?\n(b) Both taps were turned on at the same time. Water from both taps flowed at the same rate of 2.4 litres per minute. How long did it take for the height of water in both tanks to be the same?",
          image="1777455013275_image.png",
+         img_after_line=0,
          type="short", answer="(a) 11 520 cm³  (b) 8 min"),
     dict(id=44, topic="Number Patterns", difficulty="Medium", school="Ai Tong", marks=3,
          text="Selvi used rods to form figures following a pattern.\nFigure 1: 7 rods, Figure 2: 10 rods, Figure 3: 12 rods, Figure 4: 15 rods.\n(a) What is the difference between the number of rods used for Figure 7 and Figure 9?\n(b) How many rods would she use for Figure 99?",
@@ -1041,26 +1042,30 @@ def build_pdf(output_path, level="P4", selected_topics=None, include_answers=Fal
 
         # Question text lines
         all_lines = q["text"].split("\n")
-        first_cell = smart_line(all_lines[0], bold_prefix=f"Q{q_counter}.", fsize=fsize)
-        q_block = [first_cell]
-        for extra in all_lines[1:]:
-            if extra.strip():
-                q_block.append(smart_line(extra, fsize=fsize))
-            else:
-                q_block.append(Spacer(1, 0.15*cm))
+        img_after_line = q.get("img_after_line", None)
 
-        # Embed image or vector diagram if question has one
-        if q.get("image"):
-            img_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), q["image"])
+        def _render_lines(lines, first=False):
+            out = []
+            for i, line in enumerate(lines):
+                if i == 0 and first:
+                    out.append(smart_line(line, bold_prefix=f"Q{q_counter}.", fsize=fsize))
+                elif line.strip():
+                    out.append(smart_line(line, fsize=fsize))
+                else:
+                    out.append(Spacer(1, 0.15*cm))
+            return out
+
+        def _render_image(qq):
+            out = []
+            img_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), qq["image"])
             if os.path.exists(img_path):
-                img_h = q.get("img_height", 5.5) * cm
-                img_align = q.get("img_align", "left")
-                q_block.append(Spacer(1, 0.2*cm))
+                img_h = qq.get("img_height", 5.5) * cm
+                img_align = qq.get("img_align", "centre")
+                out.append(Spacer(1, 0.2*cm))
                 _img = Image(img_path, width=PAGE_W, height=img_h, kind="proportional")
-                if img_align == "centre":
-                    _img.hAlign = "CENTER"
-                q_block.append(_img)
-                q_block.append(Spacer(1, 0.2*cm))
+                _img.hAlign = "CENTER" if img_align == "centre" else "LEFT"
+                out.append(_img)
+                out.append(Spacer(1, 0.2*cm))
             else:
                 placeholder = Table(
                     [[Paragraph("[Diagram: see original paper]", S["ans_label"])]],
@@ -1072,10 +1077,23 @@ def build_pdf(output_path, level="P4", selected_topics=None, include_answers=Fal
                     ("TOPPADDING",  (0,0), (-1,-1), 8),
                     ("LEFTPADDING", (0,0), (-1,-1), 8),
                 ]))
-                q_block.append(Spacer(1, 0.2*cm))
-                q_block.append(placeholder)
-                q_block.append(Spacer(1, 0.2*cm))
-        elif q.get("diagram"):
+                out.append(Spacer(1, 0.2*cm))
+                out.append(placeholder)
+                out.append(Spacer(1, 0.2*cm))
+            return out
+
+        if img_after_line is not None and q.get("image"):
+            before = all_lines[:img_after_line + 1]
+            after  = all_lines[img_after_line + 1:]
+            q_block = _render_lines(before, first=True)
+            q_block += _render_image(q)
+            q_block += _render_lines(after, first=False)
+        else:
+            q_block = _render_lines(all_lines, first=True)
+            if q.get("image"):
+                q_block += _render_image(q)
+
+        if q.get("diagram") and not q.get("image"):
             from diagrams import get_diagram
             diag = get_diagram(*q["diagram"])
             if diag is not None:
